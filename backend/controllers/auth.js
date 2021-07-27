@@ -1,0 +1,76 @@
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
+const User = require('../models/user');
+
+
+// create new user (POST)
+
+exports.signup = (req, res) => {
+    db.User.findOne({
+        where: { email: req.body.email }, // search for user with same email address in db
+    })
+    .then(user => {
+        if(user) { // if such a user exists
+            return res.status(400).json({ error: 'Cette adresse email est déjà utilisée !' });
+        } else { // if email address not found in db
+            if(user.pseudo === req.body.pseudo) { // if user with same pseudo in db
+                return res.status(400).json({ error: 'Ce pseudo est déjà utilisé !' });
+            } else { // if pseudo not found in db
+                // hash password
+                bcrypt.hash(req.body.password, 10)
+                .then(hash => {
+                    // create new user
+                    const user = new User({
+                        pseudo: req.body.pseudo,
+                        email: req.body.email,
+                        password: hash,
+                    });
+                    // save new user
+                    user.save()
+                    .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
+                    .catch(error => res.status(400).json({ error }));
+                })
+                .catch(error => res.status(500).json({ error }));
+            };            
+        }
+    })
+    .catch(error => res.status(500).json({ error }));
+};
+
+
+// connect existing user (POST)
+
+exports.login = (req, res) => {
+    db.User.findOne({
+        where: { email: req.body.email }, // search for user with same email address in db
+    })
+    .then(user => {
+        // if user not found in db
+        if (!user) {
+            return res.status(401).json({ error: 'Utilisateur non trouvé !' });
+        }
+        // if user found
+        // compare hashes to check if they come from the same string (password)
+        bcrypt.compare(req.body.password, user.password)
+        .then(valid => {
+            // if they don't match
+            if(!valid) {
+                return res.staus(401).json({ error: 'Mot de passe incorrect !' });
+            }
+            // if they match
+            res.status(200).json({ // return
+                message: 'Utilisateur connecté !',
+                userId: user.user_id, 
+                role: user.fk_user_role,
+                pseudo: user.pseudo,
+                photo: user.user_photo,
+                token: jwt.sign(
+                    { userId: user.user_id }, process.env.RND_TKN, { expiresIn: '24h' }
+                )
+            });
+        })
+        .catch(error => res.status(500).json({ error }));
+    })
+    .catch(error => res.status(500).json({ error }));
+};
