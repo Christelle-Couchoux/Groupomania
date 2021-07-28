@@ -1,26 +1,26 @@
-// create model for messages
+// create model for posts
 
 'use strict';
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-    class Message extends Model {
+    class Post extends Model {
         static associate(models) {
-            models.Message.belongsTo(models.User, { foreingKey: 'fk_user_id', onDelete: 'CASCADE' });
-            models.Message.hasMany(models.Comment);
-            models.Message.hasMany(models.Message_like);
+            models.Post.belongsTo(models.User, { foreingKey: 'fk_user_id', onDelete: 'CASCADE' });
+            models.Post.hasMany(models.Comment);
+            models.Post.hasMany(models.Post_like);
         }
     }
-    Message.init(
+    Post.init(
         {
-            message_id: {
+            post_id: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
                 autoIncrement: true
             },
-            message_file: {
+            post_file: {
                 type: DataTypes.STRING(50),
             },
-            message_text:{
+            post_text:{
                 type: DataTypes.STRING,
             },
             created_at: {
@@ -34,9 +34,12 @@ module.exports = (sequelize, DataTypes) => {
         },
         {
             sequelize,
-            modelName: 'Message',
-            timestamps: false,
+            modelName: 'Post',
+            tableName: 'Post',
+            createdAt: 'created_at',
+            underscore: true,
+            updatedAt: false,
         }
     );   
-    return Message
+    return Post
 };

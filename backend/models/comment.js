@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
     class Comment extends Model {
         static associate(models) {
             models.Comment.belongsTo(models.User, { foreingKey: 'fk_user_id', onDelete: 'CASCADE' });
-            models.Comment.belongsTo(models.Message, { foreingKey: 'fk_message_id', onDelete: 'CASCADE' });
+            models.Comment.belongsTo(models.Post, { foreingKey: 'fk_post_id', onDelete: 'CASCADE' });
             models.Comment.hasMany(models.Comment_like);
         }
     }
@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER(4),
                 allowNull: false
             },
-            fk_message_id: {
+            fk_post_id: {
                 type: DataTypes.INTEGER,
                 allowNull: false
             }
@@ -36,7 +36,10 @@ module.exports = (sequelize, DataTypes) => {
         {
             sequelize,
             modelName: 'Comment',
-            timestamps: false,
+            tableName: 'Comment',
+            createdAt: 'created_at',
+            underscore: true,
+            updatedAt: false,
         }
     );   
     return Comment

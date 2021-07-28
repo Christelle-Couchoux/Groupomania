@@ -46,7 +46,10 @@ module.exports = (sequelize, DataTypes) => {
         {
             sequelize,
             modelName: 'Notification',
-            timestamps: false,
+            tableName: 'Notification',
+            createdAt: 'created_at',
+            underscore: true,
+            updatedAt: false,
         }
     );   
     return Notification

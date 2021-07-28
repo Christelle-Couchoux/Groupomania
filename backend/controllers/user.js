@@ -15,16 +15,16 @@ exports.searchUser = (req, res) => {
 };
 
 
-// display messages of one user (GET)
+// display posts of one user (GET)
 
-exports.getAllMessagesOfUser = (req, res) => {
+exports.getAllPostsOfUser = (req, res) => {
 
 };
 
 
-// display messages and comments of one user (GET)
+// display posts and comments of one user (GET)
 
-exports.getAllMessagesAndCommentsOfUser = (req, res) => {
+exports.getAllPostsAndCommentsOfUser = (req, res) => {
 
 };
 

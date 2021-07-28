@@ -5,12 +5,12 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
     class User extends Model {
         static associate(models) {
-            models.User.hasMany(models.Message);
+            models.User.hasMany(models.Post);
             models.User.hasMany(models.Comment);
-            models.User.hasMany(models.Message_like);
+            models.User.hasMany(models.Post_like);
             models.User.hasMany(models.Comment_like);
             models.User.hasMany(models.Notification);
-            models.User.belongsTo(models.Role);
+            models.User.belongsTo(models.Role, { foreingKey: 'fk_user_role' });
         }
     }
     User.init(
@@ -22,14 +22,17 @@ module.exports = (sequelize, DataTypes) => {
             },
             pseudo: {
                 type: DataTypes.STRING,
+                match: [/^[-\w\sÀÁÂÄÅÇÈÉÊËÌÍÎÏÑŒÒÓÔÕÖØÙÚÛÜàáâäåçèéêëìíîïñœòóôõöøùúûü]+{3,20}$/],
                 allowNull: false,
                 unique: true
             },
             first_name:{
                 type: DataTypes.STRING,
+                match: [/^[-\w\sÀÁÂÄÅÇÈÉÊËÌÍÎÏÑŒÒÓÔÕÖØÙÚÛÜàáâäåçèéêëìíîïñœòóôõöøùúûü]+{1,30}$/],
             },
             last_name: {
                 type: DataTypes.STRING,
+                match: [/^[-\w\sÀÁÂÄÅÇÈÉÊËÌÍÎÏÑŒÒÓÔÕÖØÙÚÛÜàáâäåçèéêëìíîïñœòóôõöøùúûü]+{1,30}$/],
             },
             email: {
                 type: DataTypes.STRING,
@@ -49,6 +52,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             bio: {
                 type: DataTypes.STRING,
+                match: [/^[-\w\sÀÁÂÄÅÇÈÉÊËÌÍÎÏÑŒÒÓÔÕÖØÙÚÛÜàáâäåçèéêëìíîïñœòóôõöøùúûü]+{1,255}$/],
             },
             created_at: {
                 type: DataTypes.DATE,
@@ -63,7 +67,10 @@ module.exports = (sequelize, DataTypes) => {
         {
             sequelize,
             modelName: 'User',
-            timestamps: false,
+            tableName: 'User',
+            createdAt: 'created_at',
+            underscore: true,
+            updatedAt: false,
         }
     );   
     return User

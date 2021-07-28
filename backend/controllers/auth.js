@@ -7,7 +7,20 @@ const User = require('../models/user');
 // create new user (POST)
 
 exports.signup = (req, res) => {
-    db.User.findOne({
+    // create admin if not exists
+    if (User.length === 0) {
+        bcrypt.hash(process.env.ADMIN_PASSWORD, 10)
+        .then(hash => {
+            User.create({
+                pseudo: process.env.ADMIN_PSEUDO,
+                email: process.env.ADMIN_EMAIL,
+                password: hash,
+                fk_user_role: 2,
+            })
+        })
+    }
+    // create new user
+    User.findOne({
         where: { email: req.body.email }, // search for user with same email address in db
     })
     .then(user => {
@@ -21,14 +34,23 @@ exports.signup = (req, res) => {
                 bcrypt.hash(req.body.password, 10)
                 .then(hash => {
                     // create new user
-                    const user = new User({
+                    User.create({
                         pseudo: req.body.pseudo,
                         email: req.body.email,
                         password: hash,
-                    });
-                    // save new user
-                    user.save()
-                    .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
+                    })
+                    .then(user => // return
+                        res.status(201).json({
+                            message: 'Utilisateur créé !',
+                            userId: user.user_id, 
+                            role: user.fk_user_role,
+                            pseudo: user.pseudo,
+                            photo: user.user_photo,
+                            token: jwt.sign(
+                                { userId: user.user_id }, process.env.RND_TKN, { expiresIn: '24h' }
+                            )
+                        })
+                    )                
                     .catch(error => res.status(400).json({ error }));
                 })
                 .catch(error => res.status(500).json({ error }));
@@ -42,7 +64,7 @@ exports.signup = (req, res) => {
 // connect existing user (POST)
 
 exports.login = (req, res) => {
-    db.User.findOne({
+    User.findOne({
         where: { email: req.body.email }, // search for user with same email address in db
     })
     .then(user => {

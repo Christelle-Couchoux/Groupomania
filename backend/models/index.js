@@ -1,14 +1,17 @@
-// configure database
+// configure connection to database
+
+'use strict';
 
 const Sequelize = require("sequelize");
 const fs = require('fs');
 const path = require('path');
-const basename = path.basename(__filename)
+const basename = path.basename(__filename);
+const db = {};
 
 
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
+let sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
     host: process.env.DB_HOST,
-    dialect: mysql,
+    dialect: 'mysql',
     operatorsAliases: false,
 
     pool: {
@@ -29,8 +32,12 @@ fs
         db[ model.name ] = model
     });
 
+Object.keys(db).forEach(modelName => {
+    if (db[modelName].associate) {
+        db[modelName].associate(db);
+  }
+});
 
-const db = {};
 
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;

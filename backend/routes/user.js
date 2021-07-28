@@ -11,8 +11,8 @@ const userCtrl = require('../controllers/user');
 
 router.get('/', auth, userCtrl.getAllUsers);
 router.get('/search', auth, userCtrl.searchUser);
-router.get('/:userId', auth, userCtrl.getAllMessagesOfUser);
-router.get('/:userId/with_comments', auth, userCtrl.getAllMessagesAndCommentsOfUser);
+router.get('/:userId', auth, userCtrl.getAllPostsOfUser);
+router.get('/:userId/with_comments', auth, userCtrl.getAllPostsAndCommentsOfUser);
 router.get('/:userId/likes', auth, userCtrl.getAllLikesOfUser);
 router.put('/:userId', auth, multer, userCtrl.modifyUserProfile);
 router.delete('/:userId', auth, userCtrl.deleteUserProfile);

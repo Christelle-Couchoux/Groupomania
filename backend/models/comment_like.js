@@ -32,7 +32,10 @@ module.exports = (sequelize, DataTypes) => {
         {
             sequelize,
             modelName: 'Comment_like',
-            timestamps: false,
+            tableName: 'Comment_like',
+            createdAt: 'created_at',
+            underscore: true,
+            updatedAt: false,
         }
     );   
     return Comment_like

@@ -1,17 +1,17 @@
-// create model for message likes
+// create model for post likes
 
 'use strict';
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-    class Message_like extends Model {
+    class Post_like extends Model {
         static associate(models) {
-            models.Message_like.belongsTo(models.User, { foreingKey: 'fk_user_id', onDelete: 'CASCADE' });
-            models.Message_like.belongsTo(models.Message, { foreingKey: 'fk_message_id', onDelete: 'CASCADE' });
+            models.Post_like.belongsTo(models.User, { foreingKey: 'fk_user_id', onDelete: 'CASCADE' });
+            models.Post_like.belongsTo(models.Post, { foreingKey: 'fk_post_id', onDelete: 'CASCADE' });
         }
     }
-    Message_like.init(
+    Post_like.init(
         {
-            message_like_id: {
+            post_like_id: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
                 autoIncrement: true
@@ -24,16 +24,20 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER(4),
                 allowNull: false
             },
-            fk_message_id: {
+            fk_post_id: {
                 type: DataTypes.INTEGER,
                 allowNull: false
             }
         },
         {
             sequelize,
-            modelName: 'Message_like',
-            timestamps: false,
+            modelName: 'Post_like',
+            tableName: 'Post_like',
+            createdAt: 'created_at',
+            underscore: true,
+            updatedAt: false,
+
         }
     );   
-    return Message_like
+    return Post_like
 };

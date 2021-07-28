@@ -8,7 +8,7 @@ require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
-const messageRoutes = require('./routes/message')
+const postRoutes = require('./routes/post')
 const commentRoutes = require('./routes/comment')
 const notificationRoutes = require('./routes/notification')
 
@@ -67,7 +67,7 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/messages', messageRoutes);
+app.use('/api/posts', postRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/notifications', notificationRoutes);
 
