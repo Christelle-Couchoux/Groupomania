@@ -55,6 +55,7 @@ app.use(nocache());
 
 // database
 
+// sync all models that aren't already in the db
 const db = require("./models");
 db.sequelize.sync();
 

@@ -65,6 +65,22 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
         {
+            indexes: [
+                {
+                    name: 'user_first_name',
+                    fields: ['first_name']
+                },
+                {
+                    name: 'user_last_name',
+                    fields: ['last_name']
+                },
+                {
+                    name: 'user_created_at',
+                    fields: ['created_at']
+                },
+            ]
+        },
+        {
             sequelize,
             modelName: 'User',
             tableName: 'User',

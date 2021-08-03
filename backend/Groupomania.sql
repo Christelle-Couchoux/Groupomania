@@ -44,7 +44,7 @@ DROP TABLE IF EXISTS User;
 
 CREATE TABLE User (
     user_id SMALLINT(4) UNSIGNED AUTO_INCREMENT,
-    pseudo VARCHAR(20) NOT NULL,
+    pseudo VARCHAR(20) NOT NULL UNIQUE,
     first_name VARCHAR(30),
     last_name VARCHAR(30),
     email VARCHAR(50) NOT NULL UNIQUE,
@@ -55,9 +55,9 @@ CREATE TABLE User (
     fk_user_role TINYINT(1) UNSIGNED NOT NULL DEFAULT 3,
     PRIMARY KEY (user_id),
     FOREIGN KEY (fk_user_role) REFERENCES Role(role_id),
-    INDEX user_pseudo (pseudo),
     INDEX user_first_name (first_name),
-    INDEX user_last_name (last_name)
+    INDEX user_last_name (last_name),
+    INDEX user_created_at (created_at)
 ) ENGINE=INNODB;
 
 

@@ -30,6 +30,14 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
         {
+            indexes: [
+                {
+                    name: 'comment_like_created_at',
+                    fields: ['created_at']
+                },
+            ]
+        },
+        {
             sequelize,
             modelName: 'Comment_like',
             tableName: 'Comment_like',

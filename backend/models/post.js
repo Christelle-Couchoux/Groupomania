@@ -33,6 +33,14 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
         {
+            indexes: [
+                {
+                    name: 'post_created_at',
+                    fields: ['created_at']
+                },
+            ]
+        },
+        {
             sequelize,
             modelName: 'Post',
             tableName: 'Post',

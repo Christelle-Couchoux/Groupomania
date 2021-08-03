@@ -44,6 +44,14 @@ module.exports = (sequelize, DataTypes) => {
             },
         },
         {
+            indexes: [
+                {
+                    name: 'notification_created_at',
+                    fields: ['created_at']
+                },
+            ]
+        },
+        {
             sequelize,
             modelName: 'Notification',
             tableName: 'Notification',
