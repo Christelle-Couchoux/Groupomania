@@ -64,6 +64,10 @@ export default {
 @import '@/scss/mixins.scss';
 
 
+#login-header {
+    @include flexbox(column, nowrap, center, center);
+};
+
 #login-form {
     @include form;
 };

@@ -1,9 +1,9 @@
 <template>
     
-    <div id="login-header">
+    <div id="login-logo-title">
         
         <div id="logo">
-            <router-link to="/" title ="Retour à l'accueil">
+            <router-link to="/" title ="Se déconnecter">
                 <img src="@/assets/logo/icon-above-font.png" alt="logo de Groupomania">
             </router-link>
         </div>
@@ -29,7 +29,7 @@ export default {
 @import '@/scss/mixins.scss';
 
 
-#login-header {
+#login-logo-title {
     @include flexbox(column, nowrap, center, center);
     @include position(relative, auto, auto, auto, auto);
     @include size(100%, auto);

@@ -56,10 +56,10 @@ $color-txt: (
     btn-undo-profile-hover: $color-basic-light,
     btn-delete-account: $color-basic-light,
     btn-delete-account-hover: $color-primary-dark,
+    pseudo: $color-primary-dark,
 
 
     login-active: $color-primary-dark,
-    pseudo: $color-primary-dark,
 );
 
 
@@ -81,10 +81,10 @@ $font-size: (
     forums-icon: 4rem,
     articles-text: 1.5rem,
     articles-go-back: 2rem,
+    pseudo: 1.5rem,
 
 
     posts-menu-icon: 1.4rem,
     posts-menu-text: 1.2rem,
-    pseudo: 1.5rem,
     field-constraints: 0.8rem,
 );

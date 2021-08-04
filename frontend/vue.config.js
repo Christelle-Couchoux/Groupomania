@@ -2,13 +2,11 @@ module.exports = {
 	css: {
 		loaderOptions: {
 			sass: {
-				data: `@import "@/scss/variables.scss";
-				@import "@/scss/mixins.scss";
+				prependData: `
+					@import "@/scss/variables.scss";
+					@import "@/scss/mixins.scss";
 				`
 			}
 		}
 	}
 };
-
-
-

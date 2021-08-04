@@ -11,7 +11,13 @@
                 <form>
                     <div>
                         <label for="pseudo">Pseudo :</label>
-                        <input type="text" name="pseudo" id="pseudo" required>
+                        <input
+                            type="text" 
+                            name="pseudo"
+                            v-model="pseudo"
+                            id="pseudo" 
+                            required
+                        >
                         <p>
                             3-16&nbsp;caractères.
                         </p>

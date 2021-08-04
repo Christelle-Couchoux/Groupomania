@@ -92,127 +92,6 @@
 
 // elements style
 
-@mixin posts-h1 {
-    @include size(100%, auto);
-    max-width: 1440px;
-    font-size: map-get($font-size, h1);
-    padding: 20px 0 15px 0;
-    font-weight: 600;
-    text-align: center;
-    border-bottom: solid 1px $color-secondary;
-    background-color: $color-basic-light;
-    @include position(fixed, 130px, auto, auto, auto);
-    z-index: 10;
-
-    @include lg {
-        @include position(fixed, 0, 0, auto, 250px);
-        @include size(auto, auto);
-        border-left: solid 1px $color-secondary; 
-    };
-
-    @include xxl {
-        @include size(100%, auto);
-        max-width: 1152px;
-        @include position(fixed, 0, calc(50% - 470px), auto, calc(50% - 470px));
-    };
-
-};
-
-
-// buttons
-
-@mixin btn ($width: 150px){
-    @include flexbox(row, nowrap, center, center);
-    margin: auto;
-    padding: 20px 0 50px 0;
-    border: none;
-    text-transform: uppercase;
-
-    input {
-        text-transform: uppercase;
-        font-weight: 700;
-        font-size: map-get($font-size, btn);
-        @include size($width, auto);
-        padding: 10px;
-        border-radius: 30px;
-        transition: all 200ms ease-in-out;
-
-        &:hover {
-            cursor: pointer;
-            text-decoration: underline;
-            text-decoration-thickness: 2px;
-            text-underline-offset: 5px;
-        };
-    }; 
-};
-
-
-@mixin btn-login-signup {
-    input {
-        border: solid 2px $color-basic-dark;
-        @include color-bg-txt(btn-login-signup);
-
-        &:hover {
-            @include color-bg-txt(btn-login-signup-hover);
-        };
-    };
-};
-
-@mixin btn-new-post-comm {
-    input {
-        border: solid 2px $color-basic-dark;
-        @include color-bg-txt(btn-new-post-comm);
-
-        &:hover {
-            @include color-bg-txt(btn-new-post-comm-hover);
-        };
-    };
-};
-
-@mixin btn-edit-profile {
-    input {
-        border: solid 2px $color-basic-dark;
-        @include color-bg-txt(btn-edit-profile);
-
-        &:hover {
-            @include color-bg-txt(btn-edit-profile-hover);
-        };
-    };
-};
-
-@mixin btn-save-profile {
-    input {
-        border: solid 2px $color-basic-dark;
-        @include color-bg-txt(btn-save-profile);
-
-        &:hover {
-            @include color-bg-txt(btn-save-profile-hover);
-        };
-    };
-};
-
-@mixin btn-undo-profile {
-    input {
-        border: solid 2px $color-basic-dark;
-        @include color-bg-txt(btn-undo-profile);
-
-        &:hover {
-            @include color-bg-txt(btn-undo-profile-hover);
-        };
-    };
-};
-
-@mixin btn-delete-account {
-    input {
-        border: solid 2px $color-basic-dark;
-        @include color-bg-txt(btn-delete-account);
-
-        &:hover {
-            @include color-bg-txt(btn-delete-account-hover);
-        };
-    };
-};
-
 
 // forms
 
@@ -262,5 +141,191 @@
         text-decoration: underline;
         text-decoration-thickness: 2px;
         text-underline-offset: 5px;
+    };
+};
+
+
+// buttons
+
+@mixin btn ($width: 150px){
+    @include flexbox(row, nowrap, center, center);
+    margin: auto;
+    border: none;
+    text-transform: uppercase;
+
+    input {
+        text-transform: uppercase;
+        font-weight: 700;
+        font-size: map-get($font-size, btn);
+        @include size($width, auto);
+        padding: 10px;
+        border-radius: 30px;
+        transition: all 200ms ease-in-out;
+
+        &:hover {
+            cursor: pointer;
+            text-decoration: underline;
+            text-decoration-thickness: 2px;
+            text-underline-offset: 5px;
+        };
+    }; 
+};
+
+
+@mixin btn-login-signup {
+    padding: 20px 0 50px 0;
+
+    input {
+        border: solid 2px $color-basic-dark;
+        @include color-bg-txt(btn-login-signup);
+
+        &:hover {
+            @include color-bg-txt(btn-login-signup-hover);
+        };
+    };
+};
+
+@mixin btn-new-post-comm {
+    input {
+        border: solid 2px $color-basic-dark;
+        @include color-bg-txt(btn-new-post-comm);
+
+        &:hover {
+            @include color-bg-txt(btn-new-post-comm-hover);
+        };
+    };
+};
+
+@mixin btn-edit-profile {
+    input {
+        border: solid 2px $color-basic-dark;
+        @include color-bg-txt(btn-edit-profile);
+
+        &:hover {
+            @include color-bg-txt(btn-edit-profile-hover);
+            border: solid 2px $color-primary-dark;
+        };
+    };
+};
+
+@mixin btn-save-profile {
+    input {
+        border: solid 2px $color-basic-dark;
+        @include color-bg-txt(btn-save-profile);
+
+        &:hover {
+            @include color-bg-txt(btn-save-profile-hover);
+        };
+    };
+};
+
+@mixin btn-undo-profile {
+    input {
+        border: solid 2px $color-basic-dark;
+        @include color-bg-txt(btn-undo-profile);
+
+        &:hover {
+            @include color-bg-txt(btn-undo-profile-hover);
+        };
+    };
+};
+
+@mixin btn-delete-account {
+    input {
+        border: solid 2px $color-primary-dark;
+        @include color-bg-txt(btn-delete-account);
+
+        &:hover {
+            @include color-bg-txt(btn-delete-account-hover);
+        };
+    };
+};
+
+
+// fixed menu
+
+// main
+
+@mixin main {
+    @include flexbox(column, wrap, center, center);
+    @include size(100%, auto);
+    @include position(relative, auto, auto, auto, auto);
+    
+    @include lg {
+        @include flexbox(row, nowrap, space-around, flex-start);
+    };
+};
+
+
+// page
+
+@mixin page {
+    @include lg {
+        @include position(absolute, 0, auto, auto, 250px);
+    };
+
+    @include xxl {
+        @include size(80%, auto);
+    };
+
+    h1 {
+        @include posts-h1;
+    };
+};
+
+
+// h1
+
+@mixin posts-h1 {
+    @include size(100%, auto);
+    max-width: 1440px;
+    font-size: map-get($font-size, h1);
+    padding: 20px 0 15px 0;
+    font-weight: 600;
+    text-align: center;
+    border-bottom: solid 1px $color-secondary;
+    background-color: $color-basic-light;
+    @include position(fixed, 129px, 0, auto, 0);
+    z-index: 10;
+
+    @include lg {
+        @include position(fixed, 0, 0, auto, 250px);
+        @include size(auto, auto);
+        border-left: solid 1px $color-secondary; 
+    };
+
+    @include xxl {
+        @include size(100%, auto);
+        max-width: 1152px;
+        @include position(fixed, 0, calc(50% - 470px), auto, calc(50% - 470px));
+    };
+
+};
+
+
+//first element under h1
+
+@mixin first-under-h1 {
+    border-bottom: solid 1px $color-secondary;
+    margin: 194px 0 0 0;
+    
+    @include lg {
+        border-left: solid 1px $color-secondary; 
+        margin: 61px 0 0 0;
+    }  
+};
+
+
+@mixin no-results {
+    @include size (80%, auto);
+    margin: 35px 0 50px 0;
+    padding: 50px 20px 50px 20px;
+    text-align: center;
+    color: $color-primary-dark;
+    border-top: solid 1px $color-secondary;
+    border-bottom: solid 1px $color-secondary;
+
+    p {
+        @include size (100%, auto);
     };
 };
