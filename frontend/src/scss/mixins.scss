@@ -151,7 +151,6 @@
     @include flexbox(row, nowrap, center, center);
     margin: auto;
     border: none;
-    text-transform: uppercase;
 
     input {
         text-transform: uppercase;
@@ -191,6 +190,7 @@
         @include color-bg-txt(btn-new-post-comm);
 
         &:hover {
+            border: solid 2px $color-primary-dark;
             @include color-bg-txt(btn-new-post-comm-hover);
         };
     };
@@ -327,5 +327,116 @@
 
     p {
         @include size (100%, auto);
+    };
+};
+
+
+@mixin user-photo {
+    @include size(50px);
+    border-radius: 50%;
+    margin: 0 15px 0 0;
+    padding: 1px;
+    border: solid 1px $color-basic-dark;
+    transition: all 200ms ease-in-out;
+
+    &:hover {
+        border: solid 2px $color-primary-dark;
+        padding: 0;
+    };
+
+    img {
+        @include size(100%);
+        object-fit: cover;
+        border-radius: 50%;
+    };
+};
+
+
+@mixin user-pseudo {
+    margin: 0 5px 0 0;
+    font-size: 1.2rem;
+    transition: all 200ms ease-in-out;
+
+    p {
+        color: $color-primary-dark;
+
+        &:hover {
+            cursor: pointer;
+            text-decoration: underline;
+            text-decoration-thickness: 1px;
+            text-underline-offset: 4px;
+            color: $color-primary-dark;
+        };
+    };
+};
+
+
+@mixin post-img {
+    @include flexbox(row, nowrap, center, center);
+    margin: auto;
+    max-width: 600px;
+
+    img {
+        @include size(100%);
+        object-fit: cover;
+        margin: 5px 0 0 0;
+    };
+};
+
+
+
+@mixin btn-like-count {
+    @include flexbox(row, nowrap, space-around, baseline);
+    margin: auto;
+    max-width: 600px;
+    color: $color-secondary-dark;
+
+    &__btn {
+        @include flexbox(row, nowrap, center, center);
+        padding : 5px 20px 0 20px;
+        transition: all 200ms ease-in-out;
+            
+        i {
+            border-radius: 50%;
+            padding: 10px;
+        };
+        
+        &:hover {
+            cursor: pointer;
+            color: $color-primary-dark;
+            
+            i {
+                background-color: $color-primary-light;
+            };    
+        };
+    }; 
+
+    &__count {
+        @include flexbox(row, nowrap, flex-start, center);
+        transition: all 200ms ease-in-out;
+
+        p {
+            color: $color-secondary-dark;
+
+            &:hover {
+                cursor: pointer;
+                text-decoration: underline;
+                text-decoration-thickness: 1px;
+                text-underline-offset: 4px;
+                color: $color-primary-dark;
+            };
+        };
+    }; 
+};
+
+
+@mixin delete-post-comment {
+    @include position(absolute, 10px, 0px, auto, auto);
+    color: $color-secondary;
+    font-size: 1.3rem;
+
+    &:hover {
+        cursor: pointer;
+        color: $color-secondary-dark;
     };
 };
