@@ -1,5 +1,12 @@
-const Comment = require('../models/comment');
-
+const db = require('../models');
+const User = db.user;
+const Post = db.post;
+const Comment = db.comment;
+const Role = db.role;
+const Notification = db.notification;
+const Postlike = db.postLike;
+const CommentLike = db.commentLike;
+const Op = db.sequelize.Op;
 
 // delete a comment (DELETE)
 

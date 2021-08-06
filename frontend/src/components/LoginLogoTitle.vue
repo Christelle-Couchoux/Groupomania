@@ -3,9 +3,7 @@
     <div id="login-logo-title">
         
         <div id="logo">
-            <router-link to="/" title ="Se déconnecter">
-                <img src="@/assets/logo/icon-above-font.png" alt="logo de Groupomania">
-            </router-link>
+            <img src="@/assets/logo/icon-above-font.png" alt="logo de Groupomania">
         </div>
         
         <h1>Réseau social interne</h1>    

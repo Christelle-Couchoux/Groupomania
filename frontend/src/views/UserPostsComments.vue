@@ -6,12 +6,12 @@
 		<main>
 
 			<section id="user-profile-content">
-                <h1>Pseudo</h1>
+                <h1>{{ pseudo }}</h1>
                 
                 <UserInfo>
                     <template v-slot>
                         <div class="edit-profile-btn">
-                            <router-link to="/user/:userId/edit" title="Éditer le profil">
+                            <router-link :to="{ name: 'EditProfile', params: { userId } }" title="Éditer le profil">
                                 <input type="button" value="Éditer le profil"/>
                             </router-link>
                         </div>
@@ -65,7 +65,12 @@ export default {
 		PostsHeader,
         UserInfo,
         ProfileNav
-	}	
+	},
+    created() {
+        this.userId = localStorage.getItem("userId");
+        this.pseudo = localStorage.getItem("pseudo");
+        this.photo = localStorage.getItem("photo");
+    }	
 };
 
 </script>
@@ -82,9 +87,6 @@ export default {
     margin: 0 0 50px 0;
     @include flexbox(column, nowrap, space-around, center);
 };
-
-
-
 
 </style>
 

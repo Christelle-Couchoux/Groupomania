@@ -6,12 +6,13 @@
 		<main>
 
 			<section id="user-profile-content">
-                <h1>Pseudo</h1>
+                <h1>{{ pseudo }}</h1>
                 
                 <UserInfo>
                     <template v-slot>
+                        <!-- v-if="userId === posts.userId"  -->
                         <div class="edit-profile-btn">
-                            <router-link to="/user/:userId/edit" title="Éditer le profil">
+                            <router-link :to="{ name: 'EditProfile', params: { userId } }" title="Éditer le profil">
                                 <input type="button" value="Éditer le profil"/>
                             </router-link>
                         </div>
@@ -69,7 +70,12 @@ export default {
         UserInfo,
         ProfileNav,
         OnePost
-	}	
+	},
+    created() {
+        this.userId = localStorage.getItem("userId");
+        this.pseudo = localStorage.getItem("pseudo");
+        this.photo = localStorage.getItem("photo");
+    }	
 };
 
 </script>

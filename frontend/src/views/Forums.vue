@@ -24,7 +24,7 @@
             </section>
 
             <div id="logout">
-                <router-link to="/" title ="Déconnexion">
+                <router-link to="/" title ="Déconnexion" @click="logout">
                     <p>Se déconnecter&nbsp;?</p>
                 </router-link>
             </div>
@@ -45,11 +45,16 @@ import LoginLogoTitle from "../components/LoginLogoTitle.vue"
 
 
 export default {
-  name: 'Forums',
-  components: {
-		ScrollToTopBtn,
+    name: 'Forums',
+    components: {
+        ScrollToTopBtn,
 		LoginLogoTitle,
-  }
+    },
+    methods: {
+        logout() {
+            localStorage.clear();
+        }
+    }
 }
 
 </script>

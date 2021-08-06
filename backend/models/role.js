@@ -1,34 +1,27 @@
 // create model for roles
 
 'use strict';
-const { Model } = require('sequelize');
-module.exports = (sequelize, DataTypes) => {
-    class Role extends Model {
-        static associate(models) {
-            models.Role.hasMany(models.User);
-        }
-    }
-    Role.init(
-        {
+
+module.exports = (sequelize, Sequelize) => {
+    const Role = sequelize.define('Role', {
             role_id: {
-                type: DataTypes.INTEGER(1),
+                type: Sequelize.INTEGER(1),
                 primaryKey: true,
                 autoIncrement: true
             },
-            role_name:{
-                type: DataTypes.STRING(20),
+            role_name: {
+                type: Sequelize.STRING(20),
+                unique: true,
+                allowNull: false
             },
             role_description: {
-                type: DataTypes.STRING,
+                type: Sequelize.STRING,
             },
-        },
-        {
-            sequelize,
-            modelName: 'Role',
-            tableName: 'Role',
-            timestamps: false,
-            underscore: true,
-        }
-    );   
-    return Role
+        });   
+
+        Role.associate = function (models) {
+            Role.hasMany(models.User);
+        };
+
+    return Role;
 };

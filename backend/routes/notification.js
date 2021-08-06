@@ -8,9 +8,9 @@ const notificationCtrl = require('../controllers/notification');
 
 // notification routes
 
-router.get('/', auth, notificationCtrl.getAllNotifications);
-router.put('/:notificationId', auth, notificationCtrl.updateNotification);
-router.delete('/:notificationId', auth, notificationCtrl.deleteNotification);
+//router.get('/', auth, notificationCtrl.getAllNotifications);
+//router.put('/:notificationId', auth, notificationCtrl.updateNotification);
+//router.delete('/:notificationId', auth, notificationCtrl.deleteNotification);
 
 
 module.exports = router;

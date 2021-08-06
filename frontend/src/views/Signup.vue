@@ -8,7 +8,13 @@
 
         <main>
             <section id="signup-form">
-                <form>
+                <form @submit.prevent="checkForm" novalidate="true">
+                    <div id="signup-form-errors" v-if="errors.length">
+                        <p>Merci de corriger les erreurs suivantes :</p>
+                        <ul>
+                            <li v-for="error in errors" :key="error.name">{{ error }}</li>
+                        </ul>
+                    </div>
                     <div>
                         <label for="pseudo">Pseudo :</label>
                         <input
@@ -24,22 +30,35 @@
                     </div>
                     <div>
                         <label for="email">Email :</label>
-                        <input type="text" name="email" id="email" required>
+                        <input
+                            type="email"
+                            name="email"
+                            v-model="email"
+                            id="email"
+                            required
+                        >
                     </div>
                     <div>
                         <label for="password">Mot de passe : </label>
-                        <input type="text" name="password" id="password" required>
+                        <input
+                            type="password"
+                            name="password"
+                            v-model="password"
+                            id="password"
+                            required
+                        >
                         <p>
                             8-20&nbsp;caractères. Au&nbsp;moins&nbsp;1&nbsp;chiffre, 
                             1&nbsp;majuscule, 1&nbsp;minuscule et 1&nbsp;caractère spécial. 
                             Pas&nbsp;d'espace.
                         </p>
                     </div>
+
+                    <div class="btn-signup">
+                        <input type="submit" value="S'inscrire">
+                    </div>
                 </form>
 
-                <div class="btn-signup">
-                    <input type="submit" value="S'inscrire">
-                </div>
             </section>
 
             <div id="go-to-login">
@@ -62,15 +81,85 @@ import ScrollToTopBtn from "../components/ScrollToTopBtn.vue"
 import LoginLogoTitle from "../components/LoginLogoTitle.vue"
 import LoginMenu from "../components/LoginMenu.vue"
 
+import { API } from '@/axios.config.js'
+import router from '@/router/index.js'
+
 
 export default {
-  name: 'Login',
-  components: {
-		ScrollToTopBtn,
+    name: 'Signup',
+    components: {
+        ScrollToTopBtn,
 		LoginLogoTitle,
         LoginMenu
-  }
-}
+    },
+    data() {
+        return {
+            pseudo: "",
+            email: "",
+            password: "",
+            errors: []
+        }
+    },
+    methods: {
+        checkForm() {
+            this.errors = [];
+            if(!this.pseudo) {
+                this.errors.push('Vous devez choisir un pseudo.');
+            } else if(!this.validPseudo(this.pseudo)) {
+                this.errors.push('Vous devez choisir un pseudo valide.')
+            }
+
+            if(!this.email) {
+                this.errors.push('Vous devez indiquer une adresse email.');
+            } else if(!this.validEmail(this.email)) {
+                this.errors.push('Vous devez indiquer une adresse email valide.')
+            }
+
+            if(!this.password) {
+                this.errors.push('Vous devez choisir un mot de passe.');
+            } else if(!this.validPassword(this.password)) {
+                this.errors.push('Vous devez choisir un mot de passe valide.')
+            }
+            
+            if(!this.errors.length) { //if no errors
+                this.submitSignup(); // send the form
+            }
+        },
+
+        validPseudo(pseudo) {
+            const regex = /^[-\w\sÀÁÂÄÅÇÈÉÊËÌÍÎÏÑŒÒÓÔÕÖØÙÚÛÜàáâäåçèéêëìíîïñœòóôõöøùúûü]{3,16}$/;
+            return regex.test(pseudo);
+        },
+
+        validEmail(email) {
+            const regex = /^([\w-.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+            return regex.test(email);
+        },
+
+        validPassword(password) {
+            const regex = /^(?=.*[a-zàáâäåçèéêëìíîïñœòóôõöøùúûü])(?=.*[A-ZÀÁÂÄÅÇÈÉÊËÌÍÎÏÑŒÒÓÔÕÖØÙÚÛÜ])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,20})/;
+            return regex.test(password);
+        },
+
+        submitSignup() {
+            API.post(`auth/signup`, {
+                pseudo: this.pseudo,
+                email: this.email,
+                password: this.password
+            })
+            .then(response => {
+                localStorage.setItem("token", response.data.token);
+                localStorage.setItem("userId", response.data.userId);
+                localStorage.setItem("pseudo", response.data.pseudo);
+                localStorage.setItem("photo", response.data.photo);
+                localStorage.setItem("role", response.data.role);
+                router.push('/user/:userId/edit');
+                //console.log(response)
+            })
+            .catch(error => { console.log(error.response)});
+        }
+    }
+};
 
 </script>
 
@@ -82,17 +171,23 @@ export default {
 
 
 #signup-form {
-    @include form
+    @include form;
+
+    #signup-form-errors {
+        @include form-errors;
+    };
+
+    .btn-signup {
+        @include btn;
+        @include btn-login-signup;
+    };   
 };
 
 #go-to-login {
 	@include link-login-signup;
 };
 
-.btn-signup {
-	@include btn;
-	@include btn-login-signup;
-};
+
 
 </style>
 

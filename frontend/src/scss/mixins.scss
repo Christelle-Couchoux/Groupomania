@@ -172,7 +172,7 @@
 
 
 @mixin btn-login-signup {
-    padding: 20px 0 50px 0;
+    padding: 50px 0 0 0;
 
     input {
         border: solid 2px $color-basic-dark;
@@ -440,3 +440,28 @@
         color: $color-secondary-dark;
     };
 };
+
+
+@mixin form-errors {
+    margin: 0 0 30px 0;
+        padding: 10px;
+        border: solid 1px $color-primary-dark;
+        @include flexbox(column, nowrap, space-around, center);
+
+        p {
+            font-style: normal;
+            font-size: 1rem;
+            color: $color-primary-dark;
+            margin: 0 0 5px 0;
+        }
+
+        ul {
+            @include list-style;
+        };
+
+        li {
+            font-size: 0.9rem;
+            padding: 0 0 0 10px;
+        };
+};
+

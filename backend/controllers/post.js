@@ -1,13 +1,25 @@
-const Post = require('../models/post');
+const db = require('../models');
+const User = db.user;
+const Post = db.post;
+const Comment = db.comment;
+const Role = db.role;
+const Notification = db.notification;
+const Postlike = db.postLike;
+const CommentLike = db.commentLike;
+const Op = db.sequelize.Op;
 
 
 // display all posts (GET)
 
-/*
-exports.getAllPosts = (req, res) => {
 
+exports.getAllPosts = (req, res) => {
+    Post.findAll()
+    .then(data => {
+        res.send(data);
+    })
+    .catch((error) => res.status(500).json(error));
 };
-*/
+
 
 
 // add a new post (POST)

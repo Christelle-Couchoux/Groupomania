@@ -1,54 +1,41 @@
 // create model for comments
 
 'use strict';
-const { Model } = require('sequelize');
-module.exports = (sequelize, DataTypes) => {
-    class Comment extends Model {
-        static associate(models) {
-            models.Comment.belongsTo(models.User, { foreingKey: 'fk_user_id', onDelete: 'CASCADE' });
-            models.Comment.belongsTo(models.Post, { foreingKey: 'fk_post_id', onDelete: 'CASCADE' });
-            models.Comment.hasMany(models.Comment_like);
-        }
-    }
-    Comment.init(
-        {
-            comment_id: {
-                type: DataTypes.INTEGER,
-                primaryKey: true,
-                autoIncrement: true
-            },
-            comment_text:{
-                type: DataTypes.STRING,
-            },
-            created_at: {
-                type: DataTypes.DATE,
-                allowNull: false
-            },
-            fk_user_id: {
-                type: DataTypes.INTEGER(4),
-                allowNull: false
-            },
-            fk_post_id: {
-                type: DataTypes.INTEGER,
-                allowNull: false
-            }
+
+module.exports = (sequelize, Sequelize) => {
+    const Comment = sequelize.define('Comment', {
+        comment_id: {
+            type: Sequelize.INTEGER,
+            primaryKey: true,
+            autoIncrement: true
         },
-        {
-            indexes: [
-                {
-                    name: 'comment_created_at',
-                    fields: ['created_at']
-                },
-            ]
+        comment_text:{
+            type: Sequelize.STRING,
         },
-        {
-            sequelize,
-            modelName: 'Comment',
-            tableName: 'Comment',
-            createdAt: 'created_at',
-            underscore: true,
-            updatedAt: false,
+        fk_user_id: {
+            type: Sequelize.INTEGER(4),
+            allowNull: false
+        },
+        fk_post_id: {
+            type: Sequelize.INTEGER,
+            allowNull: false
         }
-    );   
-    return Comment
+    },
+    {
+        indexes: [
+            {
+                name: 'comment_createdAt',
+                fields: ['createdAt']
+            },
+        ]
+    }); 
+
+    Comment.associate = function (models) {
+        Comment.belongsTo(models.Post, { foreignKey: 'fk_post_id', onDelete: 'CASCADE' });
+        Comment.belongsTo(models.User, { foreignKey: 'fk_user_id', onDelete: 'CASCADE' });
+        Comment.hasMany(models.CommentLike);
+    };
+
+    return Comment;
 };
+

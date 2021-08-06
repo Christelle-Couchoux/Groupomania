@@ -1,7 +1,15 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const User = require('../models/user');
+const db = require('../models');
+const User = db.user;
+const Post = db.post;
+const Comment = db.comment;
+const Role = db.role;
+const Notification = db.notification;
+const Postlike = db.postLike;
+const CommentLike = db.commentLike;
+const Op = db.sequelize.Op;
 
 
 // create new user (POST)
@@ -15,46 +23,53 @@ exports.signup = (req, res) => {
                 pseudo: process.env.ADMIN_PSEUDO,
                 email: process.env.ADMIN_EMAIL,
                 password: hash,
-                fk_user_role: 2,
+                fk_user_role: "admin",
             })
         })
-    }
+    };
+
     // create new user
     User.findOne({
         where: { email: req.body.email }, // search for user with same email address in db
     })
     .then(user => {
-        if(user) { // if such a user exists
+        if(user) { //if user with same email in db
             return res.status(400).json({ error: 'Cette adresse email est déjà utilisée !' });
-        } else { // if email address not found in db
-            if(user.pseudo === req.body.pseudo) { // if user with same pseudo in db
-                return res.status(400).json({ error: 'Ce pseudo est déjà utilisé !' });
-            } else { // if pseudo not found in db
-                // hash password
-                bcrypt.hash(req.body.password, 10)
-                .then(hash => {
-                    // create new user
-                    User.create({
-                        pseudo: req.body.pseudo,
-                        email: req.body.email,
-                        password: hash,
-                    })
-                    .then(user => // return
-                        res.status(201).json({
-                            message: 'Utilisateur créé !',
-                            userId: user.user_id, 
-                            role: user.fk_user_role,
-                            pseudo: user.pseudo,
-                            photo: user.user_photo,
-                            token: jwt.sign(
-                                { userId: user.user_id }, process.env.RND_TKN, { expiresIn: '24h' }
-                            )
+        } else { //if email address not found in db
+            User.findOne({
+                where: { pseudo: req.body.pseudo }, // search for user with same pseudo in db
+            })
+            .then(user => {
+                if(user) { // if user with same pseudo in db
+                    return res.status(400).json({ error: 'Ce pseudo est déjà utilisé !' });
+                } else { // if pseudo not found in db
+                    // hash password
+                    bcrypt.hash(req.body.password, 10)
+                    .then(hash => {
+                        // create new user
+                        User.create({
+                            pseudo: req.body.pseudo,
+                            email: req.body.email,
+                            password: hash
                         })
-                    )                
-                    .catch(error => res.status(400).json({ error }));
-                })
-                .catch(error => res.status(500).json({ error }));
-            };            
+                        .then(user => // return
+                            res.status(201).json({
+                                message: 'Utilisateur créé !',
+                                userId: user.user_id, 
+                                role: user.fk_user_role,
+                                pseudo: user.pseudo,
+                                photo: user.user_photo,
+                                token: jwt.sign(
+                                    { userId: user.user_id }, process.env.RND_TKN, { expiresIn: '24h' }
+                                )
+                            })
+                        )
+                        .catch(error => res.status(500).json({ error }));
+                    })
+                    .catch(error => res.status(500).json({ error }));
+                }
+            })
+            .catch(error => res.status(500).json({ error }));
         }
     })
     .catch(error => res.status(500).json({ error }));

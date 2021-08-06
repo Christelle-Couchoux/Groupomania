@@ -1,4 +1,12 @@
-const Notification = require('../models/notification');
+const db = require('../models');
+const User = db.user;
+const Post = db.post;
+const Comment = db.comment;
+const Role = db.role;
+const Notification = db.notification;
+const Postlike = db.postLike;
+const CommentLike = db.commentLike;
+const Op = db.sequelize.Op;
 
 
 // display all notifications of a user (GET)

@@ -3,17 +3,17 @@
 	<nav class="user-nav">
 		<ul>
 			<li>
-				<router-link to="/user/:userId/" exact title="Messages">
+				<router-link :to="{ name: 'UserPosts', params: { userId } }" title="Messages">
 					<div><p>Messages</p></div>
 				</router-link>
 			</li>
 			<li>
-				<router-link to="/user/:userId/posts-comments" exact title="Messages et commentaires">
+				<router-link :to="{ name: 'UserPostsComments', params: { userId } }" title="Messages et commentaires">
 					<div><p>Messages & commentaires</p></div>
 				</router-link>
 			</li>
 			<li>
-				<router-link to="/user/:userId/likes" exact title="J'aime">
+				<router-link :to="{ name: 'UserLikes', params: { userId } }" title="J'aime">
 					<div><p>J'aime</p></div>
 				</router-link>
 			</li>
@@ -26,7 +26,10 @@
 <script>
 
 export default {
-    name: 'ProfileNav'
+    name: 'ProfileNav',
+	created() {
+        this.userId = localStorage.getItem("userId");
+    }
 }
 
 </script>

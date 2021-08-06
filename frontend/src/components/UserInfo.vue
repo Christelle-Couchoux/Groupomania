@@ -2,12 +2,12 @@
 
 	<div id="user-info">
 		<div id="user-photo">
-			<router-link to="/user/:userId/" title="Aller au profil utilisateur">
+			<router-link :to="{ name: 'UserPosts', params: { userId } }" title="Aller au profil utilisateur">
 				<img src="@/assets/avatar/default-user-avatar.jpg" alt="Avatar de l'utilisateur"/>
 			</router-link>
 		</div>
 
-		<p class="pseudo">Pseudomaximum16c</p>
+		<p class="pseudo">{{ pseudo }}</p>
 
 		<slot></slot>
 
@@ -25,6 +25,13 @@
 
 export default {
 	name: "UserInfo",
+    created() {
+        this.userId = localStorage.getItem("userId");
+        this.pseudo = localStorage.getItem("pseudo");
+        this.photo = localStorage.getItem("photo");
+
+
+    }
 };
 
 </script>

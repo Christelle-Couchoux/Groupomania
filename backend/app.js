@@ -15,14 +15,10 @@ const notificationRoutes = require('./routes/notification')
 const app = express();
 
 
-// define headers to avoid CORS errors
+// to avoid CORS errors
 
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*'); // origin allowed = all
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization, '); // headers allowed
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS'); // methods allowed
-    next();
-});
+var cors = require('cors')
+app.use(cors()) // Use this after the variable declaration
 
 
 // secure cookies
@@ -55,7 +51,6 @@ app.use(nocache());
 
 // database
 
-// sync all models that aren't already in the db
 const db = require("./models");
 db.sequelize.sync();
 
@@ -71,21 +66,6 @@ app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/notifications', notificationRoutes);
-
-
-// connection test
-
-async function dbTest() {
-    sequelize
-        .authenticate()
-        .then(() => {
-            console.log('La connexion a été établie avec succès.');
-        })
-        .catch(err => {
-            console.error('Impossible de se connecter à la base de données :', err);
-        });
-};
-dbTest();
 
 
 module.exports = app;

@@ -11,7 +11,7 @@
                 <UserInfo>
                     <template v-slot>
                         <div class="back-to-profile-btn">
-                            <router-link to="/user/:userId/" title="Aller au profil utilisateur">
+                            <router-link :to="{ name: 'UserPosts', params: { userId } }" title="Aller au profil utilisateur">
                                 <input type="button" value="Retour au profil"/>
                             </router-link>
                         </div>
@@ -110,7 +110,15 @@ export default {
 		ScrollToTopBtn,
 		PostsHeader,
         UserInfo
-	}	
+	},
+    created() {
+        this.userId = localStorage.getItem("userId");
+        this.pseudo = localStorage.getItem("pseudo");
+        this.photo = localStorage.getItem("photo");
+
+
+    }
+
 };
 
 </script>

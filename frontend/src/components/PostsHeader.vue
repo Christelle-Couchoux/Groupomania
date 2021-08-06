@@ -31,7 +31,7 @@
 					</router-link>
 				</li>
 				<li>
-					<router-link to="/user/:userId" title="Profil">
+					<router-link :to="{ name: 'UserPosts', params: { userId } }" title="Profil">
 						<i class="fas fa-user" aria-label="Profil" role="img"></i>
 						<span>Profil</span>
 					</router-link>
@@ -43,7 +43,7 @@
 					</router-link>
 				</li>
 				<li>
-					<router-link to="/" title ="Se déconnecter">
+					<router-link to="/" title ="Se déconnecter" @click="logout">
 						<i class="fas fa-power-off" aria-label="Se déconnecter" role="img"></i>
 						<span>Se déconnecter</span>
 					</router-link>
@@ -57,8 +57,24 @@
 
 <script>
 
+//import router from '@/router/index.js'
+
+
 export default {
-    name: 'PostsHeader'
+    name: 'PostsHeader',
+    data() {
+
+    },
+    created() {
+        this.userId = localStorage.getItem("userId");
+    },
+    methods: {
+        logout() {
+            localStorage.clear();
+            //router.push('/');
+        }
+    }
+
 }
 
 </script>
@@ -173,7 +189,7 @@ export default {
             };
         };
 
-        .router-link-active { // give class to the <a>, not <li>
+        .router-link-active {
             color: $color-primary-dark;
 
             #new-notif {
