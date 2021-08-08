@@ -1,18 +1,19 @@
 <template>
 
 	<div id="user-profile">
+<!--
 		<PostsHeader/>
 
 		<main>
 
 			<section id="user-profile-content">
-                <h1>{{ pseudo }}</h1>
+                <h1>{{ user.user_id }}</h1>
                 
                 <UserInfo>
                     <template v-slot>
-                        <!-- v-if="userId === posts.userId"  -->
-                        <div class="edit-profile-btn">
-                            <router-link :to="{ name: 'EditProfile', params: { userId } }" title="Éditer le profil">
+                        <!- v-if="userId === posts.userId"  
+                        <div class="edit-profile-btn" v-if="currentUserId === user.user_id || currentUserRole === 'admin'">
+                            <router-link :to="{ name: 'EditProfile', params: { userId: user.user_id } }" title="Éditer le profil">
                                 <input type="button" value="Éditer le profil"/>
                             </router-link>
                         </div>
@@ -23,14 +24,14 @@
 
                     <ProfileNav/>
                 
-                    <!-- if no posts yet -->
-                    <div id="no-posts">
+                    <!- if no posts yet 
+                    <div id="no-posts" v-if="!posts">
                         <p>
-                            Pseudomaximum16c n'a pas encore posté de message.
+                            {{ post.pseudo }} n'a pas encore posté de message.
                         </p>
                     </div>
 
-                    <!-- if posts -->
+                    <!- if posts 
                     <div id="posts">
 
                         <OnePost/>
@@ -48,34 +49,42 @@
 		</main>
 
 		<ScrollToTopBtn/>
-
+-->
 	</div>
 
 </template>
 
 <script>
 
-import ScrollToTopBtn from "../components/ScrollToTopBtn.vue"
-import PostsHeader from "../components/PostsHeader.vue"
-import UserInfo from "../components/UserInfo.vue"
-import ProfileNav from "../components/ProfileNav.vue"
-import OnePost from "../components/OnePost.vue"
+//import ScrollToTopBtn from "../components/ScrollToTopBtn.vue"
+//import PostsHeader from "../components/PostsHeader.vue"
+//import UserInfo from "../components/UserInfo.vue"
+//import ProfileNav from "../components/ProfileNav.vue"
+//import OnePost from "../components/OnePost.vue"
 
 
 export default {
 	name: 'UserPosts',
 	components: {
-		ScrollToTopBtn,
-		PostsHeader,
-        UserInfo,
-        ProfileNav,
-        OnePost
+		//ScrollToTopBtn,
+		//PostsHeader,
+        //UserInfo,
+        //ProfileNav,
+        //OnePost
 	},
+    data() {
+        return {
+            posts: [],
+            post: ''
+        }
+    },
     created() {
-        this.userId = localStorage.getItem("userId");
-        this.pseudo = localStorage.getItem("pseudo");
-        this.photo = localStorage.getItem("photo");
-    }	
+        this.currentUserId = localStorage.getItem("userId");
+        this.currentUserPseudo = localStorage.getItem("pseudo");
+        this.currentUserPhoto = localStorage.getItem("photo");
+        this.currentUserRole = localStorage.getItem("role");
+    },
+
 };
 
 </script>

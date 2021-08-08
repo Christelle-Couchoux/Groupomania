@@ -9,12 +9,17 @@
 
 			<section id="login-form">
 				<form @submit.prevent="checkForm" novalidate="true">
-					<div id="login-form-errors" v-if="errors.length">
+					<div class="login-errors" v-if="errors.length">
                         <p>Merci de corriger les erreurs suivantes :</p>
                         <ul>
                             <li v-for="error in errors" :key="error.name">{{ error }}</li>
                         </ul>
                     </div>
+
+                    <div class="login-errors" v-if="errorMessage">
+                        <p>{{ errorMessage }}</p>
+                    </div>
+                        
 					<div>
 						<label for="email">Email :</label>
 						<input
@@ -78,7 +83,8 @@ export default {
         return {
             email: "",
             password: "",
-            errors: []
+            errors: [],
+            errorMessage: null
         }
     },
 	methods: {
@@ -125,12 +131,13 @@ export default {
                 localStorage.setItem("token", response.data.token);
                 localStorage.setItem("userId", response.data.userId);
                 localStorage.setItem("pseudo", response.data.pseudo);
-                localStorage.setItem("photo", response.data.photo);
                 localStorage.setItem("role", response.data.role);
                 router.push('/posts/');
                 //console.log(response)
             })
-            .catch(error => { console.log(error.response)});
+            .catch(error => {
+                this.errorMessage = error.response.data.error;
+            })
         }
     }
 };
@@ -151,7 +158,7 @@ export default {
 #login-form {
     @include form;
 
-	#login-form-errors {
+	.login-errors {
         @include form-errors;
     };
 

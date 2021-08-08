@@ -11,7 +11,7 @@
                 <UserInfo>
                     <template v-slot>
                         <div class="back-to-profile-btn">
-                            <router-link :to="{ name: 'UserPosts', params: { userId } }" title="Aller au profil utilisateur">
+                            <router-link :to="{ name: 'UserPosts', params: { currentUserId } }" title="Aller au profil utilisateur">
                                 <input type="button" value="Retour au profil"/>
                             </router-link>
                         </div>
@@ -21,45 +21,40 @@
                 <div id="user-edit">
                     <div id="photo-form">
                         <div id="edit-profile-photo">
-                            <img src="@/assets/avatar/default-user-avatar.jpg" alt="Avatar de l'utilisateur">
+                            <img
+                                :src="newPhoto"
+                                alt="Avatar de l'utilisateur"
+                                class="uploading-photo"
+                            >
                         </div>
 
-                        <form class="edit-profile-form">
-                            <div class="edit-profile-form__field">
-                                <label for="photo">Photo :</label>
-                                <input type="file" name="photo" id="photo" accept="image/png, image/jpeg, image/jpg">
+                        <form class="edit-profile-form" enctype="multipart/form-data">
+							<div class="edit-errors" v-if="errorMessage">
+								<p>{{ errorMessage }}</p>
+							</div>
+
+                            <div class="edit-profile-form__field" id="photo-field">
+                                <label for="file">
+                                    <p>Modifier la photo</p>
+                                </label>
+                                <input
+                                    type="file"
+                                    name="file"
+                                    id="file"
+                                    ref="file"
+                                    v-on:change="handleFileUpload()"
+                                    accept="image/png, image/jpeg, image/jpg"
+                                >
                             </div>
-                            <div class="edit-profile-form__field">
-                                <label for="pseudo">Pseudo* : </label>
-                                <input type="text" name="pseudo" id="pseudo" required>
-                                <p>
-                                    3-16&nbsp;caractères.
-                                </p>
-                            </div>
-                            <div class="edit-profile-form__field">
-                                <label for="first-name">Prénom : </label>
-                                <input type="text" name="first-Name" id="first-name">
-                            </div>
-                            <div class="edit-profile-form__field">
-                                <label for="last-name">Nom : </label>
-                                <input type="text" name="last-name" id="last-name">
-                            </div>
-                            <div class="edit-profile-form__field">
-                                <label for="email">Email* : </label>
-                                <input type="text" name="email" id="email" required>
-                            </div>
-                            <div class="edit-profile-form__field">
-                                <label for="password">Mot de passe* : </label>
-                                <input type="text" name="password" id="password" required>
-                                <p>
-                                    8-20&nbsp;caractères. Au&nbsp;moins&nbsp;1&nbsp;chiffre, 
-                                    1&nbsp;majuscule, 1&nbsp;minuscule et 1&nbsp;caractère spécial. 
-                                    Pas&nbsp;d'espace.
-                                </p>
-                            </div>
+                            
                             <div class="edit-profile-form__field">
                                 <label for="bio">Bio : </label>
-                                <textarea name="bio" id="bio" placeholder="Présentez-vous&nbsp;!"></textarea>
+                                <textarea
+                                    name="bio"
+                                    id="bio"
+                                    v-model="bio"
+                                    placeholder="Présentez-vous&nbsp;!"
+                                ></textarea>
                                 <p id="required-fields">Les champs marqués d'un * sont obligatoires</p>
                             </div>    
                         </form>
@@ -68,7 +63,7 @@
                     <div id="edit-buttons">
                         <p id="modifications">Souhaitez-vous enregistrer les changements&nbsp;?</p>
                         <div class="save-profile-btn">
-                            <input type="submit" value="Enregistrer">
+                            <input type="submit" value="Enregistrer" v-on:click="submitFile()">
                         </div>
                         <div class="undo-profile-btn">
                             <input type="submit" value="Annuler">
@@ -81,7 +76,7 @@
                             La suppression est définitive&nbsp;!
                         </p>
                         <div class="delete-account-btn">
-                            <input type="submit" value="Supprimer le compte">
+                            <input type="submit" value="Supprimer le compte" v-on:click="deleteAccount()">
                         </div>
                     </div>
                 </div>
@@ -103,22 +98,72 @@ import ScrollToTopBtn from "../components/ScrollToTopBtn.vue"
 import PostsHeader from "../components/PostsHeader.vue"
 import UserInfo from "../components/UserInfo.vue"
 
+import { API } from '@/axios.config.js'
+import router from '@/router/index.js'
+
 
 export default {
 	name: 'EditProfile',
+    data() {
+        return {
+            user: '',
+            bio: '',
+            file: '',
+			newPhoto: ''
+        }
+    },
 	components: {
 		ScrollToTopBtn,
 		PostsHeader,
         UserInfo
 	},
-    created() {
-        this.userId = localStorage.getItem("userId");
-        this.pseudo = localStorage.getItem("pseudo");
-        this.photo = localStorage.getItem("photo");
+	created() {
+        this.currentUserId = localStorage.getItem("userId");
+        this.currentUserPseudo = localStorage.getItem("pseudo");
 
+		API.get(`users/${this.currentUserId}`)
+        .then(response => {
+            this.pseudo = response.data.pseudo;
+			this.photo = response.data.user_photo;
+			this.bio = response.data.bio;
+            console.log(response);
+        })
+        .catch(error => {
+            this.errorMessage = error.response.data.error;
+        })	
+    },
+    methods: {
+        handleFileUpload() {
+            this.file = this.$refs.file.files[0];
+			this.newPhoto = URL.createObjectURL(this.file)
+        },
 
+        submitFile() {
+            let formData = new FormData();
+            formData.append('file', this.file);
+			formData.append('bio', this.bio)
+
+            API.put(`users/${this.currentUserId}`, formData)
+            .then(response => {
+                localStorage.setItem("photo", response.data.user_photo);
+				localStorage.setItem("bio", response.data.bio);
+            })
+            .catch(error => {
+                this.errorMessage = error.response.data.error;
+            })
+        },
+
+		deleteAccount() {
+			API.delete(`users/${this.currentUserId}`)
+			.then(response => {
+				console.log(response)
+				localStorage.clear();
+				router.push('/');
+			})
+			.catch(error => console.log(error));
+			
+		}
     }
-
 };
 
 </script>
@@ -228,6 +273,35 @@ export default {
 
     #required-fields {
         margin: 20px auto;
+    };
+
+    #file {
+        @include size(0);
+        opacity: 0;
+    };
+
+    #photo-field {
+        transition: all 200ms ease-in-out;
+
+        &:hover {
+            color: $color-primary-dark;
+
+            label {
+                cursor: pointer;
+            }
+        };
+
+        p {
+            padding: 5px;
+            border: solid 1px $color-secondary;
+            text-align: center;
+            font-style: normal;
+            font-size: 1rem;
+        }
+    };
+
+	.edit-errors {
+        @include form-errors;
     };
 };
 

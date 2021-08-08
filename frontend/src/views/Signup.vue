@@ -9,12 +9,17 @@
         <main>
             <section id="signup-form">
                 <form @submit.prevent="checkForm" novalidate="true">
-                    <div id="signup-form-errors" v-if="errors.length">
+                    <div class="signup-errors" v-if="errors.length">
                         <p>Merci de corriger les erreurs suivantes :</p>
                         <ul>
                             <li v-for="error in errors" :key="error.name">{{ error }}</li>
                         </ul>
                     </div>
+
+                    <div class="signup-errors" v-if="errorMessage">
+                        <p>{{ errorMessage }}</p>
+                    </div>
+
                     <div>
                         <label for="pseudo">Pseudo :</label>
                         <input
@@ -97,7 +102,8 @@ export default {
             pseudo: "",
             email: "",
             password: "",
-            errors: []
+            errors: [],
+            errorMessage: null,
         }
     },
     methods: {
@@ -151,12 +157,14 @@ export default {
                 localStorage.setItem("token", response.data.token);
                 localStorage.setItem("userId", response.data.userId);
                 localStorage.setItem("pseudo", response.data.pseudo);
-                localStorage.setItem("photo", response.data.photo);
                 localStorage.setItem("role", response.data.role);
-                router.push('/user/:userId/edit');
+                const currentUserId = response.data.userId;
+                router.push(`/user/${currentUserId}/edit`);
                 //console.log(response)
             })
-            .catch(error => { console.log(error.response)});
+            .catch(error => {
+                this.errorMessage = error.response.data.error;
+            })
         }
     }
 };
@@ -173,7 +181,7 @@ export default {
 #signup-form {
     @include form;
 
-    #signup-form-errors {
+    .signup-errors {
         @include form-errors;
     };
 
@@ -186,8 +194,6 @@ export default {
 #go-to-login {
 	@include link-login-signup;
 };
-
-
 
 </style>
 

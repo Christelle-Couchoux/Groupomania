@@ -93,7 +93,7 @@ exports.login = (req, res) => {
         .then(valid => {
             // if they don't match
             if(!valid) {
-                return res.staus(401).json({ error: 'Mot de passe incorrect !' });
+                return res.status(401).json({ error: 'Mot de passe incorrect !' });
             }
             // if they match
             res.status(200).json({ // return

@@ -30,7 +30,7 @@ module.exports = (sequelize, Sequelize) => {
 	});
 
 	Post.associate = function (models) {
-		Post.belongsTo(models.User, { foreignKey: 'fk_user_id', onDelete: 'CASCADE' });
+		Post.belongsTo(models.User, { foreignKey: 'fk_user_id', targetKey:'user_id', onDelete: 'CASCADE' });
 		Post.hasMany(models.Comment);
 		Post.hasMany(models.Post_like);
 	};

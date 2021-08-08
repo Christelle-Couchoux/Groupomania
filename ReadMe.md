@@ -21,7 +21,7 @@ For more details, see the functional specification file.
 - Connect to a MySQL client.
 - Run `CREATE DATABASE groupomania;`.
 - Import the file groupomania.sql.
-- To connect to the database, change USER and PASSWORD in config/db.config.js so they match your MySQL configuration.
+- To connect to the database, change the values of USER and PASSWORD in config/db.config.js so they match your MySQL configuration.
 
 #### Back-end
 - Install nodemon.

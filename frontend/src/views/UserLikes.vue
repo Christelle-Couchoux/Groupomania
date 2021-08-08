@@ -6,12 +6,12 @@
 		<main>
 
 			<section id="user-profile-content">
-                <h1>{{ pseudo }}</h1>
+                <h1>{{ currentUserPseudo }}</h1>
                 
                 <UserInfo>
                     <template v-slot>
                         <div class="edit-profile-btn">
-                            <router-link :to="{ name: 'EditProfile', params: { userId } }" title="Éditer le profil">
+                            <router-link :to="{ name: 'EditProfile', params: { currentUserId } }" title="Éditer le profil">
                                 <input type="button" value="Éditer le profil"/>
                             </router-link>
                         </div>
@@ -25,7 +25,7 @@
                     <!-- if no posts or comments liked yet -->
                     <div id="no-posts">
                         <p>
-                            Pseudo n'a pas encore aimé de message ou commentaire.
+                            {{currentUserPseudo}} n'a pas encore aimé de message ou commentaire.
                         </p>
                     </div>
 
@@ -67,9 +67,9 @@ export default {
         ProfileNav
 	},
     created() {
-        this.userId = localStorage.getItem("userId");
-        this.pseudo = localStorage.getItem("pseudo");
-        this.photo = localStorage.getItem("photo");
+        this.currentUserId = localStorage.getItem("userId");
+        this.currentUserPseudo = localStorage.getItem("pseudo");
+        this.currentUserPhoto = localStorage.getItem("photo");
     }	
 };
 

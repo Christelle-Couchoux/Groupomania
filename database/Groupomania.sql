@@ -128,3 +128,11 @@ BEGIN
 END //
 DELIMITER;
 
+
+
+SELECT * FROM Users;
+
+DESCRIBE Users;
+DESCRIBE Posts;
+
+SELECT * FROM Posts;

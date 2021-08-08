@@ -2,36 +2,42 @@
 
 	<div id="user-info">
 		<div id="user-photo">
-			<router-link :to="{ name: 'UserPosts', params: { userId } }" title="Aller au profil utilisateur">
-				<img src="@/assets/avatar/default-user-avatar.jpg" alt="Avatar de l'utilisateur"/>
+			<router-link :to="{ name: 'UserPosts', params: { userId: user.user_id } }"  title="Voir le profil de l'utilisateur">
+				<img :src="user.user_photo" alt="Avatar de l'utilisateur"/>
 			</router-link>
 		</div>
 
-		<p class="pseudo">{{ pseudo }}</p>
+		<p class="pseudo">{{ user.pseudo }}</p>
 
 		<slot></slot>
 
-		<p class="user-bio">
-			<strong>Bio :</strong> Lorem ipsum dolor sit amet, consectetur adipiscing
-			elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-			Ut enim ad minim veniam.
+		<p class="user-bio" v-if="user.bio">
+			<strong>Bio :</strong> {{user.bio}}.
 		</p>
+
+        <div class="user-info-errors" v-if="errorMessage">
+            <p>{{ errorMessage }}</p>
+        </div>
 	</div>
 
 </template>
 
 
 <script>
+//import { API } from '@/axios.config.js'
+//import router from '@/router/index.js'
 
 export default {
 	name: "UserInfo",
+    data() {
+        return {
+            errorMessage: null,
+        }
+    },
     created() {
-        this.userId = localStorage.getItem("userId");
-        this.pseudo = localStorage.getItem("pseudo");
-        this.photo = localStorage.getItem("photo");
-
-
-    }
+        this.currentUserId = localStorage.getItem("userId");
+        this.currentUserPseudo = localStorage.getItem("pseudo");
+    },
 };
 
 </script>
@@ -49,6 +55,10 @@ export default {
 
     @include lg {
         @include flexbox(row, wrap, space-around, center);
+    };
+
+    .user-info-errors {
+        @include form-errors;
     };
 };
 

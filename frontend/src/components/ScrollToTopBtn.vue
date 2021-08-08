@@ -10,7 +10,29 @@
 <script>
 
 export default {
-    name: 'ScrollToTopBtn'
+    name: 'ScrollToTopBtn',
+    mounted() {
+        document.addEventListener('scroll', this.showBtnScroll);
+        const btnScroll = document.getElementById('scroll-to-top');
+        btnScroll.addEventListener('click', this.scrollToTop);
+    },
+    methods: {
+        showBtnScroll(){
+            const btnScroll = document.getElementById('scroll-to-top');
+            if(document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+                btnScroll.style.display = 'block'; // show button
+            } else {
+                btnScroll.style.display = 'none'; // otherwise hide
+            }
+        },
+
+        scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+    }    
 };
 
 </script>
@@ -24,7 +46,7 @@ export default {
 
 #scroll-to-top {
     z-index: 99; // above everything
-    // display: none; // hidden by default  uncomment when js
+    display: none; // hidden by default
     font-size: 1.3rem;
     @include color-bg-txt(btn-scroll);
     @include position(fixed, auto, 20px, 20px, auto);

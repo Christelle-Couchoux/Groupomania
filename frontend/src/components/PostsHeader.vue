@@ -43,7 +43,7 @@
 					</router-link>
 				</li>
 				<li>
-					<router-link to="/" title ="Se déconnecter" @click="logout">
+					<router-link to="/" title ="Se déconnecter" @click="logout()">
 						<i class="fas fa-power-off" aria-label="Se déconnecter" role="img"></i>
 						<span>Se déconnecter</span>
 					</router-link>
@@ -71,10 +71,8 @@ export default {
     methods: {
         logout() {
             localStorage.clear();
-            //router.push('/');
         }
     }
-
 }
 
 </script>
