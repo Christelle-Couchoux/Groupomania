@@ -8,9 +8,17 @@
 			<section id="all-posts-content">
                 <h1>Accueil</h1>
 
-                <div class="add-post">
+                <form enctype="multipart/form-data" class="add-post">
                     <div class="add-post__text">
-                        <textarea name="new-post" id="new-post" placeholder="Nouveau message"></textarea>
+                        <textarea
+                            name="new-post"
+                            id="new-post"
+                            placeholder="Nouveau message"
+                            v-model="text"
+                        ></textarea>
+                    </div>
+                    <div class="add-post__image" v-if="newImage">
+                        <img :src="newImage">
                     </div>
 
                     <div class="add-post__btn">
@@ -18,14 +26,21 @@
                             <label for="post-img">
                                 <i class="fas fa-image" aria-label="Ajouter une image" role="img"></i>
                             </label>
-                            <input type="file" name="post-img" id="post-img" accept="image/png, image/jpeg, image/jpg">
+                            <input
+                                type="file"
+                                name="post-img"
+                                id="post-img"
+                                accept="image/png, image/jpeg, image/jpg, image/gif"
+                                ref="file"
+                                @change="handleFileUpload"
+                            >
                         </div>
 
                         <div class="add-post__btn__btn-send">
-                            <input type="submit" value="Envoyer">
+                            <input type="submit" value="Envoyer" @click="createPost">
                         </div>
                     </div>
-                </div>
+                </form>
 
 
                 <div id="all-posts-list">
@@ -38,47 +53,46 @@
                     </div>
 
                     <!-- if posts -->
-                    <div id="posts">
+                    <div id="posts" v-else>
 
                         <div class="post" v-for="post in posts" :key="post.post_id">
-                            <div class="delete-post" v-if="post.userId === currentUserId || currentUserRole === 'admin'">
-                                <i class="fas fa-times" aria-label="Supprimer" role="button"></i>
+                            <div class="delete-post" v-if="post.fk_user_id == currentUserId || currentUserRole == 'admin'">
+                                <i class="fas fa-times" aria-label="Supprimer" role="button" @click="deletePost"></i>
                             </div>
 
                             <div class="post__title">
                                 <div class="post__title__photo">
-                                    <router-link :to="{ name: 'UserPosts', params: { userId: post.userId } }" title="Voir le profil de l'utilisateur">
+                                    <router-link :to="{ name: 'UserPosts', params: { userId: post.fk_user_id } }" title="Voir le profil de l'utilisateur">
                                         <img
-                                            :src="post.userPhoto"
+                                            :src="post.user_photo"
                                             alt="Avatar de l'utilisateur"
                                         />
                                     </router-link>
                                 </div>
                                 <div class="post__title__txt">
                                     <div class="post__title__pseudo">
-                                        <router-link :to="{ name: 'UserPosts', params: { userId: post.userId } }" title="Voir le profil de l'utilisateur">
-                                            <p>{{post.pseudo}}</p>
+                                        <router-link :to="{ name: 'UserPosts', params: { userId: post.fk_user_id } }" title="Voir le profil de l'utilisateur">
+                                            <p>{{ post.pseudo }}</p>
                                         </router-link>
                                     </div>
                                     <div class="post__title__divider">
                                         <p>-</p>
                                     </div>
                                     <div class="post__title__date">
-                                        <p>{{post.createdAt}}</p>
+                                        <p>{{ moment(post.createdAt).fromNow() }}</p>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="post__text">
+                            <div class="post__text" v-if="post.post_text">
                                 <p>
-                                    {{post.text}}
+                                    {{ post.post_text }}
                                 </p>
                             </div>
 
-                            <div class="post__img">
+                            <div class="post__img" v-if="post.post_file">
                                 <img
-                                    :src="post.file"
-                                    alt="Photo d'un pic-épeiche"
+                                    :src="post.post_file"
                                 />
                             </div>
 
@@ -126,33 +140,76 @@
 
 import ScrollToTopBtn from "../components/ScrollToTopBtn.vue"
 import PostsHeader from "../components/PostsHeader.vue"
+import moment from 'moment'
 
 import { API } from '@/axios.config.js'
 
 
 export default {
 	name: 'Posts',
+    
 	components: {
 		ScrollToTopBtn,
 		PostsHeader,
 	},
+
     data() {
         return {
-            Posts: [],
-            post: ''
+            posts: {},
+            post: '',
+            file: null,
+            text: '',
+            newImage: ''
         }
     },
+
+    created() {
+        this.currentUserId = localStorage.getItem("userId");
+        this.currentUserPseudo = localStorage.getItem("pseudo");
+        this.currentUserRole = localStorage.getItem("role");
+
+        this.getAllPosts();
+        this.moment();
+    },
+
     methods: {
-        getAllPosts() {
+        getAllPosts() { // OK
             API.get(`posts/`)
            .then(response => {
-                this.posts = response.data.Posts;
+                this.posts = response.data.posts;
             })
             .catch(error => console.log(error));
+        },
+
+        moment() {
+            this.moment = moment;
+        },
+
+        handleFileUpload() { // OK
+            this.file = this.$refs.file.files[0];
+			this.newImage = URL.createObjectURL(this.file)
+        },
+        
+        createPost() { // NOT WORKING FOR IMAGE, TEXT OK
+            const formData = new FormData()
+            formData.append('file', this.file)
+            formData.append('text', this.text)
+            formData.append('userId', this.currentUserId)
+        
+            API.post(`posts/`, formData)
+            .then(response => console.log(response))
+            .catch(error => console.log(error));
+
+            //window.location.reload();
+        },
+
+        deletePost() { // NOT WORKING (OK in mysql)
+            API.delete(`posts/${this.post.post_id}`)
+            .then(response => console.log(response))
+            .catch(error => console.log(error));
+
+            //window.location.reload();
         }
-    },
-    created() {
-        this.getAllPosts();
     }
 };
 
@@ -172,7 +229,12 @@ export default {
 
 #all-posts-content {
     @include page;
+    @include size(100%, auto);
     margin: auto;
+
+    @include lg {
+        @include size(calc(100% - 250px), auto);
+    };
 };
 
 
@@ -195,6 +257,10 @@ export default {
             font-size: 1rem;
             font-family: $montserrat;
         };
+    };
+
+    &__image {
+        @include post-img;
     };
 
 
@@ -346,7 +412,6 @@ export default {
     .delete-post {
         @include delete-post-comment;
         @include position(absolute, 30px, 20px, auto, auto);
-
     };
 };
 

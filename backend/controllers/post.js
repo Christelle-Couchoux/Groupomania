@@ -8,10 +8,22 @@ const Notification = db.notification;
 const Postlike = db.postLike;
 const CommentLike = db.commentLike;
 const Op = db.sequelize.Op;
+const { QueryTypes } = require('sequelize');
+const sequelize = db.sequelize;
 
 
 // display all posts (GET)
+// OK
 
+exports.getAllPosts = (req, res) => {
+    sequelize.query('CALL get_all_posts()', { type: QueryTypes.SELECT })
+    .then(([posts, metadata]) => {
+        return res.status(200).json({ posts })
+    })
+    .catch((error) => res.status(400).json(error));
+}
+
+/*
 exports.getAllPosts = (req, res) => {
     Post.findAll({
         include: [
@@ -41,18 +53,21 @@ exports.getAllPosts = (req, res) => {
     })
     .catch((error) => res.status(400).json(error));
 };
+*/
 
 
 // add a new post (POST)
+// image is displayed but not saved
+// text is ok
 
 exports.createPost = (req, res) => {
-    let uploadedPhoto =''
+    const fileURL =''
     if(req.file) {
-        uploadedPhoto = `${req.protocol}://${req.get("host")}/images/${req.file.filename}` 
+        fileURL = `${req.protocol}://${req.get("host")}/images/${req.file.filename}` 
     }
     Post.create({
         fk_user_id: req.body.userId,
-        post_file: uploadedPhoto,
+        post_file: fileURL,
         post_text: req.body.text,
     })
     .then(() => 
@@ -72,10 +87,30 @@ exports.getOnePost = (req, res) => {
 
 
 // delete a post (DELETE)
+// ok in mysql
+
+exports.deletePost = (req, res) => {
+    sequelize.query('CALL delete_post(?)', 
+    {
+        replacements: [req.params.postId],
+        type: QueryTypes.DELETE 
+    })
+    .then(() => res.status(200).json({ message: 'Message supprimé !' }))
+    .catch(error => res.status(400).json({ error }));
+};
 
 /*
 exports.deletePost = (req, res) => {
-
+    //Post.findOne({ where: { post_id: req.params.postId }})
+    //.then(post => {
+        //const filename = post.post_file.split('/images/')[1];
+        //fs.unlink(`images/${ filename }`, () => {
+            Post.destroy({ where: { post_id: req.params.postId } })
+            .then(() => res.status(200).json({ message: 'Message supprimé !' }))
+            .catch(error => res.status(400). json({ error }));
+        //});
+    //})
+    //.catch(error => res.status(500). json({ error }));
 };
 */
 

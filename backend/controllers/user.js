@@ -7,9 +7,11 @@ const Notification = db.notification;
 const Postlike = db.postLike;
 const CommentLike = db.commentLike;
 const { Op } = require('sequelize');
-
+const { QueryTypes } = require('sequelize');
+const sequelize = db.sequelize;
 
 // display all users (GET)
+// OK
 
 exports.getAllUsers = (req, res) => {
     User.findAll({
@@ -24,13 +26,48 @@ exports.getAllUsers = (req, res) => {
 
 
 // display posts of one user (GET)
+// OK
+
+exports.getAllPostsOfUser = (req, res) => {
+    sequelize.query('CALL get_all_posts_of_user(?)', 
+    {
+        replacements: [req.params.userId],
+        type: QueryTypes.SELECT 
+    })
+    .then(([posts, metadata]) => {
+        return res.status(200).json({ posts })
+    })
+    .catch((error) => res.status(400).json(error));
+};
 
 /*
 exports.getAllPostsOfUser = (req, res) => {
-
+    sequelize.query('CALL get_all_posts()', { 
+        type: QueryTypes.SELECT, 
+        where: { fk_user_id: req.params.userId }
+    })
+    .then(([posts, metadata]) => {
+        return res.status(200).json({ posts })
+    })
+    .catch((error) => res.status(400).json(error));
 };
 */
 
+
+// display info of one user (GET)
+// OK
+
+exports.getUserInfo = (req, res) => {
+    sequelize.query('CALL get_user_info(?)', 
+    {
+        replacements: [req.params.userId],
+        type: QueryTypes.SELECT 
+    })
+    .then(([info, metadata]) => {
+        return res.status(200).json({ info })
+    })
+    .catch((error) => res.status(400).json(error));
+};
 
 
 // display posts and comments of one user (GET)
@@ -67,12 +104,15 @@ exports.modifyUserProfile = (req, res) => {
 
 
 
-// delete user profile (DELETE)
+// delete user account (DELETE)
+// works in mysql
 
 exports.deleteUserAccount = (req, res) => {
-    User.destroy({ where: { user_id: req.params.userId } })
+    sequelize.query('CALL delete_user(?)', 
+    {
+        replacements: [req.params.userId],
+        type: QueryTypes.DELETE 
+    })
     .then(() => res.status(200).json({ message: 'Utilisateur supprimé !' }))
     .catch(error => res.status(400).json({ error }));
 };
-
-

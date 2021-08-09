@@ -15,9 +15,6 @@
 						<span>Accueil</span>
 					</router-link>
 				</li>
-
-                <!-- new message directing to pop-up window? -->
-
 				<li>
 					<router-link to="/user/:userId/notifications" title="Notifications">
 						<span id="bell">
@@ -31,7 +28,7 @@
 					</router-link>
 				</li>
 				<li>
-					<router-link :to="{ name: 'UserPosts', params: { userId } }" title="Profil">
+					<router-link :to="{ name: 'UserPosts', params: { userId: currentUserId } }" title="Profil">
 						<i class="fas fa-user" aria-label="Profil" role="img"></i>
 						<span>Profil</span>
 					</router-link>
@@ -57,16 +54,13 @@
 
 <script>
 
-//import router from '@/router/index.js'
-
-
 export default {
     name: 'PostsHeader',
     data() {
 
     },
     created() {
-        this.userId = localStorage.getItem("userId");
+        this.currentUserId = localStorage.getItem("userId");
     },
     methods: {
         logout() {

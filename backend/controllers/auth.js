@@ -13,6 +13,7 @@ const Op = db.sequelize.Op;
 
 
 // create new user (POST)
+// OK
 
 exports.signup = (req, res) => {
     // create admin if not exists
@@ -77,6 +78,7 @@ exports.signup = (req, res) => {
 
 
 // connect existing user (POST)
+// OK
 
 exports.login = (req, res) => {
     User.findOne({

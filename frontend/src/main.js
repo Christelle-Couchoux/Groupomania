@@ -7,4 +7,5 @@ import moment from 'moment'
 createApp(App).use(router).mount('#app')
 
 
-App.prototype.moment = moment
+App.moment = moment
+moment.locale('fr');

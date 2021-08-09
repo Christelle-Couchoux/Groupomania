@@ -9,12 +9,13 @@ const userCtrl = require('../controllers/user');
 
 // user routes
 
-router.get('/', auth, userCtrl.getAllUsers);
-//router.get('/:userId/posts', auth, userCtrl.getAllPostsOfUser);
+router.get('/', userCtrl.getAllUsers);
+router.get('/:userId/posts', userCtrl.getAllPostsOfUser);
+router.get('/:userId/info', userCtrl.getUserInfo);
 //router.get('/:userId/with_comments', auth, userCtrl.getAllPostsAndCommentsOfUser);
 //router.get('/:userId/likes', auth, userCtrl.getAllLikesOfUser);
-router.put('/:userId', auth, multer, userCtrl.modifyUserProfile);
-router.delete('/:userId', auth, userCtrl.deleteUserAccount);
+router.put('/:userId', multer, userCtrl.modifyUserProfile);
+router.delete('/:userId', userCtrl.deleteUserAccount);
 
 
 module.exports = router;

@@ -9,12 +9,12 @@ const postCtrl = require('../controllers/post');
 
 // post routes
 
-router.get('/', postCtrl.getAllPosts);
+router.get('/', auth, postCtrl.getAllPosts);
 
 
-router.post('/', multer, postCtrl.createPost);
+router.post('/', auth, multer, postCtrl.createPost);
 //router.get('/:postId', auth, postCtrl.getOnePost);
-//router.delete('/:postId', auth, postCtrl.deletePost);
+router.delete('/:postId', postCtrl.deletePost);
 //router.get('/:postId/likes', auth, postCtrl.getAllLikesOfPost);
 //router.post('/:postId/likes', auth, postCtrl.LikePost);
 //router.get('/:postId/comments', auth, postCtrl.getAllCommentsOfPost);

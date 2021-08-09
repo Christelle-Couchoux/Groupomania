@@ -5,27 +5,40 @@
 
 		<main>
 
-			<section id="edit-profile-content">
+			<section id="edit-profile-content" v-for="userInfo in info" :key="userInfo.pseudo">
                 <h1>Modifier le profil</h1>
                 
-                <UserInfo>
-                    <template v-slot>
-                        <div class="back-to-profile-btn">
-                            <router-link :to="{ name: 'UserPosts', params: { currentUserId } }" title="Aller au profil utilisateur">
-                                <input type="button" value="Retour au profil"/>
-                            </router-link>
-                        </div>
-                    </template>
-                </UserInfo>
+                <div id="user-info">
+                    <div id="user-photo">
+                        <img :src="userInfo.user_photo">
+                    </div>
+
+                    <p class="pseudo">{{ userInfo.pseudo }}</p>
+
+                    <div class="edit-profile-btn" v-if="currentUserId == userInfo.user_id || currentUserRole == 'admin'">
+                        <router-link :to="{ name: 'UserPosts', params: { userId: userInfo.user_id } }" title="Éditer le profil">
+                            <input type="button" value="Retour au profil"/>
+                        </router-link>
+                    </div>
+
+                    <p class="user-bio">
+                        <strong>Bio :</strong>  {{ userInfo.bio }}
+                    </p>
+
+                    <div class="user-info-errors" v-if="errorMessage">
+                        <p>{{ errorMessage }}</p>
+                    </div>
+                </div>
 
                 <div id="user-edit">
                     <div id="photo-form">
-                        <div id="edit-profile-photo">
+                        <div id="edit-profile-photo" v-if="newPhoto">
                             <img
                                 :src="newPhoto"
                                 alt="Avatar de l'utilisateur"
-                                class="uploading-photo"
                             >
+                        </div>
+                        <div id="edit-profile-photo" v-else>
                         </div>
 
                         <form class="edit-profile-form" enctype="multipart/form-data">
@@ -42,8 +55,8 @@
                                     name="file"
                                     id="file"
                                     ref="file"
-                                    v-on:change="handleFileUpload()"
-                                    accept="image/png, image/jpeg, image/jpg"
+                                    @change="handleFileUpload"
+                                    accept="image/png, image/jpeg, image/jpg, image/gif"
                                 >
                             </div>
                             
@@ -63,7 +76,7 @@
                     <div id="edit-buttons">
                         <p id="modifications">Souhaitez-vous enregistrer les changements&nbsp;?</p>
                         <div class="save-profile-btn">
-                            <input type="submit" value="Enregistrer" v-on:click="submitFile()">
+                            <input type="submit" value="Enregistrer" @click="submitFile">
                         </div>
                         <div class="undo-profile-btn">
                             <input type="submit" value="Annuler">
@@ -76,7 +89,7 @@
                             La suppression est définitive&nbsp;!
                         </p>
                         <div class="delete-account-btn">
-                            <input type="submit" value="Supprimer le compte" v-on:click="deleteAccount()">
+                            <input type="submit" value="Supprimer le compte" @click.prevent="deleteAccount">
                         </div>
                     </div>
                 </div>
@@ -96,7 +109,6 @@
 
 import ScrollToTopBtn from "../components/ScrollToTopBtn.vue"
 import PostsHeader from "../components/PostsHeader.vue"
-import UserInfo from "../components/UserInfo.vue"
 
 import { API } from '@/axios.config.js'
 import router from '@/router/index.js'
@@ -104,42 +116,51 @@ import router from '@/router/index.js'
 
 export default {
 	name: 'EditProfile',
+
     data() {
         return {
             user: '',
             bio: '',
             file: '',
-			newPhoto: ''
+			newPhoto: '',
+            info: [],
+            userInfo:''
         }
     },
+
 	components: {
 		ScrollToTopBtn,
-		PostsHeader,
-        UserInfo
+		PostsHeader
 	},
+
 	created() {
         this.currentUserId = localStorage.getItem("userId");
         this.currentUserPseudo = localStorage.getItem("pseudo");
+        this.currentUserRole = localStorage.getItem("role");
 
-		API.get(`users/${this.currentUserId}`)
-        .then(response => {
-            this.pseudo = response.data.pseudo;
-			this.photo = response.data.user_photo;
-			this.bio = response.data.bio;
-            console.log(response);
-        })
-        .catch(error => {
-            this.errorMessage = error.response.data.error;
-        })	
+        this.getUserInfo();
+	
     },
+
     methods: {
+        getUserInfo() {
+            const userId = this.$route.params.userId;
+            //console.log(userId);
+
+            API.get(`users/${userId}/info`)
+           .then(response => {
+                this.info = response.data.info;
+            })
+            .catch(error => console.log(error));
+        },
+
         handleFileUpload() {
             this.file = this.$refs.file.files[0];
 			this.newPhoto = URL.createObjectURL(this.file)
         },
 
         submitFile() {
-            let formData = new FormData();
+            const formData = new FormData();
             formData.append('file', this.file);
 			formData.append('bio', this.bio)
 
@@ -182,6 +203,12 @@ export default {
 
 #edit-profile-content {
     @include page;
+    @include size(100%, auto);
+    margin: auto;
+
+    @include lg {
+        @include size(calc(100% - 250px), auto);
+    };
 };
 
 

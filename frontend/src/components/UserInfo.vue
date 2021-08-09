@@ -2,17 +2,21 @@
 
 	<div id="user-info">
 		<div id="user-photo">
-			<router-link :to="{ name: 'UserPosts', params: { userId: user.user_id } }"  title="Voir le profil de l'utilisateur">
-				<img :src="user.user_photo" alt="Avatar de l'utilisateur"/>
+			<router-link :to="{ name: 'UserPosts', params: { userId: userId } }"  title="Voir le profil de l'utilisateur">
+				<img :src="userPhoto" alt="Avatar de l'utilisateur"/>
 			</router-link>
 		</div>
 
-		<p class="pseudo">{{ user.pseudo }}</p>
+		<p class="pseudo">{{ pseudo }}</p>
 
-		<slot></slot>
+        <div class="edit-profile-btn" v-if="currentUserId === userId || currentUserRole === 'admin'">
+            <router-link :to="{ name: 'EditProfile', params: { userId: userId } }" title="Éditer le profil">
+                <input type="button" value="Éditer le profil"/>
+            </router-link>
+        </div>
 
-		<p class="user-bio" v-if="user.bio">
-			<strong>Bio :</strong> {{user.bio}}.
+		<p class="user-bio">
+			<strong>Bio :</strong>  {{ bio }}
 		</p>
 
         <div class="user-info-errors" v-if="errorMessage">
@@ -29,6 +33,7 @@
 
 export default {
 	name: "UserInfo",
+    props: ['userId', 'userPhoto', 'pseudo', 'bio'],
     data() {
         return {
             errorMessage: null,
@@ -60,6 +65,16 @@ export default {
     .user-info-errors {
         @include form-errors;
     };
+
+    .edit-profile-btn {
+        @include btn(200px);
+        @include btn-edit-profile;
+        margin: 20px 10px 10px 10px;
+
+        @include lg {
+            order: 2;
+        };
+    };
 };
 
 
@@ -73,11 +88,6 @@ export default {
 
     @include lg {
         order: 1;
-    };
-
-    &:hover {
-        border: solid 5px $color-primary-dark;
-        padding: 0;
     };
 
     img {
