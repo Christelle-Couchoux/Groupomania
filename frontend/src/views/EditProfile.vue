@@ -38,7 +38,7 @@
                                 alt="Avatar de l'utilisateur"
                             >
                         </div>
-                        <div id="edit-profile-photo" v-else>
+                        <div id="edit-profile-photo-placeholder" v-else>
                         </div>
 
                         <form class="edit-profile-form" enctype="multipart/form-data">
@@ -76,10 +76,10 @@
                     <div id="edit-buttons">
                         <p id="modifications">Souhaitez-vous enregistrer les changements&nbsp;?</p>
                         <div class="save-profile-btn">
-                            <input type="submit" value="Enregistrer" @click="submitFile">
+                            <input type="submit" value="Enregistrer" @click.prevent="submitFile">
                         </div>
                         <div class="undo-profile-btn">
-                            <input type="submit" value="Annuler">
+                            <input type="submit" value="Annuler" @click.prevent="emptyForm">
                         </div>
                     </div>
 
@@ -143,7 +143,7 @@ export default {
     },
 
     methods: {
-        getUserInfo() {
+        getUserInfo() { // OK
             const userId = this.$route.params.userId;
             //console.log(userId);
 
@@ -155,35 +155,39 @@ export default {
         },
 
         handleFileUpload() {
+            //this.file = document.getElementById('file').files[0];
             this.file = this.$refs.file.files[0];
 			this.newPhoto = URL.createObjectURL(this.file)
         },
 
-        submitFile() {
+        submitFile() { // doesn't work with file, ok if only text
             const formData = new FormData();
             formData.append('file', this.file);
 			formData.append('bio', this.bio)
 
-            API.put(`users/${this.currentUserId}`, formData)
-            .then(response => {
-                localStorage.setItem("photo", response.data.user_photo);
-				localStorage.setItem("bio", response.data.bio);
-            })
-            .catch(error => {
-                this.errorMessage = error.response.data.error;
-            })
+            API.put(`users/${this.$route.params.userId}`, formData)
+            .then(response => console.log(response))
+            .catch(error => console.log(error));
+
+            //window.location.reload();
+
         },
 
 		deleteAccount() {
-			API.delete(`users/${this.currentUserId}`)
+			API.delete(`users/${this.$route.params.userId}`)
 			.then(response => {
 				console.log(response)
 				localStorage.clear();
 				router.push('/');
 			})
-			.catch(error => console.log(error));
-			
-		}
+			.catch(error => console.log(error));	
+		},
+
+        emptyForm() {
+            this.file = '',
+            this.newPhoto = '',
+            this.bio = ''
+        }
     }
 };
 
@@ -259,6 +263,19 @@ export default {
         border-radius: 50%;
     };
 };
+
+#edit-profile-photo-placeholder {
+    @include flexbox(row, nowrap, center, center);
+    @include size(150px);
+    border-radius: 50%;
+    margin: 20px 20px 20px 20px;
+    border: solid 1px $color-secondary;
+
+    @include lg {
+        margin: 20px;
+    };
+};
+
 
 
 .edit-profile-form {

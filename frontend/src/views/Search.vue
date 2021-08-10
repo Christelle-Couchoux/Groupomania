@@ -32,30 +32,30 @@
                     </div>
 
                     <!-- if users -->
-                        <div class="user" v-for="user in users" :key="user.user_id">
-                            <div class="user__id">
-                                <div class="user__id__photo">
-                                    <router-link :to="{ name: 'UserPosts', params: { userId: user.user_id } }" title="Voir le profil de l'utilisateur">
-                                        <img :src="user.user_photo" alt="Avatar de l'utilisateur">
-                                    </router-link>
-                                </div>
-                                <div class="user__id__pseudo">
-                                    <router-link :to="{ name: 'UserPosts', params: { userId: user.user_id } }" title="Voir le profil de l'utilisateur">
-                                        <p>{{ user.pseudo }}</p>
-                                    </router-link>
-                                </div>
+                    <div class="user" v-for="user in users" :key="user.user_id">
+                        <div class="user__id">
+                            <div class="user__id__photo">
+                                <router-link :to="{ name: 'UserPosts', params: { userId: user.user_id } }" title="Voir le profil de l'utilisateur">
+                                    <img :src="user.user_photo" alt="Avatar de l'utilisateur">
+                                </router-link>
                             </div>
-
-                            <div class="user__bio" v-if="user.bio">
-                                <p>
-                                    <strong>Bio :</strong> {{ user.bio }}
-                                </p>
+                            <div class="user__id__pseudo">
+                                <router-link :to="{ name: 'UserPosts', params: { userId: user.user_id } }" title="Voir le profil de l'utilisateur">
+                                    <p>{{ user.pseudo }}</p>
+                                </router-link>
                             </div>
                         </div>
 
-                        <div id="users-end">
-                            <p>Fin des utilisateurs.</p>
+                        <div class="user__bio" v-if="user.bio">
+                            <p>
+                                <strong>Bio :</strong> {{ user.bio }}
+                            </p>
                         </div>
+                    </div>
+
+                    <div id="users-end">
+                        <p>Fin des utilisateurs.</p>
+                    </div>
 
                 </div>
             </section>
@@ -127,10 +127,6 @@ export default {
 
 #user-search {
     @include main;
-    
-    main {
-        @include size(100%, auto);
-    };
 };
 
 

@@ -37,7 +37,7 @@
                         </div>
 
                         <div class="add-post__btn__btn-send">
-                            <input type="submit" value="Envoyer" @click="createPost">
+                            <input type="submit" value="Envoyer" @click.prevent="createPost">
                         </div>
                     </div>
                 </form>
@@ -56,64 +56,71 @@
                     <div id="posts" v-else>
 
                         <div class="post" v-for="post in posts" :key="post.post_id">
-                            <div class="delete-post" v-if="post.fk_user_id == currentUserId || currentUserRole == 'admin'">
-                                <i class="fas fa-times" aria-label="Supprimer" role="button" @click="deletePost"></i>
-                            </div>
-
-                            <div class="post__title">
-                                <div class="post__title__photo">
-                                    <router-link :to="{ name: 'UserPosts', params: { userId: post.fk_user_id } }" title="Voir le profil de l'utilisateur">
-                                        <img
-                                            :src="post.user_photo"
-                                            alt="Avatar de l'utilisateur"
-                                        />
-                                    </router-link>
+                            <router-link :to="{ name: 'Post', params: { postId: post.post_id } }" title="Voir le message">
+                                <div
+                                    class="delete-post"
+                                    v-if="post.fk_user_id == currentUserId || currentUserRole == 'admin'"
+                                    @click.prevent="deletePost()"
+                                >
+                                    <i class="fas fa-times" aria-label="Supprimer" role="button"></i>
                                 </div>
-                                <div class="post__title__txt">
-                                    <div class="post__title__pseudo">
+
+                                <div class="post__title">
+                                    <div class="post__title__photo">
                                         <router-link :to="{ name: 'UserPosts', params: { userId: post.fk_user_id } }" title="Voir le profil de l'utilisateur">
-                                            <p>{{ post.pseudo }}</p>
+                                            <img
+                                                :src="post.user_photo"
+                                                alt="Avatar de l'utilisateur"
+                                            />
                                         </router-link>
                                     </div>
-                                    <div class="post__title__divider">
-                                        <p>-</p>
-                                    </div>
-                                    <div class="post__title__date">
-                                        <p>{{ moment(post.createdAt).fromNow() }}</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="post__text" v-if="post.post_text">
-                                <p>
-                                    {{ post.post_text }}
-                                </p>
-                            </div>
-
-                            <div class="post__img" v-if="post.post_file">
-                                <img
-                                    :src="post.post_file"
-                                />
-                            </div>
-
-                            <div class="post__buttons">
-                                <div class="post__btn post__btn--comment" title="Commenter">
-                                    <div class="post__btn__icon">
-                                        <i class="far fa-comment" aria-label="Commenter" role="img"></i>
-                                    </div>
-                                    <div class="post__btn__counter">
-                                        <p>1</p>
+                                    <div class="post__title__txt">
+                                        <div class="post__title__pseudo">
+                                            <router-link :to="{ name: 'UserPosts', params: { userId: post.fk_user_id } }" title="Voir le profil de l'utilisateur">
+                                                <p>{{ post.pseudo }}</p>
+                                            </router-link>
+                                        </div>
+                                        <div class="post__title__divider">
+                                            <p>-</p>
+                                        </div>
+                                        <div class="post__title__date">
+                                            <p>{{ moment(post.createdAt).fromNow() }}</p>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="post__btn post__btn--like" title="Aimer">
-                                    <div class="post__btn__icon">
-                                        <i class="far fa-heart" aria-label="Aimer" role="img"></i>
+
+                                <div class="post__text" v-if="post.post_text">
+                                    <p>
+                                        {{ post.post_text }}
+                                    </p>
+                                </div>
+
+                                <div class="post__img" v-if="post.post_file">
+                                    <img
+                                        :src="post.post_file"
+                                    />
+                                </div>
+
+                                <div class="post__buttons">
+                                    <div class="post__btn post__btn--comment" title="Commenter">
+                                        <div class="post__btn__icon">
+                                            <i class="far fa-comment" aria-label="Commenter" role="img"></i>
+                                        </div>
+                                        <div class="post__btn__counter">
+                                            <p>1</p>
+                                        </div>
                                     </div>
-                                    <div class="post__btn__counter">
-                                        <p>3</p>
+                                    <div class="post__btn post__btn--like" title="Aimer">
+                                        <div class="post__btn__icon">
+                                            <i class="far fa-heart" aria-label="Aimer" role="img"></i>
+                                        </div>
+                                        <div class="post__btn__counter">
+                                            <p>3</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </router-link>
+
                         </div>
 
                         <div id="posts-end">
@@ -157,8 +164,9 @@ export default {
         return {
             posts: {},
             post: '',
-            file: null,
+            file: '',
             text: '',
+            userId: '',
             newImage: ''
         }
     },
@@ -191,22 +199,26 @@ export default {
         },
         
         createPost() { // NOT WORKING FOR IMAGE, TEXT OK
-            const formData = new FormData()
-            formData.append('file', this.file)
-            formData.append('text', this.text)
-            formData.append('userId', this.currentUserId)
-        
+            const formData = new FormData();
+            formData.append('file', this.file);
+            formData.append('text', this.text);
+            formData.append('userId', this.currentUserId);
+
             API.post(`posts/`, formData)
             .then(response => console.log(response))
             .catch(error => console.log(error));
 
-            //window.location.reload();
+            window.location.reload();
         },
 
-        deletePost() { // NOT WORKING (OK in mysql)
-            API.delete(`posts/${this.post.post_id}`)
-            .then(response => console.log(response))
-            .catch(error => console.log(error));
+        deletePost() { // HOW TO TARGET THE POST ID???
+            //let postId = this.closest('.post').key; // get id of post
+            //console.log(postId);
+
+            //API.delete(`posts/${this.post.post_id}`)
+            //.then(response => console.log(response))
+            //.catch(error => console.log(error));
+            console.log();
 
             //window.location.reload();
         }

@@ -12,13 +12,13 @@ const postCtrl = require('../controllers/post');
 router.get('/', auth, postCtrl.getAllPosts);
 
 
-router.post('/', auth, multer, postCtrl.createPost);
-//router.get('/:postId', auth, postCtrl.getOnePost);
+router.post('/', multer, postCtrl.createPost);
+router.get('/:postId', postCtrl.getOnePost);
 router.delete('/:postId', postCtrl.deletePost);
 //router.get('/:postId/likes', auth, postCtrl.getAllLikesOfPost);
 //router.post('/:postId/likes', auth, postCtrl.LikePost);
-//router.get('/:postId/comments', auth, postCtrl.getAllCommentsOfPost);
-//router.post('/:postId/comments', auth, postCtrl.createComment);
+router.get('/:postId/comments', postCtrl.getAllCommentsOfPost);
+router.post('/:postId/comments', postCtrl.createComment);
 
 
 module.exports = router;

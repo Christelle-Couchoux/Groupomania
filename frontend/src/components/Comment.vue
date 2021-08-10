@@ -71,9 +71,9 @@ export default {
     @include size (100%, auto);
     padding: 0 0 20px 0;
 
-    &:last-child {
-        border-bottom: solid 1px $color-secondary; // add bottom line to last comment
-    };
+    //&:last-child {
+        //border-bottom: solid 1px $color-secondary; // add bottom line to last comment
+    //};
 
     //@include flexbox(column, nowrap, space-around, center);
 
@@ -117,5 +117,6 @@ export default {
         @include delete-post-comment;
     };
 };
+
 
 </style>

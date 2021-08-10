@@ -254,6 +254,10 @@
     @include lg {
         @include flexbox(row, nowrap, space-around, flex-start);
     };
+
+    main {
+        @include size(100%, auto);
+    };
 };
 
 

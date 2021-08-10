@@ -81,8 +81,8 @@ export default {
 	},
 	data() {
         return {
-            email: "",
-            password: "",
+            email: '',
+            password: '',
             errors: [],
             errorMessage: null
         }

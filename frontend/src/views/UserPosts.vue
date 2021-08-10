@@ -64,64 +64,66 @@
                     <div id="posts" v-else>
 
                         <div class="post" v-for="post in posts" :key="post.post_id">
-                            <div class="delete-post" v-if="post.fk_user_id == currentUserId || currentUserRole == 'admin'">
-                                <i class="fas fa-times" aria-label="Supprimer" role="button" @click="deletePost"></i>
-                            </div>
-
-                            <div class="post__title">
-                                <div class="post__title__photo">
-                                    <router-link :to="{ name: 'UserPosts', params: { userId: post.fk_user_id } }" title="Voir le profil de l'utilisateur">
-                                        <img
-                                            :src="post.user_photo"
-                                            alt="Avatar de l'utilisateur"
-                                        />
-                                    </router-link>
+                            <router-link :to="{ name: 'Post', params: { postId: post.post_id } }" title="Voir le message">
+                                <div class="delete-post" v-if="post.fk_user_id == currentUserId || currentUserRole == 'admin'">
+                                    <i class="fas fa-times" aria-label="Supprimer" role="button" @click="deletePost"></i>
                                 </div>
-                                <div class="post__title__txt">
-                                    <div class="post__title__pseudo">
+
+                                <div class="post__title">
+                                    <div class="post__title__photo">
                                         <router-link :to="{ name: 'UserPosts', params: { userId: post.fk_user_id } }" title="Voir le profil de l'utilisateur">
-                                            <p>{{ post.pseudo }}</p>
+                                            <img
+                                                :src="post.user_photo"
+                                                alt="Avatar de l'utilisateur"
+                                            />
                                         </router-link>
                                     </div>
-                                    <div class="post__title__divider">
-                                        <p>-</p>
-                                    </div>
-                                    <div class="post__title__date">
-                                        <p>{{ moment(post.createdAt).fromNow() }}</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="post__text" v-if="post.post_text">
-                                <p>
-                                    {{ post.post_text }}
-                                </p>
-                            </div>
-
-                            <div class="post__img" v-if="post.post_file">
-                                <img
-                                    :src="post.post_file"
-                                />
-                            </div>
-
-                            <div class="post__buttons">
-                                <div class="post__btn post__btn--comment" title="Commenter">
-                                    <div class="post__btn__icon">
-                                        <i class="far fa-comment" aria-label="Commenter" role="img"></i>
-                                    </div>
-                                    <div class="post__btn__counter">
-                                        <p>1</p>
+                                    <div class="post__title__txt">
+                                        <div class="post__title__pseudo">
+                                            <router-link :to="{ name: 'UserPosts', params: { userId: post.fk_user_id } }" title="Voir le profil de l'utilisateur">
+                                                <p>{{ post.pseudo }}</p>
+                                            </router-link>
+                                        </div>
+                                        <div class="post__title__divider">
+                                            <p>-</p>
+                                        </div>
+                                        <div class="post__title__date">
+                                            <p>{{ moment(post.createdAt).fromNow() }}</p>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="post__btn post__btn--like" title="Aimer">
-                                    <div class="post__btn__icon">
-                                        <i class="far fa-heart" aria-label="Aimer" role="img"></i>
+
+                                <div class="post__text" v-if="post.post_text">
+                                    <p>
+                                        {{ post.post_text }}
+                                    </p>
+                                </div>
+
+                                <div class="post__img" v-if="post.post_file">
+                                    <img
+                                        :src="post.post_file"
+                                    />
+                                </div>
+
+                                <div class="post__buttons">
+                                    <div class="post__btn post__btn--comment" title="Commenter">
+                                        <div class="post__btn__icon">
+                                            <i class="far fa-comment" aria-label="Commenter" role="img"></i>
+                                        </div>
+                                        <div class="post__btn__counter">
+                                            <p>1</p>
+                                        </div>
                                     </div>
-                                    <div class="post__btn__counter">
-                                        <p>3</p>
+                                    <div class="post__btn post__btn--like" title="Aimer">
+                                        <div class="post__btn__icon">
+                                            <i class="far fa-heart" aria-label="Aimer" role="img"></i>
+                                        </div>
+                                        <div class="post__btn__counter">
+                                            <p>3</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </router-link>
                         </div>
 
                         <div id="posts-end">
@@ -155,8 +157,6 @@ export default {
 	components: {
 		ScrollToTopBtn,
 		PostsHeader,
-        //UserInfo,
-        //ProfileNav,
 	},
 
     data() {
@@ -174,6 +174,8 @@ export default {
         this.currentUserPseudo = localStorage.getItem("pseudo");
         this.currentUserRole = localStorage.getItem("role");
 
+        this.userId = this.$route.params.userId;
+
         this.getAllPostsOfUser();
         this.getUserInfo();
         this.moment();
@@ -181,10 +183,10 @@ export default {
 
     methods: {
         getAllPostsOfUser() {
-            const userId = this.$route.params.userId;
+            
             //console.log(userId);
 
-            API.get(`users/${userId}/posts`)
+            API.get(`users/${this.userId}/posts`)
            .then(response => {
                 this.posts = response.data.posts;
             })
@@ -196,10 +198,7 @@ export default {
         },
 
         getUserInfo() {
-            const userId = this.$route.params.userId;
-            //console.log(userId);
-
-            API.get(`users/${userId}/info`)
+            API.get(`users/${this.userId}/info`)
            .then(response => {
                 this.info = response.data.info;
             })
@@ -219,14 +218,15 @@ export default {
 
 
 #user-profile {
-    @include main   
+    @include main; 
 };
 
 
 #user-profile-content {
+    //@include size(100%, auto);
+
     @include page;
-    @include size(100%, auto);
-    margin: auto;
+    //margin: auto;
 
     @include lg {
         @include size(calc(100% - 250px), auto);

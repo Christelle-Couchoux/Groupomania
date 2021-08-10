@@ -76,28 +76,64 @@ exports.createPost = (req, res) => {
     .catch(error => res.status(400).json({ error }));    
 };
 
+/*
+exports.createPost = (req, res) => {
+    const fileURL =''
+    if(req.file) {
+        fileURL = `${req.protocol}://${req.get("host")}/images/${req.file.filename}` 
+    }
+    Post.create({
+        fk_user_id: req.body.userId,
+        post_file: fileURL,
+        post_text: req.body.text,
+    })
+    .then(() => 
+        res.status(201).json({ message: 'Message créé !' })
+    )
+    .catch(error => res.status(400).json({ error }));    
+};
+*/
 
 // display a post (GET)
 
-/*
+
 exports.getOnePost = (req, res) => {
+    sequelize.query('CALL get_one_post(:postId)',
+    {
+        replacements: { postId: req.params.postId },
+        type: QueryTypes.SELECT 
+    })
+    .then(([post, metadata]) => { return res.status(200).json({ post }) })
+    .catch((error) => res.status(400).json(error));
 
 };
-*/
+
+
 
 
 // delete a post (DELETE)
 // ok in mysql
 
+/*
 exports.deletePost = (req, res) => {
-    sequelize.query('CALL delete_post(?)', 
+    sequelize.query('CALL delete_post(:postId)',
     {
-        replacements: [req.params.postId],
+        replacements: { postId: req.params.postId },
         type: QueryTypes.DELETE 
     })
     .then(() => res.status(200).json({ message: 'Message supprimé !' }))
     .catch(error => res.status(400).json({ error }));
 };
+*/
+
+
+exports.deletePost = (req, res) => {
+    Post.destroy({ where: { post_id: req.params.postId } })
+    .then(() => res.status(200).json({ message: 'Message supprimé !' }))
+    .catch(error => res.status(400). json({ error }));
+};
+
+
 
 /*
 exports.deletePost = (req, res) => {
@@ -135,17 +171,31 @@ exports.LikePost = (req, res) => {
 
 // display all comments of a post (GET)
 
-/*
-exports.getAllCommentsOfPost = (req, res) => {
 
+exports.getAllCommentsOfPost = (req, res) => {
+    sequelize.query('CALL get_comments_of_post(:postId)',
+    {
+        replacements: { postId: req.params.postId },
+        type: QueryTypes.SELECT 
+    })
+    .then(([comments, metadata]) => { return res.status(200).json({ comments }) })
+    .catch((error) => res.status(400).json(error));
 };
-*/
+
+
 
 
 // add a new comment (POST)
 
-/*
-exports.createComment = (req, res) => {
 
+exports.createComment = (req, res) => {
+    Comment.create({
+        fk_user_id: req.body.userId,
+        fk_post_id: req.body.postId,
+        comment_text: req.body.text,
+    })
+    .then(() => res.status(201).json({ message: 'Commentaire créé !' }))
+    .catch(error => res.status(400).json({ error }));    
 };
-*/
+
+

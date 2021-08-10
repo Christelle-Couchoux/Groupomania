@@ -8,51 +8,46 @@
 			<section id="specific-post-content">
                 <h1>Message</h1>
 
-                <div id="specific-post-details">
-                    <!-- post -->
+                <div id="specific-post-details" v-for="postInfo in post" :key="postInfo.post_id">
                     <div class="specific-post">
-                        <!-- if own post -->
-                        <div class="delete-specific-post">
+                        <div
+                            class="delete-specific-post"
+                            v-if="postInfo.user_id == currentUserId || currentUserRole == 'admin'"
+                            @click.prevent="deletePost"
+                        >
                             <i class="fas fa-times" aria-label="Supprimer" role="button"></i>
                         </div>
 
                         <div class="specific-post__title">
                             <div class="specific-post__title__photo">
-                                <router-link to="/user/:userId/" title="Aller au profil utilisateur">
-                                    <img src="@/assets/avatar/default-user-avatar3.png" alt="Avatar de l'utilisateur 2">
+                                <router-link :to="{ name: 'UserPosts', params: { userId: postInfo.user_id } }" title="Voir le profil de l'utilisateur">
+                                    <img :src="postInfo.user_photo" alt="Avatar de l'utilisateur 2">
                                 </router-link>
                             </div>
 
                             <div class="specific-post__title__pseudo">
-                                <router-link to="/user/:userId/" title="Aller au profil utilisateur">
-                                    <p>Utilisateur3</p>
+                                <router-link :to="{ name: 'UserPosts', params: { userId: postInfo.user_id } }" title="Voir le profil de l'utilisateur">
+                                    <p>{{ postInfo.pseudo }}</p>
                                 </router-link>
                             </div>
                         </div>
 
                         <div class="specific-post__date-time">
-                            <div class="specific-post__time">
-                                <p>hh:mm</p>
-                            </div>
-                            <div class="specific-post__divider">
-                                <p>-</p>
-                            </div>
                             <div class="specific-post__date">
-                                <p>jj mois aaaa</p>
+                                <p>{{ moment(postInfo.createdAt).format('[Le] D MMMM YYYY [à] HH:MM') }}</p>
                             </div>
                         </div>
 
-                        <div class="specific-post__text">
+                        <div class="specific-post__text" v-if="postInfo.post_text">
                             <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do 
-                                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                                {{ postInfo.post_text }}
                             </p>
                         </div>
 
-                        <div class="specific-post__img">
-                            <a href="@/assets/images/verdier.jpg" title="Agrandir la photo">
-                                <img src="@/assets/images/verdier.jpg" alt="Photo d'un pic-épeiche">
-                            </a>
+                        <div class="specific-post__img" v-if="postInfo.post_file">
+                            <img
+                                :src="postInfo.post_file"
+                            />
                         </div>
 
                         <div class="specific-post__likes">
@@ -64,31 +59,91 @@
                                     <p>3 &nbsp; J'aime</p>
                                 </router-link>
                             </div>
-                        </div>
-                        
-
-                        
+                        </div>        
                     </div>
                     <!-- post end -->
 
-                    
-                    <div class="add-comment">
+                    <!-- add comment -->
+                    <form class="add-comment">
                         <div class="add-comment__text">
-                            <textarea name="new-comment" id="new-comment" placeholder="Nouveau commentaire"></textarea>
+                            <textarea
+                                name="new-comment"
+                                id="new-comment"
+                                placeholder="Nouveau commentaire"
+                                v-model="text"
+                            ></textarea>
                         </div>
     
                         <div class="add-comment__btn">
-                            <input type="submit" value="Envoyer">
+                            <input type="submit" value="Envoyer" @click.prevent="createComment">
                         </div>
-                    </div>
-
+                    </form>
+                    <!-- add comment end -->
 
                     <!-- comments -->
-                    <!-- comment -->
-                    <Comment/>
-                    <Comment/>
-                    <Comment/>
-                    <!-- comment end -->
+                    <!-- if no comments -->
+                    <div id="no-comments"  v-if="!comments">
+                        <p>
+                            Il n'y a pas encore de commentaire.
+                        </p>
+                    </div>
+
+                    <!-- if comments -->
+                    <div id="comments-list">
+
+                        <div class="comment" v-for="comment in comments" :key="comment.comment_id">
+                            <!-- if own comment -->
+                            <div class="delete-comment" v-if="comment.user_id == currentUserId || currentUserRole == 'admin'">
+                                <i class="fas fa-times" aria-label="Supprimer" role="button"></i>
+                            </div>
+
+                            <div class="comment__title">
+                                <div class="comment__title__photo">
+                                    <router-link :to="{ name: 'UserPosts', params: { userId: comment.user_id } }" title="Voir le profil de l'utilisateur">
+                                        <img
+                                            :src="comment.user_photo"
+                                            alt="Avatar de l'utilisateur"
+                                        />
+                                    </router-link>
+                                </div>
+                                <div class="comment__title__txt">
+                                    <div class="comment__title__pseudo">
+                                        <router-link :to="{ name: 'UserPosts', params: { userId: comment.user_id } }" title="Voir le profil de l'utilisateur">
+                                            <p>{{ comment.pseudo }}</p>
+                                        </router-link>
+                                    </div>
+                                    <div class="comment__title__divider">
+                                        <p>-</p>
+                                    </div>
+                                    <div class="comment__title__date">
+                                        <p>{{ moment(comment.createdAt).fromNow() }}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="comment__text">
+                                <p>{{ comment.comment_text }}</p>
+                            </div>
+
+                            <div class="comment__likes">
+                                <div class="comment__likes__btn" title="Aimer">
+                                    <i class="far fa-heart" aria-label="Aimer" role="img"></i>
+                                </div>
+                                <div class="comment__likes__count" title="Voir les utilisateurs qui aiment ce message">
+                                    <router-link to="/posts/:postId/likes" title="Voir les utilisateurs qui aiment ce message">
+                                        <p>2 &nbsp; J'aime</p>
+                                    </router-link>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="comments-end">
+                            <p>Fin des commentaires.</p>
+                        </div>
+
+                    </div>
+                   <!-- comments end -->
+
                 </div>
 
             </section>
@@ -107,8 +162,10 @@
 
 import ScrollToTopBtn from "../components/ScrollToTopBtn.vue"
 import PostsHeader from "../components/PostsHeader.vue"
-import Comment from "../components/Comment.vue"
+import moment from 'moment'
 
+import { API } from '@/axios.config.js'
+import router from '@/router/index.js'
 
 
 export default {
@@ -116,9 +173,75 @@ export default {
 	components: {
 		ScrollToTopBtn,
 		PostsHeader,
-        Comment
+	},
 
-	}	
+    data() {
+        return {
+            post: {},
+            postInfo: '',
+            text: '',
+            comments: {},
+            comment: ''
+        }
+    },
+
+    created() {
+        this.currentUserId = localStorage.getItem("userId");
+        this.currentUserPseudo = localStorage.getItem("pseudo");
+        this.currentUserRole = localStorage.getItem("role");
+
+        this.postId = this.$route.params.postId;
+
+        this.getOnePost();
+        this.moment();
+        this.getComments();
+    },
+
+    methods: {
+        getOnePost() {
+            
+
+            API.get(`posts/${this.postId}`)
+           .then(response => {
+                this.post = response.data.post;
+            })
+            .catch(error => console.log(error));
+        },
+
+        moment() {
+            this.moment = moment;
+        },
+
+        createComment() {
+            API.post(`posts/${this.postId}/comments`,
+            {
+                userId: this.currentUserId,
+                postId: this.postId,
+                text: this.text
+            })
+            .then(response => console.log(response))
+            .catch(error => console.log(error));
+
+            window.location.reload();
+        },
+
+        getComments() {
+            API.get(`posts/${this.postId}/comments`)
+           .then(response => {
+                this.comments = response.data.comments;
+            })
+            .catch(error => console.log(error));
+        }, 
+
+        deletePost() {
+            API.delete(`posts/${this.postId}`)
+            .then(response => console.log(response))
+            .catch(error => console.log(error));
+            console.log(this.post_id);
+
+            router.push('/posts');
+        }
+    }
 };
 
 </script>
@@ -137,7 +260,12 @@ export default {
 
 #specific-post-content {
     @include page;
+    @include size(100%, auto);
     margin: auto;
+
+    @include lg {
+        @include size(calc(100% - 250px), auto);
+    };
 };
 
 
@@ -147,15 +275,6 @@ export default {
     @include size(100%);
     padding: 0 0 50px 0;
     @include flexbox(column, nowrap, space-around, center);
-
-    .comment {
-        @include size (80%, auto);
-        margin: auto;
-
-        &:last-child {
-            border: none;
-        };
-    };
 };
 
 
@@ -235,8 +354,68 @@ export default {
     };
 };
 
+#comments-list {
+    @include size (100%, auto);
+    padding: 0 0 30px 0;
+    @include flexbox(column, nowrap, space-around, center);
+
+    //border-bottom: solid 1px $color-secondary;
+    //border-top: solid 1px $color-secondary;
+    margin: 0 0 30px 0;
+};
+
+  
+.comment {
+    @include position(relative, auto, auto, auto, auto);
+    @include size (80%, auto);
+    margin: auto;
+    padding: 20px 0 20px 0;
+    border-bottom: solid 1px $color-secondary;
+
+    &__title {
+        @include flexbox(row, wrap, flex-start, center);
+        margin: 5px 0 5px 0;
+
+        &__photo {
+            @include user-photo;
+        };
+
+        &__txt {
+            @include flexbox(row, nowrap, flex-start, baseline);
+        };
+
+        &__pseudo {
+            @include user-pseudo;
+        };
+
+        &__divider {
+            margin: 0 5px 0 0;
+            color: $color-secondary-dark;
+        };
+
+        &__date {
+            margin: 0 0 0 0;
+            color: $color-secondary-dark;
+            font-size: 0.9rem;
+        };
+    };
+
+    &__text {
+        margin: 5px 0 5px 0;
+    };
+
+    &__likes {
+        @include btn-like-count;
+	};
+    
+    .delete-comment {
+        @include delete-post-comment;
+    };
+};
 
 
-
+#comments-end {
+    margin: 50px 0 50px 0;
+};
 
 </style>

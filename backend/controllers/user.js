@@ -29,9 +29,9 @@ exports.getAllUsers = (req, res) => {
 // OK
 
 exports.getAllPostsOfUser = (req, res) => {
-    sequelize.query('CALL get_all_posts_of_user(?)', 
+    sequelize.query('CALL get_all_posts_of_user(:userId)', 
     {
-        replacements: [req.params.userId],
+        replacements: { userId: req.params.userId },
         type: QueryTypes.SELECT 
     })
     .then(([posts, metadata]) => {
@@ -58,25 +58,31 @@ exports.getAllPostsOfUser = (req, res) => {
 // OK
 
 exports.getUserInfo = (req, res) => {
-    sequelize.query('CALL get_user_info(?)', 
+    sequelize.query('CALL get_user_info(:userId)',
     {
-        replacements: [req.params.userId],
+        replacements: { userId: req.params.userId },
         type: QueryTypes.SELECT 
     })
-    .then(([info, metadata]) => {
-        return res.status(200).json({ info })
-    })
+    .then(([info, metadata]) => { return res.status(200).json({ info }) })
     .catch((error) => res.status(400).json(error));
 };
 
 
 // display posts and comments of one user (GET)
 
-/*
-exports.getAllPostsAndCommentsOfUser = (req, res) => {
 
+exports.getAllPostsAndCommentsOfUser = (req, res) => {
+    sequelize.query('CALL get_posts_and_comments_of_user(:userId)', 
+    {
+        replacements: { userId: req.params.userId },
+        type: QueryTypes.SELECT 
+    })
+    .then(([postsComments, metadata]) => {
+        return res.status(200).json({ postsComments })
+    })
+    .catch((error) => res.status(400).json(error));
 };
-*/
+
 
 
 // display likes of one user (GET)
@@ -105,14 +111,10 @@ exports.modifyUserProfile = (req, res) => {
 
 
 // delete user account (DELETE)
-// works in mysql
+// OK
 
 exports.deleteUserAccount = (req, res) => {
-    sequelize.query('CALL delete_user(?)', 
-    {
-        replacements: [req.params.userId],
-        type: QueryTypes.DELETE 
-    })
-    .then(() => res.status(200).json({ message: 'Utilisateur supprimé !' }))
-    .catch(error => res.status(400).json({ error }));
+    User.destroy({ where: { user_id: req.params.userId } })
+    .then(() => res.status(200).json({ message: 'Utlisateur supprimé !' }))
+    .catch(error => res.status(400). json({ error }));
 };
