@@ -61,7 +61,7 @@
                     </div>
 
                     <!-- if posts -->
-                    <div id="posts" v-else>
+                    <div id="posts">
 
                         <div class="post" v-for="post in posts" :key="post.post_id">
                             <router-link :to="{ name: 'Post', params: { postId: post.post_id } }" title="Voir le message">
@@ -189,6 +189,7 @@ export default {
             API.get(`users/${this.userId}/posts`)
            .then(response => {
                 this.posts = response.data.posts;
+                console.log(response);
             })
             .catch(error => console.log(error));
         },
@@ -262,9 +263,9 @@ export default {
     @include size(120px);
     border-radius: 50%;
     margin: 20px 10px 10px 10px;
-    padding: 2px;
-    border: solid 3px $color-basic-dark;
-    transition: all 200ms ease-in-out;
+    //padding: 2px;
+    //border: solid 3px $color-basic-dark;
+    //transition: all 200ms ease-in-out;
 
     @include lg {
         order: 1;
@@ -310,6 +311,57 @@ export default {
     @include lg {
         border-left: solid 1px $color-secondary; 
     };     
+};
+
+
+.user-nav {
+    @include size (100%, auto);
+    margin: 0 0 15px 0;
+    
+    ul {
+        @include list-style;
+        @include flexbox(row, nowrap, space-around, center);
+    };
+    li {
+        transition: all 200ms ease-in-out;
+        @include flexbox(row, nowrap, center, center);
+        @include size(100%, auto);
+        text-align: center;
+		div {
+			@include size(100%, 50px);
+			@include flexbox(row, nowrap, center, center);
+		};
+		a {
+			@include size (100%, auto);
+			border-bottom: solid 1px $color-secondary;
+			&:hover {
+				cursor: pointer;
+				font-weight: 700;
+				p {
+					color: $color-primary-dark;
+				};
+			};	
+        };     
+    }; 
+    // DO NOT MOVE! 
+    // Needs to be outside li to not be overwritten
+	/*
+    .router-link-active {
+        border-bottom: solid 1px $color-primary-dark;
+        //a {
+            color: $color-primary-dark;
+            font-weight: 700;
+        //};
+    };  
+	*/
+	.router-link-exact-active {
+        border-bottom: solid 1px $color-primary-dark;
+        
+		p {
+			color: $color-primary-dark;
+			font-weight: 700;
+		};
+    }; 
 };
 
 

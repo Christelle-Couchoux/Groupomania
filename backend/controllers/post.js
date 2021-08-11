@@ -61,9 +61,28 @@ exports.getAllPosts = (req, res) => {
 // text is ok
 
 exports.createPost = (req, res) => {
-    const fileURL =''
+    let fileURL = '';
     if(req.file) {
-        fileURL = `${req.protocol}://${req.get("host")}/images/${req.file.filename}` 
+        fileURL = `${req.protocol}://${req.get('host')}/images/${req.file.filename}` 
+    };
+    sequelize.query('CALL create_post(:file, :text, :userId)',
+    {
+        replacements: { 
+            file: fileURL,
+            text: req.body.text,
+            userId: req.body.userId 
+        },
+        type: QueryTypes.INSERT 
+    })
+    .then(() => res.status(201).json({ message: 'Message créé !' }))
+    .catch(error => res.status(400).json({ error }));
+};
+
+/*
+exports.createPost = (req, res) => {
+    let fileURL = '';
+    if(req.file) {
+        fileURL = `${req.protocol}://${req.get('host')}/images/${req.file.filename}` 
     }
     Post.create({
         fk_user_id: req.body.userId,
@@ -75,6 +94,7 @@ exports.createPost = (req, res) => {
     )
     .catch(error => res.status(400).json({ error }));    
 };
+*/
 
 /*
 exports.createPost = (req, res) => {
@@ -132,7 +152,6 @@ exports.deletePost = (req, res) => {
     .then(() => res.status(200).json({ message: 'Message supprimé !' }))
     .catch(error => res.status(400). json({ error }));
 };
-
 
 
 /*

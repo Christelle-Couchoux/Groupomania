@@ -132,7 +132,7 @@ export default {
                 localStorage.setItem("userId", response.data.userId);
                 localStorage.setItem("pseudo", response.data.pseudo);
                 localStorage.setItem("role", response.data.role);
-                router.push('/posts/');
+                router.push('/forums');
                 //console.log(response)
             })
             .catch(error => {

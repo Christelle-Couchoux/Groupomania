@@ -10,7 +10,7 @@ module.exports = (sequelize, Sequelize) => {
 			autoIncrement: true
 		},
 		post_file: {
-			type: Sequelize.STRING(50),
+			type: Sequelize.STRING,
 		},
 		post_text: {
 			type: Sequelize.STRING,

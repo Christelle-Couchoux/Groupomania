@@ -9,3 +9,4 @@ createApp(App).use(router).mount('#app')
 
 App.moment = moment
 moment.locale('fr');
+moment.tz.setDefault();

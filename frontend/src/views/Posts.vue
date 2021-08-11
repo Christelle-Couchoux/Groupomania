@@ -9,7 +9,7 @@
                 <h1>Accueil</h1>
 
                 <form enctype="multipart/form-data" class="add-post">
-                    <div class="add-post__text">
+                    <div class="add-post__text" >
                         <textarea
                             name="new-post"
                             id="new-post"
@@ -23,13 +23,13 @@
 
                     <div class="add-post__btn">
                         <div class="add-post__btn__btn-image" title="Ajouter une image">
-                            <label for="post-img">
+                            <label for="file">
                                 <i class="fas fa-image" aria-label="Ajouter une image" role="img"></i>
                             </label>
                             <input
                                 type="file"
-                                name="post-img"
-                                id="post-img"
+                                name="file"
+                                id="file"
                                 accept="image/png, image/jpeg, image/jpg, image/gif"
                                 ref="file"
                                 @change="handleFileUpload"
@@ -39,6 +39,15 @@
                         <div class="add-post__btn__btn-send">
                             <input type="submit" value="Envoyer" @click.prevent="createPost">
                         </div>
+
+                        <div class="add-post__btn__btn-undo">
+                            <input type="submit" value="Annuler" @click.prevent="emptyForm">
+                        </div>
+
+                    </div>
+
+                    <div class="submit-errors" v-if="errorMessage">
+                         <p>{{ errorMessage }}</p>
                     </div>
                 </form>
 
@@ -167,7 +176,8 @@ export default {
             file: '',
             text: '',
             userId: '',
-            newImage: ''
+            newImage: '',
+            errorMessage: null
         }
     },
 
@@ -195,7 +205,8 @@ export default {
 
         handleFileUpload() { // OK
             this.file = this.$refs.file.files[0];
-			this.newImage = URL.createObjectURL(this.file)
+			this.newImage = URL.createObjectURL(this.file);
+            console.log(this.file);
         },
         
         createPost() { // NOT WORKING FOR IMAGE, TEXT OK
@@ -203,12 +214,23 @@ export default {
             formData.append('file', this.file);
             formData.append('text', this.text);
             formData.append('userId', this.currentUserId);
+            for (var value of formData.values()) { console.log(value); }
+            if(this.file != '' || this.text != '') {
+                API.post(`posts/`, formData)
+                .then(response => console.log(response))
+                .catch(error => console.log(error));
+            } else {
+                this.errorMessage = 'Vous ne pouvez pas envoyer un message vide.';
+            }
+    
 
-            API.post(`posts/`, formData)
-            .then(response => console.log(response))
-            .catch(error => console.log(error));
+            //window.location.reload();
+        },
 
-            window.location.reload();
+        emptyForm() {
+            this.file = '',
+            this.newImage = '',
+            this.text = ''
         },
 
         deletePost() { // HOW TO TARGET THE POST ID???
@@ -273,17 +295,19 @@ export default {
 
     &__image {
         @include post-img;
+        @include size(80%, auto);
     };
 
 
     &__btn {
-        @include flexbox(row, nowrap, space-between, center);
+        @include flexbox(row, wrap, space-around, center);
         margin: auto;
+        padding: 0 30px 0 30px;
         @include size(80%, auto);
     
         &__btn-image {
             @include flexbox(row, nowrap, center, center);
-            margin: 10px 10px 10px 30px;
+            margin: 10px 10px 10px 10px;
             transition: all 200ms ease-in-out;
 
             input {
@@ -308,9 +332,20 @@ export default {
         &__btn-send {
             @include btn;
             @include btn-new-post-comm;
-            margin: 10px 30px 10px 10px;
+            margin: 10px 10px 10px 10px;
 
         };
+
+        &__btn-undo {
+            @include btn;
+            @include btn-undo-profile;
+            margin: 10px 10px 10px 10px;
+        };
+    };
+
+    .submit-errors {
+        @include form-errors;
+        margin: 20px 0 20px 0;
     };
 };
 

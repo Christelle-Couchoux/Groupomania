@@ -69,7 +69,7 @@ exports.getUserInfo = (req, res) => {
 
 
 // display posts and comments of one user (GET)
-
+//OK
 
 exports.getAllPostsAndCommentsOfUser = (req, res) => {
     sequelize.query('CALL get_posts_and_comments_of_user(:userId)', 
@@ -95,7 +95,7 @@ exports.getAllLikesOfUser = (req, res) => {
 
 
 // modify user profile (PUT)
-
+// file doesn't work
 
 exports.modifyUserProfile = (req, res) => {
     const userObject = req.file ? 

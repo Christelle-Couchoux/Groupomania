@@ -38,9 +38,14 @@
                                 alt="Avatar de l'utilisateur"
                             >
                         </div>
-                        <div id="edit-profile-photo-placeholder" v-else>
-                        </div>
 
+                        <div id="edit-profile-photo" v-else>
+                            <img
+                                :src="userInfo.user_photo"
+                                alt="Avatar de l'utilisateur"
+                            >
+                        </div>
+                        
                         <form class="edit-profile-form" enctype="multipart/form-data">
 							<div class="edit-errors" v-if="errorMessage">
 								<p>{{ errorMessage }}</p>
@@ -68,7 +73,6 @@
                                     v-model="bio"
                                     placeholder="Présentez-vous&nbsp;!"
                                 ></textarea>
-                                <p id="required-fields">Les champs marqués d'un * sont obligatoires</p>
                             </div>    
                         </form>
                     </div>
@@ -121,7 +125,7 @@ export default {
         return {
             user: '',
             bio: '',
-            file: '',
+            file: "",
 			newPhoto: '',
             info: [],
             userInfo:''
@@ -156,6 +160,7 @@ export default {
 
         handleFileUpload() {
             //this.file = document.getElementById('file').files[0];
+            //this.file = e;
             this.file = this.$refs.file.files[0];
 			this.newPhoto = URL.createObjectURL(this.file)
         },
@@ -263,19 +268,6 @@ export default {
         border-radius: 50%;
     };
 };
-
-#edit-profile-photo-placeholder {
-    @include flexbox(row, nowrap, center, center);
-    @include size(150px);
-    border-radius: 50%;
-    margin: 20px 20px 20px 20px;
-    border: solid 1px $color-secondary;
-
-    @include lg {
-        margin: 20px;
-    };
-};
-
 
 
 .edit-profile-form {

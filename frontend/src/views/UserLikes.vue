@@ -8,19 +8,11 @@
 			<section id="user-profile-content">
                 <h1>{{ currentUserPseudo }}</h1>
                 
-                <UserInfo>
-                    <template v-slot>
-                        <div class="edit-profile-btn">
-                            <router-link :to="{ name: 'EditProfile', params: { currentUserId } }" title="Éditer le profil">
-                                <input type="button" value="Éditer le profil"/>
-                            </router-link>
-                        </div>
-                    </template>
-                </UserInfo>
+                <!-- user info -->
 
                 <div id="user-posts">
 
-                    <ProfileNav/>
+                    <!-- profil nav -->
 
                     <!-- if no posts or comments liked yet -->
                     <div id="no-posts">
@@ -54,8 +46,6 @@
 
 import ScrollToTopBtn from "../components/ScrollToTopBtn.vue"
 import PostsHeader from "../components/PostsHeader.vue"
-import UserInfo from "../components/UserInfo.vue"
-import ProfileNav from "../components/ProfileNav.vue"
 
 
 export default {
@@ -63,8 +53,6 @@ export default {
 	components: {
 		ScrollToTopBtn,
 		PostsHeader,
-        UserInfo,
-        ProfileNav
 	},
     created() {
         this.currentUserId = localStorage.getItem("userId");

@@ -34,7 +34,7 @@
 
                         <div class="specific-post__date-time">
                             <div class="specific-post__date">
-                                <p>{{ moment(postInfo.createdAt).format('[Le] D MMMM YYYY [à] HH:MM') }}</p>
+                                <p>{{ moment(postInfo.createdAt).format('[Le] D MMMM YYYY [à] HH:mm') }}</p>
                             </div>
                         </div>
 
@@ -73,9 +73,15 @@
                                 v-model="text"
                             ></textarea>
                         </div>
-    
+                        
                         <div class="add-comment__btn">
-                            <input type="submit" value="Envoyer" @click.prevent="createComment">
+                            <div class="add-comment__btn__btn-send">
+                                <input type="submit" value="Envoyer" @click.prevent="createComment">
+                            </div>
+
+                            <div class="add-comment__btn__btn-undo">
+                                <input type="submit" value="Annuler" @click.prevent="emptyForm">
+                            </div>
                         </div>
                     </form>
                     <!-- add comment end -->
@@ -225,6 +231,10 @@ export default {
             window.location.reload();
         },
 
+        emptyForm() {
+            this.text = ''
+        },
+
         getComments() {
             API.get(`posts/${this.postId}/comments`)
            .then(response => {
@@ -328,13 +338,14 @@ export default {
 
 .add-comment {
     @include size (100%, auto);
+    @include flexbox(column, wrap, space-around, center);
     padding: 30px 0 30px 0;
     border-bottom: solid 1px $color-secondary;
     border-top: solid 1px $color-secondary;
     margin: 0 0 30px 0;
 
     &__text {
-        @include flexbox(column, nowrap, space-around, center);
+        //@include flexbox(column, nowrap, space-around, center);
         @include size(80%, auto);
         margin: auto;
 
@@ -348,10 +359,22 @@ export default {
     };
 
     &__btn {
-        @include btn;
-        @include btn-new-post-comm;
-        margin: 30px 0 0 0;
+        @include flexbox(row, wrap, space-around, center);
+        padding: 0 30px 0 30px;
+
+        &__btn-send {
+            @include btn;
+            @include btn-new-post-comm;
+            margin: 30px 10px 0 10px;
+        };
+
+        &__btn-undo {
+            @include btn;
+            @include btn-undo-profile;
+            margin: 30px 10px 0 10px;
+        };
     };
+    
 };
 
 #comments-list {

@@ -158,8 +158,7 @@ export default {
                 localStorage.setItem("userId", response.data.userId);
                 localStorage.setItem("pseudo", response.data.pseudo);
                 localStorage.setItem("role", response.data.role);
-                const currentUserId = response.data.userId;
-                router.push(`/user/${currentUserId}/edit`);
+                router.push(`/forums`);
                 //console.log(response)
             })
             .catch(error => {

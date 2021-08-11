@@ -10,7 +10,7 @@ module.exports = (sequelize, Sequelize) => {
 			autoIncrement: true
 		},
 		pseudo: {
-			type: Sequelize.STRING,
+			type: Sequelize.STRING(16),
 			allowNull: false,
 			unique: true
 		},
@@ -26,7 +26,7 @@ module.exports = (sequelize, Sequelize) => {
 			unique: true,
 		},
 		password: {
-			type: Sequelize.STRING,
+			type: Sequelize.STRING(20),
 			allowNull: false,
 			//validate: { verifyPassword }
 		},
