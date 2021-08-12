@@ -99,7 +99,11 @@
 
                         <div class="comment" v-for="comment in comments" :key="comment.comment_id">
                             <!-- if own comment -->
-                            <div class="delete-comment" v-if="comment.user_id == currentUserId || currentUserRole == 'admin'">
+                            <div
+                                class="delete-comment"
+                                v-if="comment.user_id == currentUserId || currentUserRole == 'admin'"
+                                @click.prevent="deleteComment(comment)"
+                            >
                                 <i class="fas fa-times" aria-label="Supprimer" role="button"></i>
                             </div>
 
@@ -187,7 +191,7 @@ export default {
             postInfo: '',
             text: '',
             comments: {},
-            comment: ''
+            comment: '',
         }
     },
 
@@ -250,6 +254,15 @@ export default {
             console.log(this.post_id);
 
             router.push('/posts');
+        },
+
+        deleteComment(comment) {
+            API.delete(`comments/${comment.comment_id}`)
+            .then(response => console.log(response))
+            .catch(error => console.log(error));
+            console.log();
+
+            window.location.reload();
         }
     }
 };

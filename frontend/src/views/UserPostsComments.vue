@@ -64,7 +64,11 @@
                         <div class="post" v-for="postComment in postsComments" :key="postComment.id">
                             <router-link :to="{ name: 'Post', params: { postId: postComment.post_id } }" title="Voir le message" class="postComment-router-link">
                                 <!-- post -->
-                                <div class="delete-post" v-if="postComment.post_user_id == currentUserId || currentUserRole == 'admin'">
+                                <div
+                                    class="delete-post"
+                                    v-if="postComment.post_user_id == currentUserId || currentUserRole == 'admin'"
+                                    @click.prevent="deletePost(postComment)"
+                                >
                                     <i class="fas fa-times" aria-label="Supprimer" role="button" @click="deletePost"></i>
                                 </div>
 
@@ -110,7 +114,7 @@
                                             <i class="far fa-comment" aria-label="Commenter" role="img"></i>
                                         </div>
                                         <div class="post__btn__counter">
-                                            <p>1</p>
+                                            <p></p>
                                         </div>
                                     </div>
                                     <div class="post__btn post__btn--like" title="Aimer">
@@ -118,7 +122,7 @@
                                             <i class="far fa-heart" aria-label="Aimer" role="img"></i>
                                         </div>
                                         <div class="post__btn__counter">
-                                            <p>3</p>
+                                            <p></p>
                                         </div>
                                     </div>
                                 </div>
@@ -127,7 +131,11 @@
                                 <!-- comment -->
                                 <div class="comment" v-if="postComment.comment_id">
                                     <!-- if own comment -->
-                                    <div class="delete-comment" v-if="postComment.comment_user_id == currentUserId || currentUserRole == 'admin'">
+                                    <div
+                                        class="delete-comment"
+                                        v-if="postComment.comment_user_id == currentUserId || currentUserRole == 'admin'"
+                                        @click.prevent="deleteComment(postComment)"
+                                    >
                                         <i class="fas fa-times" aria-label="Supprimer" role="button"></i>
                                     </div>
 
@@ -255,6 +263,24 @@ export default {
             .catch(error => console.log(error));
             
         },
+
+        deletePost(postComment) {
+            API.delete(`posts/${postComment.post_id}`)
+            .then(response => console.log(response))
+            .catch(error => console.log(error));
+            console.log();
+
+            window.location.reload();
+        },
+
+        deleteComment(postComment) {
+            API.delete(`comments/${postComment.comment_id}`)
+            .then(response => console.log(response))
+            .catch(error => console.log(error));
+            console.log();
+
+            window.location.reload();
+        }
     }
 };
 

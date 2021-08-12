@@ -57,7 +57,7 @@
                                 </label>
                                 <input
                                     type="file"
-                                    name="file"
+                                    name="image"
                                     id="file"
                                     ref="file"
                                     @change="handleFileUpload"
@@ -125,7 +125,7 @@ export default {
         return {
             user: '',
             bio: '',
-            file: "",
+            file: '',
 			newPhoto: '',
             info: [],
             userInfo:''
@@ -167,9 +167,13 @@ export default {
 
         submitFile() { // doesn't work with file, ok if only text
             const formData = new FormData();
-            formData.append('file', this.file);
-			formData.append('bio', this.bio)
-
+            if(this.file != '') {
+                formData.append('image', this.file)
+            }
+			if(this.bio != '') {
+                formData.append('bio', this.bio)
+            }
+            for (var value of formData.values()) { console.log(value); }
             API.put(`users/${this.$route.params.userId}`, formData)
             .then(response => console.log(response))
             .catch(error => console.log(error));

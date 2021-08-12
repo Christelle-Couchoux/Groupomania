@@ -65,7 +65,11 @@
 
                         <div class="post" v-for="post in posts" :key="post.post_id">
                             <router-link :to="{ name: 'Post', params: { postId: post.post_id } }" title="Voir le message">
-                                <div class="delete-post" v-if="post.fk_user_id == currentUserId || currentUserRole == 'admin'">
+                                <div
+                                    class="delete-post"
+                                    v-if="post.fk_user_id == currentUserId || currentUserRole == 'admin'"
+                                    @click.prevent="deletePost(post)"
+                                >
                                     <i class="fas fa-times" aria-label="Supprimer" role="button" @click="deletePost"></i>
                                 </div>
 
@@ -111,7 +115,7 @@
                                             <i class="far fa-comment" aria-label="Commenter" role="img"></i>
                                         </div>
                                         <div class="post__btn__counter">
-                                            <p>1</p>
+                                            <p>{{ post.comments_count }}</p>
                                         </div>
                                     </div>
                                     <div class="post__btn post__btn--like" title="Aimer">
@@ -119,7 +123,7 @@
                                             <i class="far fa-heart" aria-label="Aimer" role="img"></i>
                                         </div>
                                         <div class="post__btn__counter">
-                                            <p>3</p>
+                                            <p>{{ post.post_likes_count }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -205,6 +209,15 @@ export default {
             })
             .catch(error => console.log(error));
         },
+
+        deletePost(post) {
+            API.delete(`posts/${post.post_id}`)
+            .then(response => console.log(response))
+            .catch(error => console.log(error));
+            console.log();
+
+            window.location.reload();
+        }
     }
 
 };

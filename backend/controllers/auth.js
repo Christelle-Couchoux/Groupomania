@@ -74,7 +74,9 @@ exports.signup = (req, res) => {
         }
     })
     .catch(error => res.status(500).json({ error }));
+    //sequelize.close();
 };
+
 
 
 // connect existing user (POST)
@@ -112,4 +114,5 @@ exports.login = (req, res) => {
         .catch(error => res.status(500).json({ error }));
     })
     .catch(error => res.status(500).json({ error }));
+    //sequelize.close();
 };

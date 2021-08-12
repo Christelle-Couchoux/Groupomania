@@ -10,6 +10,7 @@ const { Op } = require('sequelize');
 const { QueryTypes } = require('sequelize');
 const sequelize = db.sequelize;
 
+
 // display all users (GET)
 // OK
 
@@ -21,6 +22,7 @@ exports.getAllUsers = (req, res) => {
     })
     .then(users => res.status(200).json({ users }))
     .catch(error => res.status(40).json({ error }));
+    //sequelize.close();
 };
 
 
@@ -38,20 +40,9 @@ exports.getAllPostsOfUser = (req, res) => {
         return res.status(200).json({ posts })
     })
     .catch((error) => res.status(400).json(error));
+    //sequelize.close();
 };
 
-/*
-exports.getAllPostsOfUser = (req, res) => {
-    sequelize.query('CALL get_all_posts()', { 
-        type: QueryTypes.SELECT, 
-        where: { fk_user_id: req.params.userId }
-    })
-    .then(([posts, metadata]) => {
-        return res.status(200).json({ posts })
-    })
-    .catch((error) => res.status(400).json(error));
-};
-*/
 
 
 // display info of one user (GET)
@@ -65,7 +56,9 @@ exports.getUserInfo = (req, res) => {
     })
     .then(([info, metadata]) => { return res.status(200).json({ info }) })
     .catch((error) => res.status(400).json(error));
+    //sequelize.close();
 };
+
 
 
 // display posts and comments of one user (GET)
@@ -81,6 +74,7 @@ exports.getAllPostsAndCommentsOfUser = (req, res) => {
         return res.status(200).json({ postsComments })
     })
     .catch((error) => res.status(400).json(error));
+    //sequelize.close();
 };
 
 
@@ -94,8 +88,9 @@ exports.getAllLikesOfUser = (req, res) => {
 */
 
 
+
 // modify user profile (PUT)
-// file doesn't work
+// OK
 
 exports.modifyUserProfile = (req, res) => {
     const userObject = req.file ? 
@@ -106,6 +101,7 @@ exports.modifyUserProfile = (req, res) => {
     User.update({ ...userObject, user_id: req.params.userId }, { where: { user_id: req.params.userId } })
     .then(() => res.status(200).json({ message: 'Profil utilisateur modifié !' }))
     .catch(error => res.status(400).json({ error }));
+    //sequelize.close();
 }
 
 
@@ -117,4 +113,5 @@ exports.deleteUserAccount = (req, res) => {
     User.destroy({ where: { user_id: req.params.userId } })
     .then(() => res.status(200).json({ message: 'Utlisateur supprimé !' }))
     .catch(error => res.status(400). json({ error }));
+    //sequelize.close();
 };

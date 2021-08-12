@@ -26,9 +26,10 @@
                             <label for="file">
                                 <i class="fas fa-image" aria-label="Ajouter une image" role="img"></i>
                             </label>
+                            <!-- name must be 'image' because multer save .single('image') -->
                             <input
                                 type="file"
-                                name="file"
+                                name="image" 
                                 id="file"
                                 accept="image/png, image/jpeg, image/jpg, image/gif"
                                 ref="file"
@@ -69,7 +70,7 @@
                                 <div
                                     class="delete-post"
                                     v-if="post.fk_user_id == currentUserId || currentUserRole == 'admin'"
-                                    @click.prevent="deletePost()"
+                                    @click.prevent="deletePost(post)"
                                 >
                                     <i class="fas fa-times" aria-label="Supprimer" role="button"></i>
                                 </div>
@@ -116,7 +117,7 @@
                                             <i class="far fa-comment" aria-label="Commenter" role="img"></i>
                                         </div>
                                         <div class="post__btn__counter">
-                                            <p>1</p>
+                                            <p>{{ post.comments_count }}</p>
                                         </div>
                                     </div>
                                     <div class="post__btn post__btn--like" title="Aimer">
@@ -124,7 +125,7 @@
                                             <i class="far fa-heart" aria-label="Aimer" role="img"></i>
                                         </div>
                                         <div class="post__btn__counter">
-                                            <p>3</p>
+                                            <p>{{ post.post_likes_count }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -206,15 +207,17 @@ export default {
         handleFileUpload() { // OK
             this.file = this.$refs.file.files[0];
 			this.newImage = URL.createObjectURL(this.file);
-            console.log(this.file);
+            //console.log(this.file); // ok
         },
         
         createPost() { // NOT WORKING FOR IMAGE, TEXT OK
             const formData = new FormData();
-            formData.append('file', this.file);
-            formData.append('text', this.text);
+            formData.append('image', this.file) // must be 'image' because multer save .single('image')
+            formData.append('text', this.text)
             formData.append('userId', this.currentUserId);
-            for (var value of formData.values()) { console.log(value); }
+
+            //for (var value of formData.values()) { console.log(value); } // ok
+
             if(this.file != '' || this.text != '') {
                 API.post(`posts/`, formData)
                 .then(response => console.log(response))
@@ -223,26 +226,23 @@ export default {
                 this.errorMessage = 'Vous ne pouvez pas envoyer un message vide.';
             }
     
-
             //window.location.reload();
         },
 
         emptyForm() {
             this.file = '',
             this.newImage = '',
-            this.text = ''
+            this.text = '',
+            this.errorMessage = ''
         },
 
-        deletePost() { // HOW TO TARGET THE POST ID???
-            //let postId = this.closest('.post').key; // get id of post
-            //console.log(postId);
-
-            //API.delete(`posts/${this.post.post_id}`)
-            //.then(response => console.log(response))
-            //.catch(error => console.log(error));
+        deletePost(post) {
+            API.delete(`posts/${post.post_id}`)
+            .then(response => console.log(response))
+            .catch(error => console.log(error));
             console.log();
 
-            //window.location.reload();
+            window.location.reload();
         }
     }
 };

@@ -9,12 +9,15 @@ const CommentLike = db.commentLike;
 const Op = db.sequelize.Op;
 
 // delete a comment (DELETE)
+// OK
 
-/*
 exports.deleteComment = (req, res) => {
-
+    Comment.destroy({ where: { comment_id: req.params.commentId } })
+    .then(() => res.status(200).json({ message: 'Commentaire supprimé !' }))
+    .catch(error => res.status(400). json({ error }));
+    //sequelize.close();
 };
-*/
+
 
 
 // display all likes of a comment (GET)
@@ -24,6 +27,7 @@ exports.getAllLikesOfComment = (req, res) => {
 
 };
 */
+
 
 
 // like or unlike a comment (POST)

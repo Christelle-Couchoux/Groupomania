@@ -22,4 +22,5 @@ const storage = multer.diskStorage({
     }
 });
 
-module.exports = multer({storage: storage}).single('image');
+module.exports = multer({storage: storage}).single('image'); 
+// if 'image' here, name input type file must be 'image', and must be formData.append('image', this.file) 
