@@ -14,21 +14,14 @@ module.exports = (sequelize, Sequelize) => {
 			allowNull: false,
 			unique: true
 		},
-		first_name: {
-			type: Sequelize.STRING,
-		},
-		last_name: {
-			type: Sequelize.STRING,
-		},
 		email: {
-			type: Sequelize.STRING,
+			type: Sequelize.STRING(50),
 			allowNull: false,
 			unique: true,
 		},
 		password: {
-			type: Sequelize.STRING(20),
+			type: Sequelize.STRING,
 			allowNull: false,
-			//validate: { verifyPassword }
 		},
 		user_photo: {
 			type: Sequelize.STRING,
@@ -48,14 +41,6 @@ module.exports = (sequelize, Sequelize) => {
 	{
 		indexes: [
 			{
-				name: 'user_first_name',
-				fields: ['first_name']
-			},
-			{
-				name: 'user_last_name',
-				fields: ['last_name']
-			},
-			{
 				name: 'user_createdAt',
 				fields: ['createdAt']
 			},
@@ -66,10 +51,9 @@ module.exports = (sequelize, Sequelize) => {
 		User.hasMany(models.Post);
 		User.hasMany(models.Comment);
 		User.hasMany(models.Post_like);
-		User.hasMany(models.Comment_like);
-		User.hasMany(models.Notification);
 		User.belongsTo(models.Role, { foreingKey: 'fk_user_role', targetKey: 'role_name' });
 	};
 
 	return User;
 };
+

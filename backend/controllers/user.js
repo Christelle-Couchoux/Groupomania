@@ -27,24 +27,6 @@ exports.getAllUsers = (req, res) => {
 
 
 
-// display posts of one user (GET)
-// OK
-
-exports.getAllPostsOfUser = (req, res) => {
-    sequelize.query('CALL get_all_posts_of_user(:userId)', 
-    {
-        replacements: { userId: req.params.userId },
-        type: QueryTypes.SELECT 
-    })
-    .then(([posts, metadata]) => {
-        return res.status(200).json({ posts })
-    })
-    .catch((error) => res.status(400).json(error));
-    //sequelize.close();
-};
-
-
-
 // display info of one user (GET)
 // OK
 
@@ -61,17 +43,35 @@ exports.getUserInfo = (req, res) => {
 
 
 
-// display posts and comments of one user (GET)
-//OK
+// display posts of one user (GET)
+// OK
 
-exports.getAllPostsAndCommentsOfUser = (req, res) => {
-    sequelize.query('CALL get_posts_and_comments_of_user(:userId)', 
+exports.getAllPostsOfUser = (req, res) => {
+    sequelize.query('CALL get_all_posts_of_user_with_comments_and_likes_counts(:userId)', 
     {
         replacements: { userId: req.params.userId },
         type: QueryTypes.SELECT 
     })
-    .then(([postsComments, metadata]) => {
-        return res.status(200).json({ postsComments })
+    .then(([posts, metadata]) => {
+        return res.status(200).json({ posts })
+    })
+    .catch((error) => res.status(400).json(error));
+    //sequelize.close();
+};
+
+
+
+// display comments of one user (GET)
+//OK
+
+exports.getAllCommentsOfUser = (req, res) => {
+    sequelize.query('CALL get_all_comments_of_user(:userId)', 
+    {
+        replacements: { userId: req.params.userId },
+        type: QueryTypes.SELECT 
+    })
+    .then(([comments, metadata]) => {
+        return res.status(200).json({ comments })
     })
     .catch((error) => res.status(400).json(error));
     //sequelize.close();
@@ -96,6 +96,7 @@ exports.modifyUserProfile = (req, res) => {
     const userObject = req.file ? 
     {
         ...req.body.userId,
+        bio: req.body.bio,
         user_photo: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
     } : { ...req.body }
     User.update({ ...userObject, user_id: req.params.userId }, { where: { user_id: req.params.userId } })
@@ -103,7 +104,6 @@ exports.modifyUserProfile = (req, res) => {
     .catch(error => res.status(400).json({ error }));
     //sequelize.close();
 }
-
 
 
 // delete user account (DELETE)

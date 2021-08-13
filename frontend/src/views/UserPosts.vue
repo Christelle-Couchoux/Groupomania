@@ -22,13 +22,9 @@
                         </router-link>
                     </div>
 
-                    <p class="user-bio">
+                    <p class="user-bio" v-if="userInfo.bio != null">
                         <strong>Bio :</strong>  {{ userInfo.bio }}
                     </p>
-
-                    <div class="user-info-errors" v-if="errorMessage">
-                        <p>{{ errorMessage }}</p>
-                    </div>
                 </div>
 
                 <div id="user-posts">
@@ -41,8 +37,8 @@
                                 </router-link>
                             </li>
                             <li>
-                                <router-link :to="{ name: 'UserPostsComments', params: { userId: userInfo.user_id } }" title="Messages et commentaires">
-                                    <div><p>Messages & commentaires</p></div>
+                                <router-link :to="{ name: 'UserComments', params: { userId: userInfo.user_id } }" title="Commentaires">
+                                    <div><p>Commentaires</p></div>
                                 </router-link>
                             </li>
                             <li>
@@ -296,7 +292,7 @@ export default {
     @include size(90%, auto);
     font-size: map-get($font-size, pseudo);
     color: map-get($color-txt, pseudo);
-    margin: 10px;
+    margin: 10px 10px 20px 10px;
     text-align: center;
     transition: all 200ms ease-in-out;
 
@@ -308,7 +304,7 @@ export default {
 
 .user-bio {
     @include size(90%, auto);
-    margin: 10px 10px 20px 10px;
+    margin: 0 10px 20px 10px;
     padding: 0 10px;
 
     @include lg {
@@ -356,17 +352,7 @@ export default {
 			};	
         };     
     }; 
-    // DO NOT MOVE! 
-    // Needs to be outside li to not be overwritten
-	/*
-    .router-link-active {
-        border-bottom: solid 1px $color-primary-dark;
-        //a {
-            color: $color-primary-dark;
-            font-weight: 700;
-        //};
-    };  
-	*/
+
 	.router-link-exact-active {
         border-bottom: solid 1px $color-primary-dark;
         

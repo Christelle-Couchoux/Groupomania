@@ -50,14 +50,22 @@
                             />
                         </div>
 
-                        <div class="specific-post__likes">
-                            <div class="specific-post__likes__btn" title="Aimer">
-                                <i class="far fa-heart" aria-label="Aimer" role="img"></i>
+                        <div class="specific-post__buttons">
+                            <div class="specific-post__btn specific-post__btn--comment" title="Commentaires">
+                                <div class="specific-post__btn__icon">
+                                    <i class="far fa-comment" aria-label="Commentaires" role="img"></i>
+                                </div>
+                                <div class="specific-post__btn__counter">
+                                    <p>{{ postInfo.comments_count }}</p>
+                                </div>
                             </div>
-                            <div class="specific-post__likes__count" title="Voir les utilisateurs qui aiment ce message">
-                                <router-link to="/posts/:postId/likes" title="Voir les utilisateurs qui aiment ce message">
-                                    <p>3 &nbsp; J'aime</p>
-                                </router-link>
+                            <div class="specific-post__btn specific-post__btn--like" title="Aimer">
+                                <div class="specific-post__btn__icon">
+                                    <i class="far fa-heart" aria-label="Aimer" role="img"></i>
+                                </div>
+                                <div class="specific-post__btn__counter">
+                                    <p>{{ postInfo.post_likes_count }}</p>
+                                </div>
                             </div>
                         </div>        
                     </div>
@@ -76,12 +84,16 @@
                         
                         <div class="add-comment__btn">
                             <div class="add-comment__btn__btn-send">
-                                <input type="submit" value="Envoyer" @click.prevent="createComment">
+                                <input type="submit" value="Envoyer" @click.prevent="checkComment">
                             </div>
 
                             <div class="add-comment__btn__btn-undo">
                                 <input type="submit" value="Annuler" @click.prevent="emptyForm">
                             </div>
+                        </div>
+
+                        <div class="submit-errors" v-if="errorMessage">
+                            <p>{{ errorMessage }}</p>
                         </div>
                     </form>
                     <!-- add comment end -->
@@ -134,17 +146,6 @@
                             <div class="comment__text">
                                 <p>{{ comment.comment_text }}</p>
                             </div>
-
-                            <div class="comment__likes">
-                                <div class="comment__likes__btn" title="Aimer">
-                                    <i class="far fa-heart" aria-label="Aimer" role="img"></i>
-                                </div>
-                                <div class="comment__likes__count" title="Voir les utilisateurs qui aiment ce message">
-                                    <router-link to="/posts/:postId/likes" title="Voir les utilisateurs qui aiment ce message">
-                                        <p>2 &nbsp; J'aime</p>
-                                    </router-link>
-                                </div>
-                            </div>
                         </div>
 
                         <div id="comments-end">
@@ -192,6 +193,7 @@ export default {
             text: '',
             comments: {},
             comment: '',
+            errorMessage: null
         }
     },
 
@@ -222,6 +224,19 @@ export default {
             this.moment = moment;
         },
 
+        checkComment() {
+            if(!this.validComment(this.text)) {
+                this.errorMessage = 'Votre commentaire doit comprendre entre 1 et 255 caractères.';
+            } else { //if no errors
+                this.createComment(); // send the form
+            }
+        },
+
+        validComment(text) {
+            const regex = /^[-\w\sÀÁÂÄÅÇÈÉÊËÌÍÎÏÑŒÒÓÔÕÖØÙÚÛÜàáâäåçèéêëìíîïñœòóôõöøùúûü.,!"'\\?/$ ]{0,255}$/;
+            return regex.test(text);
+        },
+
         createComment() {
             API.post(`posts/${this.postId}/comments`,
             {
@@ -231,12 +246,12 @@ export default {
             })
             .then(response => console.log(response))
             .catch(error => console.log(error));
-
-            window.location.reload();
+            //window.location.reload();
         },
 
         emptyForm() {
-            this.text = ''
+            this.text = '',
+            this.errorMessage = ''
         },
 
         getComments() {
@@ -346,6 +361,54 @@ export default {
         @include delete-post-comment;
         @include position(absolute, 30px, 20px, auto, auto);
     };
+
+
+    &__buttons {
+        @include flexbox(row, nowrap, space-around, center);
+        margin: auto;
+        max-width: 600px;
+    };
+
+
+    &__btn {
+        @include flexbox(row, nowrap, center, center);
+        padding : 5px 20px 0 20px;
+        color: $color-secondary-dark;
+        transition: all 200ms ease-in-out;
+        
+        &:hover {
+            cursor: pointer;
+        };
+
+        &__icon {
+            margin: 0 10px 0 0;
+            
+            i {
+                border-radius: 50%;
+                padding: 10px;
+            };
+        }; 
+        
+        &--comment {
+            &:hover {
+                color: $color-basic-dark;
+
+                i {
+                    background-color: $color-basic-dark-lighter;
+                };
+            };
+        };
+    
+        &--like {
+            &:hover {
+                color: $color-primary-dark;
+                i {
+                    background-color: $color-primary-light;
+                };
+            };
+        };
+    }; 
+  
 };
 
 
@@ -386,6 +449,11 @@ export default {
             @include btn-undo-profile;
             margin: 30px 10px 0 10px;
         };
+    };
+
+    .submit-errors {
+        @include form-errors;
+        margin: 30px 0 10px 0;
     };
     
 };

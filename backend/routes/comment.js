@@ -9,8 +9,6 @@ const commentCtrl = require('../controllers/comment');
 // comment routes
 
 router.delete('/:commentId', auth, commentCtrl.deleteComment);
-//router.get('/:commentId/likes', auth, commentCtrl.getAllLikesOfComment);
-//router.post('/:commentId/likes', commentCtrl.LikeComment);
 
 
 module.exports = router;

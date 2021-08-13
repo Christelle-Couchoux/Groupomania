@@ -34,3 +34,4 @@ module.exports = (sequelize, Sequelize) => {
 
     return Post_like;
 };
+

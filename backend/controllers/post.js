@@ -14,26 +14,6 @@ const sequelize = db.sequelize;
 
 // display all posts (GET)
 // OK
-/*
-exports.getAllPosts = (req, res) => {
-    sequelize.query('CALL get_all_posts()', { type: QueryTypes.SELECT })
-    .then(([posts, metadata]) => {
-        return res.status(200).json({ posts })
-    })
-    .catch((error) => res.status(400).json(error));
-    //sequelize.close();
-}
-*/
-/*
-exports.getAllPosts = (req, res) => {
-    sequelize.query('CALL get_all_posts_with_comments_count()', { type: QueryTypes.SELECT })
-    .then(([posts, metadata]) => {
-        return res.status(200).json({ posts })
-    })
-    .catch((error) => res.status(400).json(error));
-    //sequelize.close();
-}
-*/
 
 exports.getAllPosts = (req, res) => {
     sequelize.query('CALL get_all_posts_with_comments_and_likes_counts()', { type: QueryTypes.SELECT })
@@ -45,45 +25,9 @@ exports.getAllPosts = (req, res) => {
 }
 
 
-/* include doesn't work
-
-exports.getAllPosts = (req, res) => {
-    Post.findAll({
-        include: [
-            { // add comments and likes
-                model: User,
-                attributes: ['pseudo', 'user_photo', 'user_id']
-            },
-        ],
-        order: [
-            ['post_id', 'DESC']
-        ]
-    })
-    .then(posts => {
-        const Posts = [];
-        posts.forEach((post) =>
-            Posts.push( {
-                id: post.post_id,
-                file:post.post_file,
-                text: post.post_text,
-                userId: post.User.user_id,
-                pseudo: post.User.pseudo,
-                userPhoto: post.User.user_photo,
-                createdAt: post.createdAt
-            })
-        );
-        return res.status(200).json({ Posts })
-    })
-    .catch((error) => res.status(400).json(error));
-};
-*/
-
-
 
 // add a new post (POST)
-// image is displayed and saved
-// req is sent but not recorded in db
-// req without image is ok
+// OK
 
 exports.createPost = (req, res) => {
     //req.socket.setTimeout(10 * 60 * 1000);
@@ -106,83 +50,9 @@ exports.createPost = (req, res) => {
     .catch(err => {
         if(err.request){ console.log(err.request) }
         if(err.response){ console.log(err.response) }
-        if(fileURL) { console.log(fileURL) }
     });
     //sequelize.close();
 };
-
-
-
-/*
-exports.createPost = (req, res) => {
-    let fileURL ='';
-    if(req.file) {
-        fileURL = `${req.protocol}://${req.get("host")}/images/${req.file.filename}` 
-    }
-    Post.create({
-        post_file: fileURL,
-        post_text: req.body.text,
-        fk_user_id: req.body.userId,
-    })
-    .then(() => res.status(201).json({ message: 'Message créé !' }))
-    .catch(err => {
-        if(err.request){ console.log(err.request) }
-        if(err.response){ console.log(err.response) }
-        if(fileURL) { console.log(fileURL) }
-    });    
-};
-*/
-
-
-
-/*
-exports.createPost = (req, res) => {
-    if(!req.file) {
-        Post.create( {
-            post_file: '',
-            post_text: req.body.text,
-            fk_user_id: req.body.userId
-        })
-        .then(() => res.status(201).json({ message: 'Message créé !' }))
-        .catch(error => res.status(400).json({ error })); 
-    } else if(req.file) {
-        let fileURL = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-        Post.create( {
-            post_file: fileURL,
-            post_text: req.body.text,
-            fk_user_id: req.body.userId
-        })
-        .then(() => res.status(201).json({ message: 'Message créé !' }))
-        .catch(error => res.status(400).json({ error })); 
-    } 
-};
-*/
-
-
-
-/*
-exports.createPost = (req, res) => {
-    if(!req.file) {
-        Post.create( {
-            post_file: '',
-            post_text: req.body.text,
-            fk_user_id: req.body.userId
-        })
-        .then(() => res.status(201).json({ message: 'Message créé !' }))
-        .catch(error => res.status(400).json({ error })); 
-    } else if(req.file) {
-        let fileURL = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-        Post.create( {
-            post_file: fileURL,
-            post_text: req.body.text,
-            fk_user_id: req.body.userId
-        })
-        .then(() => res.status(201).json({ message: 'Message créé !' }))
-        .catch(error => res.status(400).json({ error })); 
-    } 
-};
-*/
-
 
 
 
@@ -191,7 +61,7 @@ exports.createPost = (req, res) => {
 // OK
 
 exports.getOnePost = (req, res) => {
-    sequelize.query('CALL get_one_post(:postId)',
+    sequelize.query('CALL get_one_post_with_comments_and_likes_counts(:postId)',
     {
         replacements: { postId: req.params.postId },
         type: QueryTypes.SELECT 
@@ -199,6 +69,38 @@ exports.getOnePost = (req, res) => {
     .then(([post, metadata]) => { return res.status(200).json({ post }) })
     .catch((error) => res.status(400).json(error));
     //sequelize.close();
+};
+
+
+
+// display all comments of a post (GET)
+// OK
+
+exports.getAllCommentsOfPost = (req, res) => {
+    sequelize.query('CALL get_comments_of_post(:postId)',
+    {
+        replacements: { postId: req.params.postId },
+        type: QueryTypes.SELECT 
+    })
+    .then(([comments, metadata]) => { return res.status(200).json({ comments }) })
+    .catch((error) => res.status(400).json(error));
+    //sequelize.close();
+};
+
+
+
+// add a new comment (POST)
+// OK
+
+exports.createComment = (req, res) => {
+    Comment.create({
+        fk_user_id: req.body.userId,
+        fk_post_id: req.body.postId,
+        comment_text: req.body.text,
+    })
+    .then(() => res.status(201).json({ message: 'Commentaire créé !' }))
+    .catch(error => res.status(400).json({ error }));
+    //sequelize.close();  
 };
 
 
@@ -231,15 +133,6 @@ exports.deletePost = (req, res) => {
 
 
 
-// display all likes of a post (GET)
-
-/*
-exports.getAllLikesOfPost = (req, res) => {
-
-};
-*/
-
-
 
 // like or unlike a post (POST)
 
@@ -248,36 +141,3 @@ exports.LikePost = (req, res) => {
 
 };
 */
-
-
-
-// display all comments of a post (GET)
-// OK
-
-exports.getAllCommentsOfPost = (req, res) => {
-    sequelize.query('CALL get_comments_of_post(:postId)',
-    {
-        replacements: { postId: req.params.postId },
-        type: QueryTypes.SELECT 
-    })
-    .then(([comments, metadata]) => { return res.status(200).json({ comments }) })
-    .catch((error) => res.status(400).json(error));
-    //sequelize.close();
-};
-
-
-
-
-// add a new comment (POST)
-// OK
-
-exports.createComment = (req, res) => {
-    Comment.create({
-        fk_user_id: req.body.userId,
-        fk_post_id: req.body.postId,
-        comment_text: req.body.text,
-    })
-    .then(() => res.status(201).json({ message: 'Commentaire créé !' }))
-    .catch(error => res.status(400).json({ error }));
-    //sequelize.close();  
-};

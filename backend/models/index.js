@@ -23,8 +23,6 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.comment = require("./comment.js")(sequelize, Sequelize);
-db.comment_like = require("./comment_like.js")(sequelize, Sequelize);
-db.notification = require("./notification.js")(sequelize, Sequelize);
 db.post_like = require("./post_like.js")(sequelize, Sequelize);
 db.post = require("./post.js")(sequelize, Sequelize);
 db.role = require("./role.js")(sequelize, Sequelize);

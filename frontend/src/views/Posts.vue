@@ -38,7 +38,7 @@
                         </div>
 
                         <div class="add-post__btn__btn-send">
-                            <input type="submit" value="Envoyer" @click.prevent="createPost">
+                            <input type="submit" value="Envoyer" @click.prevent="checkPost">
                         </div>
 
                         <div class="add-post__btn__btn-undo">
@@ -48,7 +48,7 @@
                     </div>
 
                     <div class="submit-errors" v-if="errorMessage">
-                         <p>{{ errorMessage }}</p>
+                        <p>{{ errorMessage }}</p>
                     </div>
                 </form>
 
@@ -209,6 +209,19 @@ export default {
 			this.newImage = URL.createObjectURL(this.file);
             //console.log(this.file); // ok
         },
+
+        checkPost() {
+            if(!this.validPost(this.text)) {
+                this.errorMessage = 'Votre message peut comprendre au maximum 255 caractères.';
+            } else { // if no errors
+                this.createPost(); // send the form
+            }
+        },
+
+        validPost(text) {
+            const regex = /^[-\w\sÀÁÂÄÅÇÈÉÊËÌÍÎÏÑŒÒÓÔÕÖØÙÚÛÜàáâäåçèéêëìíîïñœòóôõöøùúûü.,!"'\\?/$ ]{0,255}$/;
+            return regex.test(text);
+        },
         
         createPost() { // NOT WORKING FOR IMAGE, TEXT OK
             const formData = new FormData();
@@ -226,7 +239,7 @@ export default {
                 this.errorMessage = 'Vous ne pouvez pas envoyer un message vide.';
             }
     
-            //window.location.reload();
+            window.location.reload();
         },
 
         emptyForm() {

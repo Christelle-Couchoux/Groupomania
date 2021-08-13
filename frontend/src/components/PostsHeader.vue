@@ -16,18 +16,6 @@
 					</router-link>
 				</li>
 				<li>
-					<router-link to="/user/:userId/notifications" title="Notifications">
-						<span id="bell">
-							<i class="fas fa-bell" aria-label="Notifications" role="img"></i>
-							<!-- if notifications where seen=false > 0 -->
-							<span id="new-notif">
-								<i class="fas fa-circle" aria-hidden="true"></i>
-							</span>
-						</span>
-						<span>Notifications</span>
-					</router-link>
-				</li>
-				<li>
 					<router-link :to="{ name: 'UserPosts', params: { userId: currentUserId } }" title="Profil">
 						<i class="fas fa-user" aria-label="Profil" role="img"></i>
 						<span>Profil</span>
@@ -158,14 +146,9 @@ export default {
                 text-underline-offset: 5px;
                 text-decoration-thickness: 2px;
             };
-
-            #new-notif {
-                color: $color-basic-dark; 
-            }
         };
 
         i {
-            //@include position(relative, auto, auto, auto, auto);
             font-size: map-get($font-size, posts-menu-icon);
             transition: all 200ms ease-in-out;
         };
@@ -183,29 +166,8 @@ export default {
 
         .router-link-active {
             color: $color-primary-dark;
-
-            #new-notif {
-                color: $color-basic-dark;
-            };
-        };
-
-        #bell {
-            @include position(relative, auto, auto, auto, auto);
-            display: inline-block;
-            margin: 0;
-        };
-
-        #new-notif {
-            @include position(absolute, -10px, -3px, auto, auto);
-            display: block;
-            color: $color-primary-dark;
-            
-            i {
-                font-size: 0.6rem;
-            };
         };
     };    
-
 };
 
 </style>

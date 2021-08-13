@@ -6,14 +6,12 @@ import Forums from '../views/Forums.vue'
 import Articles from '../views/Articles.vue'
 import EditProfile from '../views/EditProfile.vue'
 import UserPosts from '../views/UserPosts.vue'
-import UserPostsComments from '../views/UserPostsComments.vue'
+import UserComments from '../views/UserComments.vue'
 import UserLikes from '../views/UserLikes.vue'
-import Notifications from '../views/Notifications.vue'
 import Search from '../views/Search.vue'
 import Posts from '../views/Posts.vue'
 import Post from '../views/Post.vue'
 import PostLikes from '../views/PostLikes.vue'
-import CommentLikes from '../views/CommentLikes.vue'
 
 
 const routes = [
@@ -60,21 +58,15 @@ const routes = [
   },
 
   {
-    path: '/user/:userId/posts-comments',
-    name: 'UserPostsComments',
-    component: UserPostsComments
+    path: '/user/:userId/comments',
+    name: 'UserComments',
+    component: UserComments
   },
 
   {
     path: '/user/:userId/likes',
     name: 'UserLikes',
     component: UserLikes
-  },
-
-  {
-    path: '/user/:userId/notifications',
-    name: 'Notifications',
-    component: Notifications
   },
 
   {
@@ -99,12 +91,6 @@ const routes = [
     path: '/posts/:postId/likes',
     name: 'PostLikes',
     component: PostLikes
-  },
-
-  {
-    path: '/comments/:commentId/likes',
-    name: 'CommentLikes',
-    component: CommentLikes
   },
 ]
 

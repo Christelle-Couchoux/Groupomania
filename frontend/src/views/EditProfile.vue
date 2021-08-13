@@ -21,13 +21,10 @@
                         </router-link>
                     </div>
 
-                    <p class="user-bio">
+                    <p class="user-bio" v-if="userInfo.bio != null">
                         <strong>Bio :</strong>  {{ userInfo.bio }}
                     </p>
 
-                    <div class="user-info-errors" v-if="errorMessage">
-                        <p>{{ errorMessage }}</p>
-                    </div>
                 </div>
 
                 <div id="user-edit">
@@ -47,10 +44,6 @@
                         </div>
                         
                         <form class="edit-profile-form" enctype="multipart/form-data">
-							<div class="edit-errors" v-if="errorMessage">
-								<p>{{ errorMessage }}</p>
-							</div>
-
                             <div class="edit-profile-form__field" id="photo-field">
                                 <label for="file">
                                     <p>Modifier la photo</p>
@@ -73,14 +66,18 @@
                                     v-model="bio"
                                     placeholder="Présentez-vous&nbsp;!"
                                 ></textarea>
-                            </div>    
+                            </div>
+
+                            <div class="edit-errors" v-if="errorMessage">
+                                <p>{{ errorMessage }}</p>
+                            </div>   
                         </form>
                     </div>
 
                     <div id="edit-buttons">
                         <p id="modifications">Souhaitez-vous enregistrer les changements&nbsp;?</p>
                         <div class="save-profile-btn">
-                            <input type="submit" value="Enregistrer" @click.prevent="submitFile">
+                            <input type="submit" value="Enregistrer" @click.prevent="checkBio">
                         </div>
                         <div class="undo-profile-btn">
                             <input type="submit" value="Annuler" @click.prevent="emptyForm">
@@ -128,7 +125,8 @@ export default {
             file: '',
 			newPhoto: '',
             info: [],
-            userInfo:''
+            userInfo:'',
+            errorMessage: null
         }
     },
 
@@ -165,20 +163,33 @@ export default {
 			this.newPhoto = URL.createObjectURL(this.file)
         },
 
-        submitFile() { // doesn't work with file, ok if only text
+        checkBio() {
+            if(!this.validBio(this.bio)) {
+                this.errorMessage = 'Votre bio peut comprendre au maximum 255 caractères.';
+            } else { // if no errors
+                this.editProfile(); // send the form
+            }
+        },
+
+        validBio(bio) {
+            const regex = /^[-\w\sÀÁÂÄÅÇÈÉÊËÌÍÎÏÑŒÒÓÔÕÖØÙÚÛÜàáâäåçèéêëìíîïñœòóôõöøùúûü.,!"'\\?/$ ]{0,255}$/;
+            return regex.test(bio);
+        },
+
+        editProfile() { // doesn't work with file, ok if only text
             const formData = new FormData();
             if(this.file != '') {
                 formData.append('image', this.file)
             }
-			if(this.bio != '') {
+			//if(this.bio != '') {
                 formData.append('bio', this.bio)
-            }
-            for (var value of formData.values()) { console.log(value); }
+            //}
+            //for (var value of formData.values()) { console.log(value); }
             API.put(`users/${this.$route.params.userId}`, formData)
             .then(response => console.log(response))
             .catch(error => console.log(error));
 
-            //window.location.reload();
+            window.location.reload();
 
         },
 
@@ -186,16 +197,22 @@ export default {
 			API.delete(`users/${this.$route.params.userId}`)
 			.then(response => {
 				console.log(response)
-				localStorage.clear();
-				router.push('/');
 			})
-			.catch(error => console.log(error));	
+			.catch(error => console.log(error));
+            
+            if(this.$route.params.userId == this.currentUserId) {
+                localStorage.clear();
+                router.push('/');
+            } else if(this.currentUserRole == 'admin') {
+                router.push('/posts/');
+            }    
 		},
 
         emptyForm() {
             this.file = '',
             this.newPhoto = '',
-            this.bio = ''
+            this.bio = '',
+            this.errorMessage = null
         }
     }
 };
@@ -342,7 +359,9 @@ export default {
 
 	.edit-errors {
         @include form-errors;
+        margin: 30px 0 10px 0;
     };
+
 };
 
 
@@ -352,7 +371,7 @@ export default {
 
 #modifications {
     @include size(100%, auto);
-    margin: 50px 10px 10px 10px;
+    margin: 30px 10px 10px 10px;
     text-align: center;
 };
 
