@@ -16,8 +16,8 @@
 					</router-link>
 				</li>
 				<li>
-					<router-link :to="{ name: 'UserPosts', params: { userId: currentUserId } }" title="Profil">
-						<i class="fas fa-user" aria-label="Profil" role="img"></i>
+					<router-link :to="{ name: 'UserPosts', params: { userId: currentUserId } }" title="Mon profil" id="profile">
+						<i class="fas fa-user" aria-label="Mon profil" role="img"></i>
 						<span>Profil</span>
 					</router-link>
 				</li>
@@ -44,15 +44,29 @@
 
 export default {
     name: 'PostsHeader',
+
     data() {
 
     },
+
     created() {
         this.currentUserId = localStorage.getItem("userId");
     },
+
+    mounted() {
+        this.activeIcon();
+    },
+
     methods: {
         logout() {
             localStorage.clear();
+        },
+
+        activeIcon() { // not working
+            const profileLink = document.getElementById("profile");
+            if(this.$router.currentRoute.path == '/user/${currentUserId}/comments') {
+                profileLink.classList.add('router-link-active');
+            }
         }
     }
 }

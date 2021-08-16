@@ -22,7 +22,7 @@
                     </div>
 
                     <div class="add-post__btn">
-                        <div class="add-post__btn__btn-image" title="Ajouter une image">
+                        <div class="add-post__btn__btn-image" title="Ajouter une image (formats .jpeg, .jpg, .png ou .gif)">
                             <label for="file">
                                 <i class="fas fa-image" aria-label="Ajouter une image" role="img"></i>
                             </label>
@@ -69,7 +69,7 @@
                             <router-link :to="{ name: 'Post', params: { postId: post.post_id } }" title="Voir le message">
                                 <div
                                     class="delete-post"
-                                    v-if="post.fk_user_id == currentUserId || currentUserRole == 'admin'"
+                                    v-if="post.post_user_id == currentUserId || currentUserRole == 'admin'"
                                     @click.prevent="deletePost(post)"
                                 >
                                     <i class="fas fa-times" aria-label="Supprimer" role="button"></i>
@@ -77,7 +77,7 @@
 
                                 <div class="post__title">
                                     <div class="post__title__photo">
-                                        <router-link :to="{ name: 'UserPosts', params: { userId: post.fk_user_id } }" title="Voir le profil de l'utilisateur">
+                                        <router-link :to="{ name: 'UserPosts', params: { userId: post.post_user_id } }" title="Voir le profil de l'utilisateur">
                                             <img
                                                 :src="post.user_photo"
                                                 alt="Avatar de l'utilisateur"
@@ -86,7 +86,7 @@
                                     </div>
                                     <div class="post__title__txt">
                                         <div class="post__title__pseudo">
-                                            <router-link :to="{ name: 'UserPosts', params: { userId: post.fk_user_id } }" title="Voir le profil de l'utilisateur">
+                                            <router-link :to="{ name: 'UserPosts', params: { userId: post.post_user_id } }" title="Voir le profil de l'utilisateur">
                                                 <p>{{ post.pseudo }}</p>
                                             </router-link>
                                         </div>
@@ -94,7 +94,7 @@
                                             <p>-</p>
                                         </div>
                                         <div class="post__title__date">
-                                            <p>{{ moment(post.createdAt).fromNow() }}</p>
+                                            <p>{{ moment(post.post_createdAt).fromNow() }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -105,7 +105,15 @@
                                     </p>
                                 </div>
 
-                                <div class="post__img" v-if="post.post_file">
+                                <div class="post__img" v-if="post.post_file" @click.prevent="enlarge">
+                                    <img
+                                        :src="post.post_file"
+                                    />
+                                </div>
+
+                                <!-- popup window enlarge img -->
+                                <div id="modal-img" class="modal">
+                                    <span class="close" @click.prevent="closeImg">&times;</span>
                                     <img
                                         :src="post.post_file"
                                     />
@@ -120,12 +128,12 @@
                                             <p>{{ post.comments_count }}</p>
                                         </div>
                                     </div>
-                                    <div class="post__btn post__btn--like" title="Aimer">
+                                    <div class="post__btn post__btn--like" title="Aimer" @click.prevent="like(post)">
                                         <div class="post__btn__icon">
                                             <i class="far fa-heart" aria-label="Aimer" role="img"></i>
                                         </div>
                                         <div class="post__btn__counter">
-                                            <p>{{ post.post_likes_count }}</p>
+                                            <p>{{ post.likes_count }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -192,6 +200,7 @@ export default {
     },
 
     methods: {
+        // display all posts
         getAllPosts() { // OK
             API.get(`posts/`)
            .then(response => {
@@ -203,7 +212,19 @@ export default {
         moment() {
             this.moment = moment;
         },
+        
+        // enlarge image in popup
+        enlarge() {
+            const modal = document.getElementById('modal-img');
+            modal.style.display = "flex";
+        },
 
+        closeImg() {
+            const modal = document.getElementById('modal-img');
+            modal.style.display = "none";
+        },
+
+        // add new post
         handleFileUpload() { // OK
             this.file = this.$refs.file.files[0];
 			this.newImage = URL.createObjectURL(this.file);
@@ -219,7 +240,7 @@ export default {
         },
 
         validPost(text) {
-            const regex = /^[-\w\sÀÁÂÄÅÇÈÉÊËÌÍÎÏÑŒÒÓÔÕÖØÙÚÛÜàáâäåçèéêëìíîïñœòóôõöøùúûü.,!"'\\?/$ ]{0,255}$/;
+            const regex = /^[-\w\sÀÁÂÄÅÇÈÉÊËÌÍÎÏÑŒÒÓÔÕÖØÙÚÛÜàáâäåçèéêëìíîïñœòóôõöøùúûü.,!"':;\\?/$ ]{0,255}$/;
             return regex.test(text);
         },
         
@@ -249,14 +270,29 @@ export default {
             this.errorMessage = ''
         },
 
+        // delete post
         deletePost(post) {
             API.delete(`posts/${post.post_id}`)
             .then(response => console.log(response))
             .catch(error => console.log(error));
-            console.log();
+            //console.log();
 
             window.location.reload();
+        },
+
+        // like post
+        like(post) {
+            API.post(`posts/${post.post_id}/likes`,
+            {
+                userId: this.currentUserId,
+                postId: this.post.post_id
+            })
+            .then(response => console.log(response))
+            .catch(error => console.log(error));
+
+            //window.location.reload();
         }
+
     }
 };
 
@@ -416,19 +452,70 @@ export default {
         };
     };
 
+
     &__text {
         margin: 5px 0 5px 0;
     };
 
+
     &__img {
         @include post-img;
+        cursor: pointer;
+        transition: 300ms;
+
+        &:hover {
+            opacity: 0.7;
+        };
     };
+
+
+
+    #modal-img { // On id rather than class to override browser default style
+        display: none; // hidden by default
+    };
+
+    .modal {
+        @include position(fixed, 0, 0, 0, 0);
+        @include flexbox(row, nowrap, center, center);
+        width: 100%;
+        height: 100%;
+        overflow: auto; // enable scroll if needed
+        background-color: rgba(0, 0, 0 , 0.9);
+        z-index: 100;
+
+        img {
+            margin: auto;
+            @include flexbox(row, nowrap, center, center);
+            max-width: 100%;
+            animation: zoom 500ms;    
+        }
+    };
+  
+    @keyframes zoom {
+        from { transform: scale(0) }
+        to { transform: scale(1) }
+    };
+
+    .close {
+        @include position(absolute, 15px, 35px, auto, auto);
+        color: $color-basic-light;
+        font-size: 40px;
+        transition: 300ms;
+
+        &:hover, &:focus {
+            color: $color-primary-dark;
+            cursor: pointer
+        }
+    };
+
+
 
     &__buttons {
         @include flexbox(row, nowrap, space-around, center);
         margin: auto;
         max-width: 600px;
     };
+
 
     &__btn {
         @include flexbox(row, nowrap, center, center);
@@ -469,6 +556,7 @@ export default {
         };
     }; 
     
+
     .delete-post {
         @include delete-post-comment;
         @include position(absolute, 30px, 20px, auto, auto);

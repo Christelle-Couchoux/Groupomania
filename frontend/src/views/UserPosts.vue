@@ -57,7 +57,7 @@
                     </div>
 
                     <!-- if posts -->
-                    <div id="posts">
+                    <div id="posts" v-else>
 
                         <div class="post" v-for="post in posts" :key="post.post_id">
                             <router-link :to="{ name: 'Post', params: { postId: post.post_id } }" title="Voir le message">
@@ -119,7 +119,7 @@
                                             <i class="far fa-heart" aria-label="Aimer" role="img"></i>
                                         </div>
                                         <div class="post__btn__counter">
-                                            <p>{{ post.post_likes_count }}</p>
+                                            <p>{{ post.likes_count }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -183,13 +183,10 @@ export default {
 
     methods: {
         getAllPostsOfUser() {
-            
-            //console.log(userId);
-
             API.get(`users/${this.userId}/posts`)
            .then(response => {
                 this.posts = response.data.posts;
-                console.log(response);
+                //console.log(response);
             })
             .catch(error => console.log(error));
         },
@@ -210,7 +207,6 @@ export default {
             API.delete(`posts/${post.post_id}`)
             .then(response => console.log(response))
             .catch(error => console.log(error));
-            console.log();
 
             window.location.reload();
         }

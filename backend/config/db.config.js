@@ -1,7 +1,7 @@
 module.exports = {
 	HOST: "localhost",
 	USER: "root", // change to match your configuration
-	PASSWORD: "", // change to match your configuration
+	PASSWORD: "MySQLChr*stelle10", // change to match your configuration
 	PORT: 3306, // change to match your configuration
 	DB: "groupomania",
 	dialect: "mysql",

@@ -110,7 +110,7 @@
                                             <i class="far fa-comment" aria-label="Commenter" role="img"></i>
                                         </div>
                                         <div class="post__btn__counter">
-                                            <p></p>
+                                            <p>{{ comment.comments_count }}</p>
                                         </div>
                                     </div>
                                     <div class="post__btn post__btn--like" title="Aimer">
@@ -118,14 +118,14 @@
                                             <i class="far fa-heart" aria-label="Aimer" role="img"></i>
                                         </div>
                                         <div class="post__btn__counter">
-                                            <p></p>
+                                            <p>{{ comment.likes_count }}</p>
                                         </div>
                                     </div>
                                 </div>
                                 <!-- post end -->
 
                                 <!-- comment -->
-                                <div class="comment" v-if="comment.comment_id">
+                                <div class="comment">
                                     <!-- if own comment -->
                                     <div
                                         class="delete-comment"
@@ -154,7 +154,7 @@
                                                 <p>-</p>
                                             </div>
                                             <div class="comment__title__date">
-                                                <p>{{ moment(comment.createdAt).fromNow() }}</p>
+                                                <p>{{ moment(comment.comment_createdAt).fromNow() }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -170,7 +170,7 @@
 
 
                         <div id="posts-end">
-                            <p>Fin des messages et commentaires.</p>
+                            <p>Fin des commentaires.</p>
                         </div>
                     </div>
                 </div>
@@ -220,20 +220,19 @@ export default {
         this.userId = this.$route.params.userId;
         //console.log(this.userId);
 
-        this.getAllPostsCommentsOfUser();
+        this.getAllCommentsOfUser();
         this.getUserInfo();
         this.moment();
     },
     
     methods: {
-        getAllPostsCommentsOfUser() {
+        getAllCommentsOfUser() {
             API.get(`users/${this.userId}/comments`)
            .then(response => {
                 this.comments = response.data.comments;
             })
             .catch(error => console.log(error));
         },
-        
 
         moment() {
             this.moment = moment;
@@ -243,23 +242,21 @@ export default {
             API.get(`users/${this.userId}/info`)
            .then(response => {
                 this.info = response.data.info;
-                console.log(this.info);
             })
             .catch(error => console.log(error));
             
         },
 
-        deletePost(postComment) {
-            API.delete(`posts/${postComment.post_id}`)
+        deletePost(comment) {
+            API.delete(`posts/${comment.post_id}`)
             .then(response => console.log(response))
             .catch(error => console.log(error));
-            console.log();
 
             window.location.reload();
         },
 
-        deleteComment(postComment) {
-            API.delete(`comments/${postComment.comment_id}`)
+        deleteComment(comment) {
+            API.delete(`comments/${comment.comment_id}`)
             .then(response => console.log(response))
             .catch(error => console.log(error));
             console.log();

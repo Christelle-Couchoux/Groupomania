@@ -47,7 +47,7 @@ exports.getUserInfo = (req, res) => {
 // OK
 
 exports.getAllPostsOfUser = (req, res) => {
-    sequelize.query('CALL get_all_posts_of_user_with_comments_and_likes_counts(:userId)', 
+    sequelize.query('CALL get_all_posts_of_user_with_counts(:userId)', 
     {
         replacements: { userId: req.params.userId },
         type: QueryTypes.SELECT 
@@ -63,7 +63,7 @@ exports.getAllPostsOfUser = (req, res) => {
 
 // display comments of one user (GET)
 //OK
-
+/*
 exports.getAllCommentsOfUser = (req, res) => {
     sequelize.query('CALL get_all_comments_of_user(:userId)', 
     {
@@ -76,8 +76,21 @@ exports.getAllCommentsOfUser = (req, res) => {
     .catch((error) => res.status(400).json(error));
     //sequelize.close();
 };
+*/
 
 
+exports.getAllCommentsOfUser = (req, res) => {
+    sequelize.query('CALL get_all_comments_of_user_with_counts(:userId)', 
+    {
+        replacements: { userId: req.params.userId },
+        type: QueryTypes.SELECT 
+    })
+    .then(([comments, metadata]) => {
+        return res.status(200).json({ comments })
+    })
+    .catch((error) => res.status(400).json(error));
+    //sequelize.close();
+};
 
 // display likes of one user (GET)
 

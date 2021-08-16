@@ -20,13 +20,13 @@
 
                         <div class="specific-post__title">
                             <div class="specific-post__title__photo">
-                                <router-link :to="{ name: 'UserPosts', params: { userId: postInfo.user_id } }" title="Voir le profil de l'utilisateur">
+                                <router-link :to="{ name: 'UserPosts', params: { userId: postInfo.post_user_id } }" title="Voir le profil de l'utilisateur">
                                     <img :src="postInfo.user_photo" alt="Avatar de l'utilisateur 2">
                                 </router-link>
                             </div>
 
                             <div class="specific-post__title__pseudo">
-                                <router-link :to="{ name: 'UserPosts', params: { userId: postInfo.user_id } }" title="Voir le profil de l'utilisateur">
+                                <router-link :to="{ name: 'UserPosts', params: { userId: postInfo.post_user_id } }" title="Voir le profil de l'utilisateur">
                                     <p>{{ postInfo.pseudo }}</p>
                                 </router-link>
                             </div>
@@ -34,7 +34,7 @@
 
                         <div class="specific-post__date-time">
                             <div class="specific-post__date">
-                                <p>{{ moment(postInfo.createdAt).format('[Le] D MMMM YYYY [à] HH:mm') }}</p>
+                                <p>{{ moment(postInfo.post_createdAt).format('[Le] D MMMM YYYY [à] HH:mm') }}</p>
                             </div>
                         </div>
 
@@ -44,7 +44,15 @@
                             </p>
                         </div>
 
-                        <div class="specific-post__img" v-if="postInfo.post_file">
+                        <div class="specific-post__img" v-if="postInfo.post_file" @click="enlarge">
+                            <img
+                                :src="postInfo.post_file"
+                            />
+                        </div>
+
+                        <!-- popup window enlarge img -->
+                        <div id="modal-img" class="modal">
+                            <span class="close" @click="closeImg">&times;</span>
                             <img
                                 :src="postInfo.post_file"
                             />
@@ -59,12 +67,12 @@
                                     <p>{{ postInfo.comments_count }}</p>
                                 </div>
                             </div>
-                            <div class="specific-post__btn specific-post__btn--like" title="Aimer">
+                            <div class="specific-post__btn specific-post__btn--like" title="Aimer" @click.prevent="like()">
                                 <div class="specific-post__btn__icon">
                                     <i class="far fa-heart" aria-label="Aimer" role="img"></i>
                                 </div>
                                 <div class="specific-post__btn__counter">
-                                    <p>{{ postInfo.post_likes_count }}</p>
+                                    <p>{{ postInfo.likes_count }}</p>
                                 </div>
                             </div>
                         </div>        
@@ -233,7 +241,7 @@ export default {
         },
 
         validComment(text) {
-            const regex = /^[-\w\sÀÁÂÄÅÇÈÉÊËÌÍÎÏÑŒÒÓÔÕÖØÙÚÛÜàáâäåçèéêëìíîïñœòóôõöøùúûü.,!"'\\?/$ ]{0,255}$/;
+            const regex = /^[-\w\sÀÁÂÄÅÇÈÉÊËÌÍÎÏÑŒÒÓÔÕÖØÙÚÛÜàáâäåçèéêëìíîïñœòóôõöøùúûü.,!"':;\\?/$ ]{1,255}$/;
             return regex.test(text);
         },
 
@@ -268,7 +276,7 @@ export default {
             .catch(error => console.log(error));
             console.log(this.post_id);
 
-            router.push('/posts');
+            router.replace('/posts'); // replace so doesn't go back to deleted page
         },
 
         deleteComment(comment) {
@@ -278,6 +286,29 @@ export default {
             console.log();
 
             window.location.reload();
+        },
+
+        enlarge() {
+            const modal = document.getElementById('modal-img');
+            modal.style.display = "flex";
+        },
+
+        closeImg() {
+            const modal = document.getElementById('modal-img');
+            modal.style.display = "none";
+        },
+
+        // like post
+        like() {
+            API.post(`posts/${this.postId}/likes`,
+            {
+                userId: this.currentUserId,
+                postId: this.postId
+            })
+            .then(response => console.log(response))
+            .catch(error => console.log(error));
+
+            //window.location.reload();
         }
     }
 };
@@ -351,11 +382,60 @@ export default {
 
     &__img {
         @include post-img;
+        cursor: pointer;
+        transition: 300ms;
+
+        &:hover {
+            opacity: 0.7;
+        };
     };
+
+
+
+    #modal-img { // On id rather than class to override browser default style
+        display: none; // hidden by default
+    };
+
+    .modal {
+        @include position(fixed, 0, 0, 0, 0);
+        @include flexbox(row, nowrap, center, center);
+        width: 100%;
+        height: 100%;
+        overflow: auto; // enable scroll if needed
+        background-color: rgba(0, 0, 0 , 0.9);
+        z-index: 100;
+
+        img {
+            margin: auto;
+            @include flexbox(row, nowrap, center, center);
+            max-width: 100%;
+            animation: zoom 500ms;    
+        }
+    };
+  
+    @keyframes zoom {
+        from { transform: scale(0) }
+        to { transform: scale(1) }
+    };
+
+    .close {
+        @include position(absolute, 15px, 35px, auto, auto);
+        color: $color-basic-light;
+        font-size: 40px;
+        transition: 300ms;
+
+        &:hover, &:focus {
+            color: $color-primary-dark;
+            cursor: pointer
+        }
+    };
+
+
 
     &__likes {
         @include btn-like-count;    
     };
+
 
     .delete-specific-post {
         @include delete-post-comment;

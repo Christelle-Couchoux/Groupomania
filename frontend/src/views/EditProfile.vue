@@ -16,7 +16,7 @@
                     <p class="pseudo">{{ userInfo.pseudo }}</p>
 
                     <div class="edit-profile-btn" v-if="currentUserId == userInfo.user_id || currentUserRole == 'admin'">
-                        <router-link :to="{ name: 'UserPosts', params: { userId: userInfo.user_id } }" title="Éditer le profil">
+                        <router-link :to="{ name: 'UserPosts', params: { userId: userInfo.user_id } }" title="Retour au profil">
                             <input type="button" value="Retour au profil"/>
                         </router-link>
                     </div>
@@ -27,7 +27,7 @@
 
                 </div>
 
-                <div id="user-edit">
+                <div id="user-edit" v-if="currentUserId == userInfo.user_id || currentUserRole == 'admin'">
                     <div id="photo-form">
                         <div id="edit-profile-photo" v-if="newPhoto">
                             <img
@@ -92,6 +92,14 @@
                         <div class="delete-account-btn">
                             <input type="submit" value="Supprimer le compte" @click.prevent="deleteAccount">
                         </div>
+                    </div>
+                </div>
+                <div class="unauthorized" v-else>
+                    <p>Accès non autorisé&nbsp;!</p>
+                    <div id="back-to-profile">
+                        <router-link :to="{ name: 'UserPosts', params: { userId: userInfo.user_id } }" title="Retour au profil">
+                            Retour au profil
+                        </router-link>
                     </div>
                 </div>
                 
@@ -405,6 +413,36 @@ export default {
     @include btn-delete-account;
     margin: 10px 10px 60px 10px;
 };
+
+
+.unauthorized {
+    @include flexbox(column, nowrap, space-around, center);
+
+    p {
+        color: $color-primary-dark;
+        font-size: 1.5rem;
+        margin: 80px 0 0 0;
+        padding: 20px;
+        border: solid 1px $color-primary-dark;
+
+    };
+
+    #back-to-profile {
+        text-align: center;
+        margin: 80px 0 80px 0;
+        text-decoration: underline;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 5px;
+        transition: all 200ms ease-in-out;
+
+        a:hover {
+            cursor: pointer;
+            color: $color-primary-dark;
+        };
+    }
+};
+
+
 
 
 </style>
