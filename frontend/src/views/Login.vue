@@ -74,11 +74,13 @@ import router from '@/router/index.js'
 
 export default {
 	name: 'Login',
+
 	components: {
 		ScrollToTopBtn,
 		LoginLogoTitle,
 		LoginMenu
 	},
+
 	data() {
         return {
             email: '',
@@ -87,6 +89,7 @@ export default {
             errorMessage: null
         }
     },
+    
 	methods: {
         checkForm() {
             this.errors = [];

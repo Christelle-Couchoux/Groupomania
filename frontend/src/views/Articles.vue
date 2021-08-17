@@ -33,11 +33,12 @@ import LoginLogoTitle from "../components/LoginLogoTitle.vue"
 
 
 export default {
-  name: 'Articles',
-  components: {
-		ScrollToTopBtn,
+    name: 'Articles',
+
+    components: {
+        ScrollToTopBtn,
 		LoginLogoTitle,
-  }
+    }
 }
 
 </script>

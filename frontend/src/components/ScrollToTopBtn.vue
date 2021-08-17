@@ -11,11 +11,13 @@
 
 export default {
     name: 'ScrollToTopBtn',
+
     mounted() {
         document.addEventListener('scroll', this.showBtnScroll);
         const btnScroll = document.getElementById('scroll-to-top');
         btnScroll.addEventListener('click', this.scrollToTop);
     },
+    
     methods: {
         showBtnScroll(){
             const btnScroll = document.getElementById('scroll-to-top');

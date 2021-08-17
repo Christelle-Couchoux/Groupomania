@@ -69,7 +69,7 @@
                             <router-link :to="{ name: 'Post', params: { postId: post.post_id } }" title="Voir le message">
                                 <div
                                     class="delete-post"
-                                    v-if="post.post_user_id == currentUserId || currentUserRole == 'admin'"
+                                    v-if="post.fk_user_id == currentUserId || currentUserRole == 'admin'"
                                     @click.prevent="deletePost(post)"
                                 >
                                     <i class="fas fa-times" aria-label="Supprimer" role="button"></i>
@@ -77,7 +77,7 @@
 
                                 <div class="post__title">
                                     <div class="post__title__photo">
-                                        <router-link :to="{ name: 'UserPosts', params: { userId: post.post_user_id } }" title="Voir le profil de l'utilisateur">
+                                        <router-link :to="{ name: 'UserPosts', params: { userId: post.fk_user_id } }" title="Voir le profil de l'utilisateur">
                                             <img
                                                 :src="post.user_photo"
                                                 alt="Avatar de l'utilisateur"
@@ -86,7 +86,7 @@
                                     </div>
                                     <div class="post__title__txt">
                                         <div class="post__title__pseudo">
-                                            <router-link :to="{ name: 'UserPosts', params: { userId: post.post_user_id } }" title="Voir le profil de l'utilisateur">
+                                            <router-link :to="{ name: 'UserPosts', params: { userId: post.fk_user_id } }" title="Voir le profil de l'utilisateur">
                                                 <p>{{ post.pseudo }}</p>
                                             </router-link>
                                         </div>
@@ -105,17 +105,18 @@
                                     </p>
                                 </div>
 
-                                <div class="post__img" v-if="post.post_file" @click.prevent="enlarge">
+                                <div class="post__img" v-if="post.post_file" @click.prevent="enlarge(post)">
                                     <img
                                         :src="post.post_file"
+                                        title = "Agrandir l'image"
                                     />
                                 </div>
 
                                 <!-- popup window enlarge img -->
                                 <div id="modal-img" class="modal">
                                     <span class="close" @click.prevent="closeImg">&times;</span>
-                                    <img
-                                        :src="post.post_file"
+                                    <img 
+                                        id="img01"
                                     />
                                 </div>
 
@@ -125,15 +126,19 @@
                                             <i class="far fa-comment" aria-label="Commenter" role="img"></i>
                                         </div>
                                         <div class="post__btn__counter">
-                                            <p>{{ post.comments_count }}</p>
+                                            <p></p>
                                         </div>
                                     </div>
-                                    <div class="post__btn post__btn--like" title="Aimer" @click.prevent="like(post)">
+                                    <div
+                                        class="post__btn post__btn--like" 
+                                        title="Aimer" 
+                                        @click.prevent="like(post)"
+                                    >
                                         <div class="post__btn__icon">
                                             <i class="far fa-heart" aria-label="Aimer" role="img"></i>
                                         </div>
                                         <div class="post__btn__counter">
-                                            <p>{{ post.likes_count }}</p>
+                                            <p></p>
                                         </div>
                                     </div>
                                 </div>
@@ -186,7 +191,7 @@ export default {
             text: '',
             userId: '',
             newImage: '',
-            errorMessage: null
+            errorMessage: null,
         }
     },
 
@@ -197,10 +202,12 @@ export default {
 
         this.getAllPosts();
         this.moment();
+
     },
 
     methods: {
         // display all posts
+
         getAllPosts() { // OK
             API.get(`posts/`)
            .then(response => {
@@ -213,10 +220,14 @@ export default {
             this.moment = moment;
         },
         
+
         // enlarge image in popup
-        enlarge() {
+
+        enlarge(post) {
             const modal = document.getElementById('modal-img');
+            const modalImg = document.getElementById('img01');
             modal.style.display = "flex";
+            modalImg.src = post.post_file;
         },
 
         closeImg() {
@@ -224,7 +235,9 @@ export default {
             modal.style.display = "none";
         },
 
+
         // add new post
+
         handleFileUpload() { // OK
             this.file = this.$refs.file.files[0];
 			this.newImage = URL.createObjectURL(this.file);
@@ -244,13 +257,13 @@ export default {
             return regex.test(text);
         },
         
-        createPost() { // NOT WORKING FOR IMAGE, TEXT OK
+        createPost() {
             const formData = new FormData();
             formData.append('image', this.file) // must be 'image' because multer save .single('image')
             formData.append('text', this.text)
             formData.append('userId', this.currentUserId);
 
-            //for (var value of formData.values()) { console.log(value); } // ok
+            //for (var value of formData.values()) { console.log(value); }
 
             if(this.file != '' || this.text != '') {
                 API.post(`posts/`, formData)
@@ -270,7 +283,9 @@ export default {
             this.errorMessage = ''
         },
 
+
         // delete post
+
         deletePost(post) {
             API.delete(`posts/${post.post_id}`)
             .then(response => console.log(response))
@@ -280,7 +295,9 @@ export default {
             window.location.reload();
         },
 
+
         // like post
+
         like(post) {
             API.post(`posts/${post.post_id}/likes`,
             {
@@ -291,8 +308,7 @@ export default {
             .catch(error => console.log(error));
 
             //window.location.reload();
-        }
-
+        },
     }
 };
 
@@ -461,7 +477,7 @@ export default {
     &__img {
         @include post-img;
         cursor: pointer;
-        transition: 300ms;
+        transition: 300ms ease-in-out;
 
         &:hover {
             opacity: 0.7;
@@ -500,7 +516,7 @@ export default {
         @include position(absolute, 15px, 35px, auto, auto);
         color: $color-basic-light;
         font-size: 40px;
-        transition: 300ms;
+        transition: 200ms ease-in-out;
 
         &:hover, &:focus {
             color: $color-primary-dark;

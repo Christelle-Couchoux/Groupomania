@@ -1,12 +1,7 @@
 const db = require('../models');
-const post = require('../models/post');
-const User = db.user;
 const Post = db.post;
 const Comment = db.comment;
-const Role = db.role;
-const Notification = db.notification;
 const Post_like = db.post_like;
-const Op = db.sequelize.Op;
 const { QueryTypes } = require('sequelize');
 const sequelize = db.sequelize;
 const fs = require("fs");
@@ -16,12 +11,11 @@ const fs = require("fs");
 // OK
 
 exports.getAllPosts = (req, res) => {
-    sequelize.query('CALL get_all_posts_with_counts()', { type: QueryTypes.SELECT })
+    sequelize.query('CALL get_all_posts()', { type: QueryTypes.SELECT })
     .then(([posts, metadata]) => {
         return res.status(200).json({ posts })
     })
     .catch((error) => res.status(400).json(error));
-    //sequelize.close();
 }
 
 
@@ -30,12 +24,10 @@ exports.getAllPosts = (req, res) => {
 // OK
 
 exports.createPost = (req, res) => {
-    //req.socket.setTimeout(10 * 60 * 1000);
     let fileURL = ''
     if(req.file) {
         fileURL = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     };
-    console.log(fileURL);
     
     sequelize.query('CALL create_post(:file, :text, :userId)',
     {
@@ -51,79 +43,7 @@ exports.createPost = (req, res) => {
         if(err.request){ console.log(err.request) }
         if(err.response){ console.log(err.response) }
     });
-    //sequelize.close();
 };
-
-
-
-
-// display a post (GET)
-// OK
-
-exports.getOnePost = (req, res) => {
-    sequelize.query('CALL get_one_post_with_counts(:postId)',
-    {
-        replacements: { postId: req.params.postId },
-        type: QueryTypes.SELECT 
-    })
-    .then(([post, metadata]) => { return res.status(200).json({ post }) })
-    .catch((error) => res.status(400).json(error));
-    //sequelize.close();
-};
-
-
-
-// display all comments of a post (GET)
-// OK
-
-exports.getAllCommentsOfPost = (req, res) => {
-    sequelize.query('CALL get_comments_of_post(:postId)',
-    {
-        replacements: { postId: req.params.postId },
-        type: QueryTypes.SELECT 
-    })
-    .then(([comments, metadata]) => { return res.status(200).json({ comments }) })
-    .catch((error) => res.status(400).json(error));
-    //sequelize.close();
-};
-
-
-
-// add a new comment (POST)
-// OK
-// doesn't work with auth ???????
-/*
-exports.createComment = (req, res) => {
-    sequelize.query('CALL create_comment(:userId, :postId, :text)',
-    {
-        replacements: {
-            userId: req.body.userId,
-            postId: req.body.postId,
-            text: req.body.text
-        },
-        type: QueryTypes.INSERT
-    })
-    .then(() => res.status(201).json({ message: 'Commentaire créé !' }))
-    .catch(err => {
-        if(err.request){ console.log(err.request) }
-        if(err.response){ console.log(err.response) }
-    });
-    //sequelize.close();
-};
-*/
-
-exports.createComment = (req, res) => {
-    Comment.create({
-        fk_user_id: req.body.userId,
-        fk_post_id: req.body.postId,
-        comment_text: req.body.text,
-    })
-    .then(() => res.status(201).json({ message: 'Commentaire créé !' }))
-    .catch(error => res.status(400).json({ error }));
-    //sequelize.close();  
-};
-
-
 
 
 
@@ -141,15 +61,82 @@ exports.deletePost = (req, res) => {
         });
     })
     .catch(error => {
-        //res.status(500).json({ error })
+        res.status(500).json({ error })
         console.log(error)
     });
 };
 
 
 
-// like or unlike a post (POST)
+// display one post (GET)
+// OK
 
+exports.getOnePost = (req, res) => {
+    sequelize.query('CALL get_one_post(:postId)',
+    {
+        replacements: { postId: req.params.postId },
+        type: QueryTypes.SELECT 
+    })
+    .then(([post, metadata]) => { return res.status(200).json({ post }) })
+    .catch((error) => res.status(400).json(error));
+};
+
+
+
+// add a new comment (POST)
+// OK
+// doesn't work with auth ???????
+
+exports.createComment = (req, res) => {
+    Comment.create({
+        fk_user_id: req.body.userId,
+        fk_post_id: req.body.postId,
+        comment_text: req.body.text,
+    })
+    .then(() => res.status(201).json({ message: 'Commentaire créé !' }))
+    .catch(error => res.status(400).json({ error }));
+};
+
+
+/*
+exports.createComment = (req, res) => {
+    sequelize.query('CALL create_comment(:userId, :postId, :text)',
+    {
+        replacements: {
+            userId: req.body.userId,
+            postId: req.body.postId,
+            text: req.body.text
+        },
+        type: QueryTypes.INSERT
+    })
+    .then(() => res.status(201).json({ message: 'Commentaire créé !' }))
+    .catch(err => {
+        if(err.request){ console.log(err.request) }
+        if(err.response){ console.log(err.response) }
+    });
+};
+*/
+
+
+
+// display all comments of a post (GET)
+// OK
+
+exports.getAllCommentsOfPost = (req, res) => {
+    sequelize.query('CALL get_comments_of_post(:postId)',
+    {
+        replacements: { postId: req.params.postId },
+        type: QueryTypes.SELECT 
+    })
+    .then(([comments, metadata]) => { return res.status(200).json({ comments }) })
+    .catch((error) => res.status(400).json(error));
+};
+
+
+
+// like or unlike a post (POST)
+// OK
+// doesn't work with auth ???????
 
 exports.likePost = (req, res) => {
     Post_like.findOne({
@@ -177,4 +164,60 @@ exports.likePost = (req, res) => {
         res.status(500). json({ error })
         console.log(error)
     });
+};
+
+
+
+// display if user liked a post (GET)
+// OK
+
+exports.getUserLiked = (req, res) => {
+    Post_like.findOne({
+        where: { 
+            fk_post_id: req.params.postId,
+            fk_user_id: req.params.userId
+        }
+    })
+    .then((liked) => {
+        console.log(liked);
+        if(liked) {
+            return res.status(200).json("true")
+        } else {
+            return res.status(200).json("false")
+        }
+    })
+    .catch(error => {
+        res.status(500). json({ error })
+        console.log(error)
+    });
+};
+
+
+
+// display number of likes of a post (GET)
+// OK
+
+exports.getLikesCountOfPost = (req, res) => {
+    sequelize.query('CALL get_likes_count_of_one_post(:postId)',
+    {
+        replacements: { postId: req.params.postId },
+        type: QueryTypes.SELECT 
+    })
+    .then(([likes, metadata]) => { return res.status(200).json({ likes }) })
+    .catch((error) => res.status(400).json(error));
+};
+
+
+
+// display number of comments of a post (GET)
+// OK
+
+exports.getCommentsCountOfPost = (req, res) => {
+    sequelize.query('CALL get_comments_count_of_one_post(:postId)',
+    {
+        replacements: { postId: req.params.postId },
+        type: QueryTypes.SELECT 
+    })
+    .then(([commentsCount, metadata]) => { return res.status(200).json({ commentsCount }) })
+    .catch((error) => res.status(400).json(error));
 };

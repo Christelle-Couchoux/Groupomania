@@ -20,13 +20,13 @@
 
                         <div class="specific-post__title">
                             <div class="specific-post__title__photo">
-                                <router-link :to="{ name: 'UserPosts', params: { userId: postInfo.post_user_id } }" title="Voir le profil de l'utilisateur">
+                                <router-link :to="{ name: 'UserPosts', params: { userId: postInfo.user_id } }" title="Voir le profil de l'utilisateur">
                                     <img :src="postInfo.user_photo" alt="Avatar de l'utilisateur 2">
                                 </router-link>
                             </div>
 
                             <div class="specific-post__title__pseudo">
-                                <router-link :to="{ name: 'UserPosts', params: { userId: postInfo.post_user_id } }" title="Voir le profil de l'utilisateur">
+                                <router-link :to="{ name: 'UserPosts', params: { userId: postInfo.user_id } }" title="Voir le profil de l'utilisateur">
                                     <p>{{ postInfo.pseudo }}</p>
                                 </router-link>
                             </div>
@@ -59,20 +59,29 @@
                         </div>
 
                         <div class="specific-post__buttons">
-                            <div class="specific-post__btn specific-post__btn--comment" title="Commentaires">
+                            <div
+                                class="specific-post__btn specific-post__btn--comment" 
+                                title="Commentaires"
+                                v-for="commCount in commentsCount" :key="commCount.post_id"
+                            >
                                 <div class="specific-post__btn__icon">
                                     <i class="far fa-comment" aria-label="Commentaires" role="img"></i>
                                 </div>
                                 <div class="specific-post__btn__counter">
-                                    <p>{{ postInfo.comments_count }}</p>
+                                    <p>{{ commCount.comments_count }}</p>
                                 </div>
                             </div>
-                            <div class="specific-post__btn specific-post__btn--like" title="Aimer" @click.prevent="like()">
+                            <div
+                                class="specific-post__btn specific-post__btn--like" 
+                                title="Aimer" 
+                                @click.prevent="like()"
+                                v-for="likeCount in likes" :key="likeCount.post_id"
+                            >
                                 <div class="specific-post__btn__icon">
-                                    <i class="far fa-heart" aria-label="Aimer" role="img"></i>
+                                    <i id="heart-btn" class="far fa-heart" aria-label="Aimer" role="img"></i>
                                 </div>
-                                <div class="specific-post__btn__counter">
-                                    <p>{{ postInfo.likes_count }}</p>
+                                <div id="heart-count" class="specific-post__btn__counter">
+                                    <p>{{ likeCount.post_likes_count }}</p>
                                 </div>
                             </div>
                         </div>        
@@ -189,6 +198,7 @@ import router from '@/router/index.js'
 
 export default {
 	name: 'Post',
+    
 	components: {
 		ScrollToTopBtn,
 		PostsHeader,
@@ -201,8 +211,9 @@ export default {
             text: '',
             comments: {},
             comment: '',
-            errorMessage: null
-        }
+            errorMessage: null,
+            likes: [],
+            commentsCount: []        }
     },
 
     created() {
@@ -215,9 +226,14 @@ export default {
         this.getOnePost();
         this.moment();
         this.getComments();
+        this.getLikesCount();
+        this.getCommentsCount();
+        this.getIfUserLiked();
     },
 
     methods: {
+        // display one post
+
         getOnePost() {
             
 
@@ -231,6 +247,22 @@ export default {
         moment() {
             this.moment = moment;
         },
+
+
+        // enlarge image in popup window
+
+        enlarge() {
+            const modal = document.getElementById('modal-img');
+            modal.style.display = "flex";
+        },
+
+        closeImg() {
+            const modal = document.getElementById('modal-img');
+            modal.style.display = "none";
+        },
+
+
+        // add new comment
 
         checkComment() {
             if(!this.validComment(this.text)) {
@@ -262,6 +294,9 @@ export default {
             this.errorMessage = ''
         },
 
+
+        // display all comments of post
+
         getComments() {
             API.get(`posts/${this.postId}/comments`)
            .then(response => {
@@ -270,35 +305,33 @@ export default {
             .catch(error => console.log(error));
         }, 
 
+
+        // delete post
+
         deletePost() {
             API.delete(`posts/${this.postId}`)
             .then(response => console.log(response))
             .catch(error => console.log(error));
-            console.log(this.post_id);
+            //console.log(this.post_id);
 
             router.replace('/posts'); // replace so doesn't go back to deleted page
         },
+
+
+        // delete comment
 
         deleteComment(comment) {
             API.delete(`comments/${comment.comment_id}`)
             .then(response => console.log(response))
             .catch(error => console.log(error));
-            console.log();
+            //console.log();
 
             window.location.reload();
         },
 
-        enlarge() {
-            const modal = document.getElementById('modal-img');
-            modal.style.display = "flex";
-        },
-
-        closeImg() {
-            const modal = document.getElementById('modal-img');
-            modal.style.display = "none";
-        },
 
         // like post
+
         like() {
             API.post(`posts/${this.postId}/likes`,
             {
@@ -308,7 +341,45 @@ export default {
             .then(response => console.log(response))
             .catch(error => console.log(error));
 
-            //window.location.reload();
+            window.location.reload();
+        },
+
+
+        // display number of likes and comments of post
+
+        getLikesCount() {
+            API.get(`posts/${this.postId}/likesCount`)
+           .then(response => {
+                this.likes = response.data.likes;
+                //console.log(this.likes);
+            })
+            .catch(error => console.log(error));
+        },
+
+        getCommentsCount() {
+            API.get(`posts/${this.postId}/commentsCount`)
+           .then(response => {
+                this.commentsCount = response.data.commentsCount;
+            })
+            .catch(error => console.log(error));
+        },
+
+
+        // display if current user likes post
+
+        getIfUserLiked() {
+            API.get(`posts/${this.postId}/userLiked/${this.currentUserId}`)
+            .then(response => {
+                if(response.data == "true") {
+                    const btn = document.getElementById('heart-btn');
+                    btn.classList.remove('far');
+                    btn.classList.add('fas');
+
+                    const count = document.getElementById('heart-count');
+                    count.classList.add('liked');
+                } 
+            })
+            .catch(error => console.log(error));
         }
     }
 };
@@ -383,7 +454,7 @@ export default {
     &__img {
         @include post-img;
         cursor: pointer;
-        transition: 300ms;
+        transition: 300ms ease-in-out;
 
         &:hover {
             opacity: 0.7;
@@ -422,7 +493,7 @@ export default {
         @include position(absolute, 15px, 35px, auto, auto);
         color: $color-basic-light;
         font-size: 40px;
-        transition: 300ms;
+        transition: 200ms ease-in-out;
 
         &:hover, &:focus {
             color: $color-primary-dark;
@@ -480,6 +551,14 @@ export default {
         };
     
         &--like {
+            .fas {
+                color: $color-primary-dark;
+            };
+
+            .liked {
+                color: $color-primary-dark;
+            };
+
             &:hover {
                 color: $color-primary-dark;
                 i {
@@ -487,6 +566,7 @@ export default {
                 };
             };
         };
+
     }; 
   
 };

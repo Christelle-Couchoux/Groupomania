@@ -33,6 +33,7 @@ import LoginLogoTitle from "../components/LoginLogoTitle.vue"
 
 export default {
 	name: 'Home',
+	
 	components: {
 		LoginLogoTitle,
 	}

@@ -45,28 +45,13 @@
 export default {
     name: 'PostsHeader',
 
-    data() {
-
-    },
-
     created() {
         this.currentUserId = localStorage.getItem("userId");
-    },
-
-    mounted() {
-        this.activeIcon();
     },
 
     methods: {
         logout() {
             localStorage.clear();
-        },
-
-        activeIcon() { // not working
-            const profileLink = document.getElementById("profile");
-            if(this.$router.currentRoute.path == '/user/${currentUserId}/comments') {
-                profileLink.classList.add('router-link-active');
-            }
         }
     }
 }

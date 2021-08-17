@@ -99,9 +99,18 @@
                                     </p>
                                 </div>
 
-                                <div class="post__img" v-if="post.post_file">
+                                <div class="post__img" v-if="post.post_file" @click.prevent="enlarge(post)">
                                     <img
                                         :src="post.post_file"
+                                        title = "Agrandir l'image"
+                                    />
+                                </div>
+
+                                <!-- popup window enlarge img -->
+                                <div id="modal-img" class="modal">
+                                    <span class="close" @click.prevent="closeImg">&times;</span>
+                                    <img 
+                                        id="img01"
                                     />
                                 </div>
 
@@ -114,7 +123,7 @@
                                             <p>{{ post.comments_count }}</p>
                                         </div>
                                     </div>
-                                    <div class="post__btn post__btn--like" title="Aimer">
+                                    <div class="post__btn post__btn--like" title="Aimer" @click.prevent="like(post)">
                                         <div class="post__btn__icon">
                                             <i class="far fa-heart" aria-label="Aimer" role="img"></i>
                                         </div>
@@ -154,6 +163,7 @@ import { API } from '@/axios.config.js'
 
 export default {
 	name: 'UserPosts',
+
 	components: {
 		ScrollToTopBtn,
 		PostsHeader,
@@ -182,6 +192,19 @@ export default {
     },
 
     methods: {
+        // display user info
+
+        getUserInfo() {
+            API.get(`users/${this.userId}/info`)
+           .then(response => {
+                this.info = response.data.info;
+            })
+            .catch(error => console.log(error));
+        },
+
+
+        // dispaly all posts of user
+
         getAllPostsOfUser() {
             API.get(`users/${this.userId}/posts`)
            .then(response => {
@@ -195,13 +218,23 @@ export default {
             this.moment = moment;
         },
 
-        getUserInfo() {
-            API.get(`users/${this.userId}/info`)
-           .then(response => {
-                this.info = response.data.info;
-            })
-            .catch(error => console.log(error));
+
+        // enlarge image in popup
+
+        enlarge(post) {
+            const modal = document.getElementById('modal-img');
+            const modalImg = document.getElementById('img01');
+            modal.style.display = "flex";
+            modalImg.src = post.post_file;
         },
+
+        closeImg() {
+            const modal = document.getElementById('modal-img');
+            modal.style.display = "none";
+        },
+
+
+        // delete post
 
         deletePost(post) {
             API.delete(`posts/${post.post_id}`)
@@ -209,6 +242,21 @@ export default {
             .catch(error => console.log(error));
 
             window.location.reload();
+        },
+
+
+        // like post
+        
+        like(post) {
+            API.post(`posts/${post.post_id}/likes`,
+            {
+                userId: this.currentUserId,
+                postId: this.post.post_id
+            })
+            .then(response => console.log(response))
+            .catch(error => console.log(error));
+
+            //window.location.reload();
         }
     }
 
@@ -268,9 +316,6 @@ export default {
     @include size(120px);
     border-radius: 50%;
     margin: 20px 10px 10px 10px;
-    //padding: 2px;
-    //border: solid 3px $color-basic-dark;
-    //transition: all 200ms ease-in-out;
 
     @include lg {
         order: 1;

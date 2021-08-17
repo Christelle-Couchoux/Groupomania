@@ -92,11 +92,13 @@ import router from '@/router/index.js'
 
 export default {
     name: 'Signup',
+
     components: {
         ScrollToTopBtn,
 		LoginLogoTitle,
         LoginMenu
     },
+
     data() {
         return {
             pseudo: "",
@@ -106,6 +108,7 @@ export default {
             errorMessage: null,
         }
     },
+    
     methods: {
         checkForm() {
             this.errors = [];

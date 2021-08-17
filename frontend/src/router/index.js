@@ -11,7 +11,6 @@ import UserLikes from '../views/UserLikes.vue'
 import Search from '../views/Search.vue'
 import Posts from '../views/Posts.vue'
 import Post from '../views/Post.vue'
-import PostLikes from '../views/PostLikes.vue'
 
 
 const routes = [
@@ -85,12 +84,6 @@ const routes = [
     path: '/posts/:postId',
     name: 'Post',
     component: Post
-  },
-
-  {
-    path: '/posts/:postId/likes',
-    name: 'PostLikes',
-    component: PostLikes
   },
 ]
 

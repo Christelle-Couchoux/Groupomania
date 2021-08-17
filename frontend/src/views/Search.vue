@@ -80,11 +80,13 @@ import { API } from '@/axios.config.js'
 
 export default {
 	name: 'Search',
+
 	components: {
 		ScrollToTopBtn,
 		PostsHeader,
 
 	},
+
     data() {
         return {
             users: [],
@@ -92,6 +94,7 @@ export default {
             search: ''
         }
     },
+
     created() {
         this.currentUserId = localStorage.getItem("userId");
         this.currentUserPseudo = localStorage.getItem("pseudo");
@@ -99,6 +102,7 @@ export default {
 
         this.getAllUsers();    
     },
+    
     methods: {
         getAllUsers() {
             API.get(`users/`)

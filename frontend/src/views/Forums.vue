@@ -46,10 +46,12 @@ import LoginLogoTitle from "../components/LoginLogoTitle.vue"
 
 export default {
     name: 'Forums',
+
     components: {
         ScrollToTopBtn,
 		LoginLogoTitle,
     },
+    
     methods: {
         logout() {
             localStorage.clear();

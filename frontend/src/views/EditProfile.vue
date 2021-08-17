@@ -149,11 +149,12 @@ export default {
         this.currentUserRole = localStorage.getItem("role");
 
         this.getUserInfo();
-	
     },
 
     methods: {
-        getUserInfo() { // OK
+        // display user info
+
+        getUserInfo() {
             const userId = this.$route.params.userId;
             //console.log(userId);
 
@@ -163,6 +164,9 @@ export default {
             })
             .catch(error => console.log(error));
         },
+
+
+        // modify profile
 
         handleFileUpload() {
             //this.file = document.getElementById('file').files[0];
@@ -184,6 +188,13 @@ export default {
             return regex.test(bio);
         },
 
+        emptyForm() {
+            this.file = '',
+            this.newPhoto = '',
+            this.bio = '',
+            this.errorMessage = null
+        },
+
         editProfile() { // doesn't work with file, ok if only text
             const formData = new FormData();
             if(this.file != '') {
@@ -201,6 +212,9 @@ export default {
 
         },
 
+
+        // delete account
+
 		deleteAccount() {
 			API.delete(`users/${this.$route.params.userId}`)
 			.then(response => {
@@ -214,14 +228,7 @@ export default {
             } else if(this.currentUserRole == 'admin') {
                 router.push('/posts/');
             }    
-		},
-
-        emptyForm() {
-            this.file = '',
-            this.newPhoto = '',
-            this.bio = '',
-            this.errorMessage = null
-        }
+		}    
     }
 };
 

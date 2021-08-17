@@ -56,7 +56,7 @@
                     </div>
 
                     <!-- if posts or comments -->
-                    <div id="comments">
+                    <div id="comments" v-else>
                         <div class="post" v-for="comment in comments" :key="comment.id">
                             <router-link :to="{ name: 'Post', params: { postId: comment.post_id } }" title="Voir le message" class="comment-router-link">
                                 <!-- post -->
@@ -98,9 +98,18 @@
                                     </p>
                                 </div>
 
-                                <div class="post__img" v-if="comment.post_file">
+                                <div class="post__img" v-if="comment.post_file" @click.prevent="enlarge(comment)">
                                     <img
                                         :src="comment.post_file"
+                                        title = "Agrandir l'image"
+                                    />
+                                </div>
+
+                                <!-- popup window enlarge img -->
+                                <div id="modal-img" class="modal">
+                                    <span class="close" @click.prevent="closeImg">&times;</span>
+                                    <img 
+                                        id="img01"
                                     />
                                 </div>
 
@@ -110,15 +119,15 @@
                                             <i class="far fa-comment" aria-label="Commenter" role="img"></i>
                                         </div>
                                         <div class="post__btn__counter">
-                                            <p>{{ comment.comments_count }}</p>
+                                            <p></p>
                                         </div>
                                     </div>
-                                    <div class="post__btn post__btn--like" title="Aimer">
+                                    <div class="post__btn post__btn--like" title="Aimer" @click.prevent="like(comment)">
                                         <div class="post__btn__icon">
                                             <i class="far fa-heart" aria-label="Aimer" role="img"></i>
                                         </div>
                                         <div class="post__btn__counter">
-                                            <p>{{ comment.likes_count }}</p>
+                                            <p></p>
                                         </div>
                                     </div>
                                 </div>
@@ -226,6 +235,20 @@ export default {
     },
     
     methods: {
+        // display user info
+
+        getUserInfo() {
+            API.get(`users/${this.userId}/info`)
+           .then(response => {
+                this.info = response.data.info;
+            })
+            .catch(error => console.log(error));
+            
+        },
+
+
+        // get all comments of user
+
         getAllCommentsOfUser() {
             API.get(`users/${this.userId}/comments`)
            .then(response => {
@@ -238,14 +261,23 @@ export default {
             this.moment = moment;
         },
 
-        getUserInfo() {
-            API.get(`users/${this.userId}/info`)
-           .then(response => {
-                this.info = response.data.info;
-            })
-            .catch(error => console.log(error));
-            
+
+        // enlarge image in popup
+
+        enlarge(comment) {
+            const modal = document.getElementById('modal-img');
+            const modalImg = document.getElementById('img01');
+            modal.style.display = "flex";
+            modalImg.src = comment.post_file;
         },
+
+        closeImg() {
+            const modal = document.getElementById('modal-img');
+            modal.style.display = "none";
+        },
+
+
+        // delete post
 
         deletePost(comment) {
             API.delete(`posts/${comment.post_id}`)
@@ -255,6 +287,9 @@ export default {
             window.location.reload();
         },
 
+
+        // delete comment
+
         deleteComment(comment) {
             API.delete(`comments/${comment.comment_id}`)
             .then(response => console.log(response))
@@ -262,6 +297,21 @@ export default {
             console.log();
 
             window.location.reload();
+        },
+
+
+        // like post
+        
+        like(comment) {
+            API.post(`posts/${comment.post_id}/likes`,
+            {
+                userId: this.currentUserId,
+                postId: this.comment.post_id
+            })
+            .then(response => console.log(response))
+            .catch(error => console.log(error));
+
+            //window.location.reload();
         }
     }
 };
