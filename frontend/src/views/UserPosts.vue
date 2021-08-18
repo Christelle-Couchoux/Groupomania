@@ -4,10 +4,10 @@
 
 		<PostsHeader/>
 
-		<main>
+		<main v-if="this.currentUserId">
 
 			<section id="user-profile-content" v-for="userInfo in info" :key="userInfo.pseudo">
-                <h1>{{ userInfo.pseudo }}</h1>
+                <h1>Profil - {{ userInfo.pseudo }}</h1>
 
                 <div id="user-info">
                     <div id="user-photo">
@@ -49,24 +49,20 @@
                         </ul>
                     </nav>
                 
-                    <!-- if no posts yet -->
-                    <div id="no-posts" v-if="!posts">
-                        <p>
-                            {{ userInfo.pseudo }} n'a pas encore posté de message.
-                        </p>
-                    </div>
+                    
 
                     <!-- if posts -->
-                    <div id="posts" v-else>
+                    <div id="posts" v-if="posts[0]">
 
                         <div class="post" v-for="post in posts" :key="post.post_id">
                             <router-link :to="{ name: 'Post', params: { postId: post.post_id } }" title="Voir le message">
                                 <div
                                     class="delete-post"
+                                    title="Supprimer le message"
                                     v-if="post.fk_user_id == currentUserId || currentUserRole == 'admin'"
                                     @click.prevent="deletePost(post)"
                                 >
-                                    <i class="fas fa-times" aria-label="Supprimer" role="button" @click="deletePost"></i>
+                                    <i class="fas fa-times" aria-label="Supprimer le message" role="button" @click="deletePost"></i>
                                 </div>
 
                                 <div class="post__title">
@@ -113,25 +109,6 @@
                                         id="img01"
                                     />
                                 </div>
-
-                                <div class="post__buttons">
-                                    <div class="post__btn post__btn--comment" title="Commenter">
-                                        <div class="post__btn__icon">
-                                            <i class="far fa-comment" aria-label="Commenter" role="img"></i>
-                                        </div>
-                                        <div class="post__btn__counter">
-                                            <p>{{ post.comments_count }}</p>
-                                        </div>
-                                    </div>
-                                    <div class="post__btn post__btn--like" title="Aimer" @click.prevent="like(post)">
-                                        <div class="post__btn__icon">
-                                            <i class="far fa-heart" aria-label="Aimer" role="img"></i>
-                                        </div>
-                                        <div class="post__btn__counter">
-                                            <p>{{ post.likes_count }}</p>
-                                        </div>
-                                    </div>
-                                </div>
                             </router-link>
                         </div>
 
@@ -139,12 +116,25 @@
                             <p>Fin des messages.</p>
                         </div>
 
-                    </div>   
+                    </div> 
+
+                    <!-- if no posts yet -->
+                    <div id="no-posts" v-else>
+                        <p>
+                            {{ userInfo.pseudo }} n'a pas encore posté de message.
+                        </p>
+                    </div>  
                 </div>
 
             </section>
 
 		</main>
+
+        <div class="access-denied" v-else>
+            <p>
+                Vous devez être connecté pour accéder à cette page.
+            </p>
+        </div>
 
 		<ScrollToTopBtn/>
 
@@ -171,7 +161,7 @@ export default {
 
     data() {
         return {
-            posts: [],
+            posts: null,
             post: '',
             userId: '',
             info: [],
@@ -209,7 +199,7 @@ export default {
             API.get(`users/${this.userId}/posts`)
            .then(response => {
                 this.posts = response.data.posts;
-                //console.log(response);
+                //console.log(this.posts);
             })
             .catch(error => console.log(error));
         },
@@ -242,24 +232,8 @@ export default {
             .catch(error => console.log(error));
 
             window.location.reload();
-        },
-
-
-        // like post
-        
-        like(post) {
-            API.post(`posts/${post.post_id}/likes`,
-            {
-                userId: this.currentUserId,
-                postId: this.post.post_id
-            })
-            .then(response => console.log(response))
-            .catch(error => console.log(error));
-
-            //window.location.reload();
         }
     }
-
 };
 
 </script>
@@ -303,7 +277,7 @@ export default {
     .edit-profile-btn {
         @include btn(200px);
         @include btn-edit-profile;
-        margin: 20px 10px 10px 10px;
+        margin: 10px 10px 10px 10px;
 
         @include lg {
             order: 2;
@@ -345,7 +319,7 @@ export default {
 
 .user-bio {
     @include size(90%, auto);
-    margin: 0 10px 20px 10px;
+    margin: 20px 10px 20px 10px;
     padding: 0 10px;
 
     @include lg {

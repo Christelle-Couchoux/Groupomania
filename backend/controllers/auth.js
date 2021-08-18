@@ -3,13 +3,6 @@ const jwt = require('jsonwebtoken');
 
 const db = require('../models');
 const User = db.user;
-const Post = db.post;
-const Comment = db.comment;
-const Role = db.role;
-const Notification = db.notification;
-const Postlike = db.postLike;
-const CommentLike = db.commentLike;
-const Op = db.sequelize.Op;
 
 
 // create new user (POST)
@@ -74,7 +67,10 @@ exports.signup = (req, res) => {
         }
     })
     .catch(error => res.status(500).json({ error }));
-    //sequelize.close();
+
+    async () => {
+        await sequelize.close();
+    };
 };
 
 
@@ -114,5 +110,8 @@ exports.login = (req, res) => {
         .catch(error => res.status(500).json({ error }));
     })
     .catch(error => res.status(500).json({ error }));
-    //sequelize.close();
+
+    async () => {
+        await sequelize.close();
+    };
 };

@@ -6,7 +6,7 @@
 		<main>
 
 			<section id="user-profile-content" v-for="userInfo in info" :key="userInfo.pseudo">
-                <h1>{{ userInfo.pseudo }}</h1>
+                <h1>Profil - {{ userInfo.pseudo }}</h1>
                 
                 <div id="user-info">
                     <div id="user-photo">
@@ -48,23 +48,17 @@
                         </ul>
                     </nav>
 
-                    <!-- if no posts or comments liked yet -->
-                    <div id="no-likes" v-if="!likedPosts">
-                        <p>
-                            {{ userInfo.pseudo }} n'a pas encore aimé de message.
-                        </p>
-                    </div>
-
                     <!-- if posts or comments liked -->
-                    <div id="likes" v-else>
+                    <div id="likes" v-if="likedPosts[0]">
                         <div class ="post" v-for="likedPost in likedPosts" :key="likedPost.post_id">
                             <router-link :to="{ name: 'Post', params: { postId: likedPost.post_id } }" title="Voir le message">
                                 <div
                                     class="delete-post"
+                                    title="Supprimer le message"
                                     v-if="likedPost.post_user_id == currentUserId || currentUserRole == 'admin'"
                                     @click.prevent="deletePost(likedPost)"
                                 >
-                                    <i class="fas fa-times" aria-label="Supprimer" role="button" @click="deletePost"></i>
+                                    <i class="fas fa-times" aria-label="Supprimer le message" role="button" @click="deletePost"></i>
                                 </div>
 
                                 <div class="post__title">
@@ -111,25 +105,6 @@
                                         id="img01"
                                     />
                                 </div>
-
-                                <div class="post__buttons">
-                                    <div class="post__btn post__btn--comment" title="Commenter">
-                                        <div class="post__btn__icon">
-                                            <i class="far fa-comment" aria-label="Commenter" role="img"></i>
-                                        </div>
-                                        <div class="post__btn__counter">
-                                            <p></p>
-                                        </div>
-                                    </div>
-                                    <div class="post__btn post__btn--like" title="Aimer" @click.prevent="like(likedPost)">
-                                        <div class="post__btn__icon">
-                                            <i class="far fa-heart" aria-label="Aimer" role="img"></i>
-                                        </div>
-                                        <div class="post__btn__counter">
-                                            <p></p>
-                                        </div>
-                                    </div>
-                                </div>
                             </router-link>
                         </div>
 
@@ -138,11 +113,21 @@
                         </div>
 
                     </div>
+
+                    <!-- if no posts or comments liked yet -->
+                    <div id="no-likes" v-else>
+                        <p>
+                            {{ userInfo.pseudo }} n'a pas encore aimé de message.
+                        </p>
+                    </div>
+
                 </div>
 
             </section>
 
 		</main>
+
+        
 
 		<ScrollToTopBtn/>
 
@@ -173,7 +158,7 @@ export default {
             info: [],
             userInfo:'',
             likedPosts: [],
-            likedPost: ''
+            likedPost: '',
         }
     },
 
@@ -240,21 +225,6 @@ export default {
             .catch(error => console.log(error));
 
             window.location.reload();
-        },
-
-
-        // like post
-        
-        like(likedPost) {
-            API.post(`posts/${likedPost.post_id}/likes`,
-            {
-                userId: this.currentUserId,
-                postId: this.likedPost.post_id
-            })
-            .then(response => console.log(response))
-            .catch(error => console.log(error));
-
-            //window.location.reload();
         }
     }
 };

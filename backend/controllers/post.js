@@ -13,10 +13,14 @@ const fs = require("fs");
 exports.getAllPosts = (req, res) => {
     sequelize.query('CALL get_all_posts()', { type: QueryTypes.SELECT })
     .then(([posts, metadata]) => {
-        return res.status(200).json({ posts })
+        return res.status(200).json({ posts });
     })
     .catch((error) => res.status(400).json(error));
-}
+
+    async () => {
+        await sequelize.close();
+    };
+};
 
 
 
@@ -43,6 +47,10 @@ exports.createPost = (req, res) => {
         if(err.request){ console.log(err.request) }
         if(err.response){ console.log(err.response) }
     });
+
+    async () => {
+        await sequelize.close();
+    };
 };
 
 
@@ -64,6 +72,10 @@ exports.deletePost = (req, res) => {
         res.status(500).json({ error })
         console.log(error)
     });
+
+    async () => {
+        await sequelize.close();
+    };
 };
 
 
@@ -79,6 +91,10 @@ exports.getOnePost = (req, res) => {
     })
     .then(([post, metadata]) => { return res.status(200).json({ post }) })
     .catch((error) => res.status(400).json(error));
+
+    async () => {
+        await sequelize.close();
+    };
 };
 
 
@@ -95,6 +111,10 @@ exports.createComment = (req, res) => {
     })
     .then(() => res.status(201).json({ message: 'Commentaire créé !' }))
     .catch(error => res.status(400).json({ error }));
+
+    async () => {
+        await sequelize.close();
+    };
 };
 
 
@@ -130,6 +150,10 @@ exports.getAllCommentsOfPost = (req, res) => {
     })
     .then(([comments, metadata]) => { return res.status(200).json({ comments }) })
     .catch((error) => res.status(400).json(error));
+
+    async () => {
+        await sequelize.close();
+    };
 };
 
 
@@ -164,6 +188,10 @@ exports.likePost = (req, res) => {
         res.status(500). json({ error })
         console.log(error)
     });
+
+    async () => {
+        await sequelize.close();
+    };
 };
 
 
@@ -190,6 +218,10 @@ exports.getUserLiked = (req, res) => {
         res.status(500). json({ error })
         console.log(error)
     });
+
+    async () => {
+        await sequelize.close();
+    };
 };
 
 
@@ -205,6 +237,10 @@ exports.getLikesCountOfPost = (req, res) => {
     })
     .then(([likes, metadata]) => { return res.status(200).json({ likes }) })
     .catch((error) => res.status(400).json(error));
+
+    async () => {
+        await sequelize.close();
+    };
 };
 
 
@@ -220,4 +256,8 @@ exports.getCommentsCountOfPost = (req, res) => {
     })
     .then(([commentsCount, metadata]) => { return res.status(200).json({ commentsCount }) })
     .catch((error) => res.status(400).json(error));
+
+    async () => {
+        await sequelize.close();
+    };
 };

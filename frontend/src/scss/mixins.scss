@@ -133,7 +133,7 @@
 
 @mixin link-login-signup {
     text-align: center;
-    margin: 80px 0 80px 0;
+    margin: 50px 0 80px 0;
     transition: all 200ms ease-in-out;
 
     &:hover {
@@ -331,6 +331,51 @@
 
     p {
         @include size (100%, auto);
+    };
+};
+
+
+@mixin access-denied {
+    @include size (80%, auto);
+    margin: 194px 0 0 0;
+    padding: 50px 20px 50px 20px;
+    text-align: center;
+    color: $color-primary-dark;
+    border-top: solid 1px $color-secondary;
+    border-bottom: solid 1px $color-secondary;
+
+    p {
+        @include size (100%, auto);
+    };
+
+    @include lg {
+        margin: 61px 0 0 0;
+        @include position(absolute, 0, auto, auto, 250px);
+        @include size(calc(100% - 250px), auto);
+        border-left: none;
+    };
+
+    @include xxl {
+        @include size(80%, auto);
+    };
+};
+
+
+@mixin access-denied-forums {
+    @include size (80%, auto);
+    margin: auto;
+    padding: 50px 20px 50px 20px;
+    text-align: center;
+    color: $color-primary-dark;
+    border-top: solid 1px $color-secondary;
+    border-bottom: solid 1px $color-secondary;
+
+    p {
+        @include size (100%, auto);
+    };
+
+    @include xxl {
+        @include size(80%, auto);
     };
 };
 

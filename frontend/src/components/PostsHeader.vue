@@ -10,9 +10,9 @@
 		<nav id="posts-menu">
 			<ul>
 				<li>
-					<router-link to="/posts" title="Accueil">
-						<i class="fas fa-home" aria-label="Retour à l'accueil" role="img"></i>
-						<span>Accueil</span>
+					<router-link to="/posts" title="Messages">
+						<i class="fas fa-home" aria-label="Retour aux messages" role="img"></i>
+						<span>Messages</span>
 					</router-link>
 				</li>
 				<li>

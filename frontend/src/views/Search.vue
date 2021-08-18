@@ -3,7 +3,7 @@
 	<div id="user-search">
 		<PostsHeader/>
 
-		<main>
+		<main v-if="this.currentUserId">
 
 			<section id="user-search-content">
                 <h1>Rechercher un utilisateur</h1>
@@ -22,16 +22,8 @@
                     </div>
                 </div>
 
-                <div id="users-list">
-
-                    <!-- if no users -->
-                    <div id="no-users" v-if="!users">
-                        <p>
-                            Aucun utilisateur ne correspond à la recherche.
-                        </p>
-                    </div>
-
-                    <!-- if users -->
+                <!-- if users -->
+                <div id="users-list" v-if="users[0]">
                     <div class="user" v-for="user in users" :key="user.user_id">
                         <div class="user__id">
                             <div class="user__id__photo">
@@ -58,8 +50,22 @@
                     </div>
 
                 </div>
+
+                <!-- if no users -->
+                <div id="no-users" v-else>
+                    <p>
+                        Aucun utilisateur ne correspond à la recherche.
+                    </p>
+                </div>
+
             </section>
         </main>
+
+        <div class="access-denied" v-else>
+            <p>
+                Vous devez être connecté pour accéder à cette page.
+            </p>
+        </div>
 
 		<ScrollToTopBtn/>
 
@@ -189,6 +195,8 @@ export default {
 
 #no-users {
     @include no-results;
+    margin:auto;
+    margin-top: 30px;
 };
 
 

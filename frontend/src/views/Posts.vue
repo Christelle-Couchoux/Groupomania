@@ -3,10 +3,10 @@
 	<div id="all-posts">
 		<PostsHeader/>
 
-		<main>
+		<main v-if="this.currentUserId">
 
 			<section id="all-posts-content">
-                <h1>Accueil</h1>
+                <h1>Messages</h1>
 
                 <form enctype="multipart/form-data" class="add-post">
                     <div class="add-post__text" >
@@ -54,25 +54,18 @@
 
 
                 <div id="all-posts-list">
-
-                    <!-- if no posts -->
-                    <div id="no-posts" v-if="!posts">
-                        <p>
-                            Il n'y a pas encore de message.
-                        </p>
-                    </div>
-
                     <!-- if posts -->
-                    <div id="posts" v-else>
+                    <div id="posts" v-if="posts[0]">
 
                         <div class="post" v-for="post in posts" :key="post.post_id">
                             <router-link :to="{ name: 'Post', params: { postId: post.post_id } }" title="Voir le message">
                                 <div
                                     class="delete-post"
+                                    title="Supprimer le message"
                                     v-if="post.fk_user_id == currentUserId || currentUserRole == 'admin'"
                                     @click.prevent="deletePost(post)"
                                 >
-                                    <i class="fas fa-times" aria-label="Supprimer" role="button"></i>
+                                    <i class="fas fa-times" aria-label="Supprimer le message" role="button"></i>
                                 </div>
 
                                 <div class="post__title">
@@ -94,7 +87,7 @@
                                             <p>-</p>
                                         </div>
                                         <div class="post__title__date">
-                                            <p>{{ moment(post.post_createdAt).fromNow() }}</p>
+                                            <p>{{ moment(post.createdAt).fromNow() }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -119,29 +112,6 @@
                                         id="img01"
                                     />
                                 </div>
-
-                                <div class="post__buttons">
-                                    <div class="post__btn post__btn--comment" title="Commenter">
-                                        <div class="post__btn__icon">
-                                            <i class="far fa-comment" aria-label="Commenter" role="img"></i>
-                                        </div>
-                                        <div class="post__btn__counter">
-                                            <p></p>
-                                        </div>
-                                    </div>
-                                    <div
-                                        class="post__btn post__btn--like" 
-                                        title="Aimer" 
-                                        @click.prevent="like(post)"
-                                    >
-                                        <div class="post__btn__icon">
-                                            <i class="far fa-heart" aria-label="Aimer" role="img"></i>
-                                        </div>
-                                        <div class="post__btn__counter">
-                                            <p></p>
-                                        </div>
-                                    </div>
-                                </div>
                             </router-link>
 
                         </div>
@@ -152,10 +122,23 @@
 
                     </div>
 
+                    <!-- if no posts -->
+                    <div id="no-posts" v-else>
+                        <p>
+                            Il n'y a pas encore de message.
+                        </p>
+                    </div>
+
                 </div>
             </section>
 
         </main>
+
+        <div class="access-denied" v-else>
+            <p>
+                Vous devez être connecté pour accéder à cette page.
+            </p>
+        </div>
 
 		<ScrollToTopBtn/>
 
@@ -192,6 +175,8 @@ export default {
             userId: '',
             newImage: '',
             errorMessage: null,
+            likes: [],
+            likeCount: ''
         }
     },
 
@@ -202,7 +187,6 @@ export default {
 
         this.getAllPosts();
         this.moment();
-
     },
 
     methods: {
@@ -293,22 +277,7 @@ export default {
             //console.log();
 
             window.location.reload();
-        },
-
-
-        // like post
-
-        like(post) {
-            API.post(`posts/${post.post_id}/likes`,
-            {
-                userId: this.currentUserId,
-                postId: this.post.post_id
-            })
-            .then(response => console.log(response))
-            .catch(error => console.log(error));
-
-            //window.location.reload();
-        },
+        }
     }
 };
 
@@ -322,7 +291,7 @@ export default {
 
 
 #all-posts {
-    @include main   
+    @include main;   
 };
 
 
@@ -578,5 +547,10 @@ export default {
         @include position(absolute, 30px, 20px, auto, auto);
     };
 };
+
+
+.access-denied {
+    @include access-denied;
+}
 
 </style>

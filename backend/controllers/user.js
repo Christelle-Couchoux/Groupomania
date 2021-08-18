@@ -1,12 +1,5 @@
 const db = require('../models');
 const User = db.user;
-const Post = db.post;
-const Comment = db.comment;
-const Role = db.role;
-const Notification = db.notification;
-const Postlike = db.postLike;
-const CommentLike = db.commentLike;
-const { Op } = require('sequelize');
 const { QueryTypes } = require('sequelize');
 const sequelize = db.sequelize;
 
@@ -22,6 +15,10 @@ exports.getAllUsers = (req, res) => {
     })
     .then(users => res.status(200).json({ users }))
     .catch(error => res.status(40).json({ error }));
+
+    async () => {
+        await sequelize.close();
+    };
 };
 
 
@@ -39,7 +36,11 @@ exports.modifyUserProfile = (req, res) => {
     User.update({ ...userObject, user_id: req.params.userId }, { where: { user_id: req.params.userId } })
     .then(() => res.status(200).json({ message: 'Profil utilisateur modifié !' }))
     .catch(error => res.status(400).json({ error }));
-}
+
+    async () => {
+        await sequelize.close();
+    };
+};
 
 
 
@@ -50,6 +51,10 @@ exports.deleteUserAccount = (req, res) => {
     User.destroy({ where: { user_id: req.params.userId } })
     .then(() => res.status(200).json({ message: 'Utlisateur supprimé !' }))
     .catch(error => res.status(400). json({ error }));
+
+    async () => {
+        await sequelize.close();
+    };
 };
 
 
@@ -65,7 +70,10 @@ exports.getUserInfo = (req, res) => {
     })
     .then(([info, metadata]) => { return res.status(200).json({ info }) })
     .catch((error) => res.status(400).json(error));
-    //sequelize.close();
+
+    async () => {
+        await sequelize.close();
+    };
 };
 
 
@@ -83,7 +91,10 @@ exports.getAllPostsOfUser = (req, res) => {
         return res.status(200).json({ posts })
     })
     .catch((error) => res.status(400).json(error));
-    //sequelize.close();
+
+    async () => {
+        await sequelize.close();
+    };
 };
 
 
@@ -101,6 +112,10 @@ exports.getAllCommentsOfUser = (req, res) => {
         return res.status(200).json({ comments })
     })
     .catch((error) => res.status(400).json(error));
+
+    async () => {
+        await sequelize.close();
+    };
 };
 
 
@@ -118,4 +133,8 @@ exports.getAllLikesOfUser = (req, res) => {
         return res.status(200).json({ likedPosts })
     })
     .catch((error) => res.status(400).json(error));
+
+    async () => {
+        await sequelize.close();
+    };
 };

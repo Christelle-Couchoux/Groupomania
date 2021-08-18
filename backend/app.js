@@ -37,7 +37,6 @@ app.use(cookieSession({
 
 
 // convert request body to js so can be used
-
 app.use(bodyParser.json());
 
 

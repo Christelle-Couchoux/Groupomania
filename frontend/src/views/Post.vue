@@ -3,7 +3,7 @@
 	<div id="specific-post">
 		<PostsHeader/>
 
-		<main>
+		<main v-if="this.currentUserId">
 
 			<section id="specific-post-content">
                 <h1>Message</h1>
@@ -12,10 +12,11 @@
                     <div class="specific-post">
                         <div
                             class="delete-specific-post"
+                            title="Supprimer le message"
                             v-if="postInfo.user_id == currentUserId || currentUserRole == 'admin'"
                             @click.prevent="deletePost"
                         >
-                            <i class="fas fa-times" aria-label="Supprimer" role="button"></i>
+                            <i class="fas fa-times" aria-label="Supprimer le message" role="button"></i>
                         </div>
 
                         <div class="specific-post__title">
@@ -58,19 +59,22 @@
                             />
                         </div>
 
+                        
                         <div class="specific-post__buttons">
                             <div
                                 class="specific-post__btn specific-post__btn--comment" 
-                                title="Commentaires"
+                                title="Voir les commentaires"
                                 v-for="commCount in commentsCount" :key="commCount.post_id"
+                                @click="scrollMeTo('comments-list')"
                             >
                                 <div class="specific-post__btn__icon">
-                                    <i class="far fa-comment" aria-label="Commentaires" role="img"></i>
+                                    <i class="far fa-comment" aria-label="Voir les commentaires" role="img"></i>
                                 </div>
                                 <div class="specific-post__btn__counter">
                                     <p>{{ commCount.comments_count }}</p>
                                 </div>
                             </div>
+
                             <div
                                 class="specific-post__btn specific-post__btn--like" 
                                 title="Aimer" 
@@ -84,7 +88,9 @@
                                     <p>{{ likeCount.post_likes_count }}</p>
                                 </div>
                             </div>
-                        </div>        
+                            
+                        </div> 
+                              
                     </div>
                     <!-- post end -->
 
@@ -116,24 +122,19 @@
                     <!-- add comment end -->
 
                     <!-- comments -->
-                    <!-- if no comments -->
-                    <div id="no-comments"  v-if="!comments">
-                        <p>
-                            Il n'y a pas encore de commentaire.
-                        </p>
-                    </div>
-
+                    
                     <!-- if comments -->
-                    <div id="comments-list">
+                    <div id="comments-list" ref="comments-list" v-if="comments[0]">
 
                         <div class="comment" v-for="comment in comments" :key="comment.comment_id">
                             <!-- if own comment -->
                             <div
                                 class="delete-comment"
+                                title="Supprimer le commentaire"
                                 v-if="comment.user_id == currentUserId || currentUserRole == 'admin'"
                                 @click.prevent="deleteComment(comment)"
                             >
-                                <i class="fas fa-times" aria-label="Supprimer" role="button"></i>
+                                <i class="fas fa-times" aria-label="Supprimer le commentaire" role="button"></i>
                             </div>
 
                             <div class="comment__title">
@@ -170,12 +171,26 @@
                         </div>
 
                     </div>
+
+                    <!-- if no comments -->
+                    <div id="no-comments"  v-else>
+                        <p>
+                            Ce message n'a pas encore de commentaire.
+                        </p>
+                    </div>
+
                    <!-- comments end -->
 
                 </div>
 
             </section>
         </main>
+
+        <div class="access-denied" v-else>
+            <p>
+                Vous devez être connecté pour accéder à cette page.
+            </p>
+        </div>
 
 		<ScrollToTopBtn/>
 
@@ -262,6 +277,14 @@ export default {
         },
 
 
+        // scroll to comments list
+
+        scrollMeTo(refName) {
+            const el = this.$refs[refName];
+            el.scrollIntoView({ behavior: 'smooth' });
+        },
+
+
         // add new comment
 
         checkComment() {
@@ -286,7 +309,8 @@ export default {
             })
             .then(response => console.log(response))
             .catch(error => console.log(error));
-            //window.location.reload();
+            window.location.reload();
+            //console.log(this.currentUserId);
         },
 
         emptyForm() {

@@ -68,6 +68,7 @@ export default {
 .btn-login{
 	@include btn;
 	@include btn-login-signup;
+	margin-bottom: 50px;
 };
 
 </style>

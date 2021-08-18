@@ -1,14 +1,14 @@
 <template>
 
-    <div>
+    <div id="forums">
         
         <header id="login-header">
             <LoginLogoTitle/>
         </header>
 
-        <main>
+        <main v-if="this.currentUserId">
 
-            <section id="forums">
+            <section id="forums-content">
                 <router-link to="/Articles" title ="Forum articles">
                     <div class="forum-option">
                         <i class="far fa-newspaper" aria-hidden="true"></i>
@@ -31,6 +31,12 @@
 
         </main>
 
+        <div class="access-denied-forums" v-else>
+            <p>
+                Vous devez être connecté pour accéder à cette page.
+            </p>
+        </div>
+
         <ScrollToTopBtn/>
 
     </div>
@@ -51,6 +57,12 @@ export default {
         ScrollToTopBtn,
 		LoginLogoTitle,
     },
+
+    created() {
+        this.currentUserId = localStorage.getItem("userId");
+        this.currentUserPseudo = localStorage.getItem("pseudo");
+        this.currentUserRole = localStorage.getItem("role");
+    },
     
     methods: {
         logout() {
@@ -68,7 +80,7 @@ export default {
 @import '@/scss/mixins.scss';
 
 
-#forums {
+#forums-content {
     @include flexbox(row, nowrap, space-around, center);
     @include size (100%, auto);
     max-width: 992px;
@@ -101,6 +113,13 @@ export default {
 
 #logout {
  @include link-login-signup;
+};
+
+
+#forums {
+    .access-denied-forums {
+        @include access-denied-forums;
+    }
 };
 
 </style>

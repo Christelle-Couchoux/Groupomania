@@ -1,13 +1,13 @@
 <template>
 
-    <div>
+    <div id="articles">
         
         <header id="login-header">
             <LoginLogoTitle/>
         </header>
 
-        <main>
-            <section id="articles">
+        <main v-if="this.currentUserId">
+            <section id="articles-content">
                 <p>Le forum articles n'est pas encore disponible...</p>
             </section>
 
@@ -18,6 +18,12 @@
             </div>
             
         </main>
+
+        <div class="access-denied-forums" v-else>
+            <p>
+                Vous devez être connecté pour accéder à cette page.
+            </p>
+        </div>
 
         <ScrollToTopBtn/>
 
@@ -38,7 +44,13 @@ export default {
     components: {
         ScrollToTopBtn,
 		LoginLogoTitle,
-    }
+    },
+
+    created() {
+        this.currentUserId = localStorage.getItem("userId");
+        this.currentUserPseudo = localStorage.getItem("pseudo");
+        this.currentUserRole = localStorage.getItem("role");
+    },
 }
 
 </script>
@@ -50,7 +62,7 @@ export default {
 @import '@/scss/mixins.scss';
 
 
-#articles {
+#articles-content {
     text-align: center;
     font-size: map-get($font-size, articles-text);
 };
@@ -71,6 +83,12 @@ export default {
     };    
 };
 
+
+#articles {
+    .access-denied-forums {
+        @include access-denied-forums;
+    }
+};
 
 </style>
 

@@ -3,7 +3,7 @@
 	<div id="edit-profile">
 		<PostsHeader/>
 
-		<main>
+		<main v-if="this.currentUserId">
 
 			<section id="edit-profile-content" v-for="userInfo in info" :key="userInfo.pseudo">
                 <h1>Modifier le profil</h1>
@@ -46,7 +46,7 @@
                         <form class="edit-profile-form" enctype="multipart/form-data">
                             <div class="edit-profile-form__field" id="photo-field">
                                 <label for="file">
-                                    <p>Modifier la photo</p>
+                                    <p>Modifier l'avatar</p>
                                 </label>
                                 <input
                                     type="file"
@@ -107,6 +107,12 @@
             </section>
 
 		</main>
+
+        <div class="access-denied" v-else>
+            <p>
+                Vous devez être connecté pour accéder à cette page.
+            </p>
+        </div>
 
 		<ScrollToTopBtn/>
 

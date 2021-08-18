@@ -34,7 +34,7 @@ export default {
 
     h1 {
         font-size: map-get($font-size, h1);
-        margin: 0 0 70px 0;
+        margin: 0 0 50px 0;
         font-weight: 400;
     };
 };
@@ -43,7 +43,7 @@ export default {
     @include position(relative, auto, auto, auto, auto);
     @include size(80%, auto);
     max-width: 400px;
-    margin: 50px 0 0 0;
+    margin: 30px 0 0 0;
 
     img {
         @include size(100%);

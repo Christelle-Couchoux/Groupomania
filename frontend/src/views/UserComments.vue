@@ -3,10 +3,10 @@
 	<div id="user-profile">
 		<PostsHeader/>
 
-		<main>
+		<main v-if="this.currentUserId">
 
 			<section id="user-profile-content" v-for="userInfo in info" :key="userInfo.pseudo">
-                <h1>{{ userInfo.pseudo }}</h1>
+                <h1>Profil - {{ userInfo.pseudo }}</h1>
                 
                 <div id="user-info">
                     <div id="user-photo">
@@ -48,24 +48,18 @@
                         </ul>
                     </nav>
 
-                    <!-- if no posts or comments yet -->
-                    <div id="no-comments" v-if="!comments">
-                        <p>
-                            {{ userInfo.pseudo }} n'a pas encore posté de message ou commentaire.
-                        </p>
-                    </div>
-
-                    <!-- if posts or comments -->
-                    <div id="comments" v-else>
+                    <!-- if comments -->
+                    <div id="comments" v-if="comments[0]">
                         <div class="post" v-for="comment in comments" :key="comment.id">
                             <router-link :to="{ name: 'Post', params: { postId: comment.post_id } }" title="Voir le message" class="comment-router-link">
                                 <!-- post -->
                                 <div
                                     class="delete-post"
+                                    title="Supprimer le message"
                                     v-if="comment.post_user_id == currentUserId || currentUserRole == 'admin'"
                                     @click.prevent="deletePost(comment)"
                                 >
-                                    <i class="fas fa-times" aria-label="Supprimer" role="button" @click="deletePost"></i>
+                                    <i class="fas fa-times" aria-label="Supprimer le message" role="button" @click="deletePost"></i>
                                 </div>
 
                                 <div class="post__title">
@@ -112,25 +106,6 @@
                                         id="img01"
                                     />
                                 </div>
-
-                                <div class="post__buttons">
-                                    <div class="post__btn post__btn--comment" title="Commenter">
-                                        <div class="post__btn__icon">
-                                            <i class="far fa-comment" aria-label="Commenter" role="img"></i>
-                                        </div>
-                                        <div class="post__btn__counter">
-                                            <p></p>
-                                        </div>
-                                    </div>
-                                    <div class="post__btn post__btn--like" title="Aimer" @click.prevent="like(comment)">
-                                        <div class="post__btn__icon">
-                                            <i class="far fa-heart" aria-label="Aimer" role="img"></i>
-                                        </div>
-                                        <div class="post__btn__counter">
-                                            <p></p>
-                                        </div>
-                                    </div>
-                                </div>
                                 <!-- post end -->
 
                                 <!-- comment -->
@@ -138,10 +113,11 @@
                                     <!-- if own comment -->
                                     <div
                                         class="delete-comment"
+                                        title="Supprimer le commentaire"
                                         v-if="comment.comment_user_id == currentUserId || currentUserRole == 'admin'"
                                         @click.prevent="deleteComment(comment)"
                                     >
-                                        <i class="fas fa-times" aria-label="Supprimer" role="button"></i>
+                                        <i class="fas fa-times" aria-label="Supprimer le commentaire" role="button"></i>
                                     </div>
 
                                     <div class="comment__title">
@@ -177,16 +153,29 @@
                             </router-link>
                         </div>
 
-
                         <div id="posts-end">
                             <p>Fin des commentaires.</p>
                         </div>
                     </div>
+
+                    <!-- if no posts or comments yet -->
+                    <div id="no-comments" v-else>
+                        <p>
+                            {{ userInfo.pseudo }} n'a pas encore posté de commentaire.
+                        </p>
+                    </div>
+
                 </div>
 
             </section>
 
 		</main>
+
+        <div class="access-denied" v-else>
+            <p>
+                Vous devez être connecté pour accéder à cette page.
+            </p>
+        </div>
 
 		<ScrollToTopBtn/>
 
@@ -297,21 +286,6 @@ export default {
             console.log();
 
             window.location.reload();
-        },
-
-
-        // like post
-        
-        like(comment) {
-            API.post(`posts/${comment.post_id}/likes`,
-            {
-                userId: this.currentUserId,
-                postId: this.comment.post_id
-            })
-            .then(response => console.log(response))
-            .catch(error => console.log(error));
-
-            //window.location.reload();
         }
     }
 };
