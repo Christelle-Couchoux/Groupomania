@@ -48,6 +48,7 @@
                                 <label for="file">
                                     <p>Modifier l'avatar</p>
                                 </label>
+                                <!-- name must be 'image' because multer save .single('image') -->
                                 <input
                                     type="file"
                                     name="image"
@@ -151,7 +152,6 @@ export default {
 
 	created() {
         this.currentUserId = localStorage.getItem("userId");
-        this.currentUserPseudo = localStorage.getItem("pseudo");
         this.currentUserRole = localStorage.getItem("role");
 
         this.getUserInfo();
@@ -175,8 +175,6 @@ export default {
         // modify profile
 
         handleFileUpload() {
-            //this.file = document.getElementById('file').files[0];
-            //this.file = e;
             this.file = this.$refs.file.files[0];
 			this.newPhoto = URL.createObjectURL(this.file)
         },
@@ -201,21 +199,18 @@ export default {
             this.errorMessage = null
         },
 
-        editProfile() { // doesn't work with file, ok if only text
+        editProfile() {
             const formData = new FormData();
             if(this.file != '') {
-                formData.append('image', this.file)
+                formData.append('image', this.file) // must be 'image' because multer save .single('image')
             }
-			//if(this.bio != '') {
-                formData.append('bio', this.bio)
-            //}
+            formData.append('bio', this.bio)
             //for (var value of formData.values()) { console.log(value); }
             API.put(`users/${this.$route.params.userId}`, formData)
             .then(response => console.log(response))
             .catch(error => console.log(error));
 
             window.location.reload();
-
         },
 
 

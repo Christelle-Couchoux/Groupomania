@@ -48,7 +48,6 @@ export default {
 
     created() {
         this.currentUserId = localStorage.getItem("userId");
-        this.currentUserPseudo = localStorage.getItem("pseudo");
         this.currentUserRole = localStorage.getItem("role");
     },
 }

@@ -3,10 +3,11 @@
 	<div id="user-profile">
 		<PostsHeader/>
 
-		<main>
+		<main v-if="currentUserId">
 
 			<section id="user-profile-content" v-for="userInfo in info" :key="userInfo.pseudo">
-                <h1>Profil - {{ userInfo.pseudo }}</h1>
+                <h1 v-if="currentUserId == userInfo.user_id" >Mon profil</h1>
+                <h1 v-else>Profil - {{ userInfo.pseudo }}</h1>
                 
                 <div id="user-info">
                     <div id="user-photo">
@@ -48,10 +49,9 @@
                         </ul>
                     </nav>
 
-                    <!-- if posts or comments liked -->
+                    <!-- if posts liked -->
                     <div id="likes" v-if="likedPosts[0]">
                         <div class ="post" v-for="likedPost in likedPosts" :key="likedPost.post_id">
-                            <router-link :to="{ name: 'Post', params: { postId: likedPost.post_id } }" title="Voir le message">
                                 <div
                                     class="delete-post"
                                     title="Supprimer le message"
@@ -91,7 +91,11 @@
                                     </p>
                                 </div>
 
-                                <div class="post__img" v-if="likedPost.post_file" @click.prevent="enlarge(likedPost)">
+                                <div 
+                                    class="post__img" 
+                                    v-if="likedPost.post_file" 
+                                    @click.prevent="enlarge(likedPost)"
+                                >
                                     <img
                                         :src="likedPost.post_file"
                                         title = "Agrandir l'image"
@@ -99,11 +103,20 @@
                                 </div>
 
                                 <!-- popup window enlarge img -->
-                                <div id="modal-img" class="modal">
-                                    <span class="close" @click.prevent="closeImg">&times;</span>
-                                    <img 
-                                        id="img01"
-                                    />
+                                <div
+                                    id="modal-img"
+                                    class="modal"
+                                    title="Fermer l'image"
+                                    @click.prevent="closeImg"
+                                >
+                                    <img id="img01"/>
+                                </div>
+
+                            <router-link :to="{ name: 'Post', params: { postId: likedPost.post_id } }" title="Commenter et aimer le message">
+                                <div class="post__link">
+                                    <p>
+                                        Commenter / Aimer
+                                    </p>
                                 </div>
                             </router-link>
                         </div>
@@ -114,7 +127,7 @@
 
                     </div>
 
-                    <!-- if no posts or comments liked yet -->
+                    <!-- if no posts liked yet -->
                     <div id="no-likes" v-else>
                         <p>
                             {{ userInfo.pseudo }} n'a pas encore aimé de message.
@@ -127,7 +140,12 @@
 
 		</main>
 
-        
+        <div class="access-denied" v-else>
+            <p>
+                Vous devez être connecté pour accéder à cette page.
+            </p>
+        </div>
+
 
 		<ScrollToTopBtn/>
 
@@ -164,7 +182,6 @@ export default {
 
     created() {
         this.currentUserId = localStorage.getItem("userId");
-        this.currentUserPseudo = localStorage.getItem("pseudo");
         this.currentUserRole = localStorage.getItem("role");
 
         this.userId = this.$route.params.userId;

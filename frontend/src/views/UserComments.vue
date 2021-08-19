@@ -6,7 +6,8 @@
 		<main v-if="this.currentUserId">
 
 			<section id="user-profile-content" v-for="userInfo in info" :key="userInfo.pseudo">
-                <h1>Profil - {{ userInfo.pseudo }}</h1>
+                <h1 v-if="currentUserId == userInfo.user_id" >Mon profil</h1>
+                <h1 v-else>Profil - {{ userInfo.pseudo }}</h1>
                 
                 <div id="user-info">
                     <div id="user-photo">
@@ -51,7 +52,6 @@
                     <!-- if comments -->
                     <div id="comments" v-if="comments[0]">
                         <div class="post" v-for="comment in comments" :key="comment.id">
-                            <router-link :to="{ name: 'Post', params: { postId: comment.post_id } }" title="Voir le message" class="comment-router-link">
                                 <!-- post -->
                                 <div
                                     class="delete-post"
@@ -92,7 +92,11 @@
                                     </p>
                                 </div>
 
-                                <div class="post__img" v-if="comment.post_file" @click.prevent="enlarge(comment)">
+                                <div 
+                                    class="post__img" 
+                                    v-if="comment.post_file" 
+                                    @click.prevent="enlarge(comment)"
+                                >
                                     <img
                                         :src="comment.post_file"
                                         title = "Agrandir l'image"
@@ -100,13 +104,23 @@
                                 </div>
 
                                 <!-- popup window enlarge img -->
-                                <div id="modal-img" class="modal">
-                                    <span class="close" @click.prevent="closeImg">&times;</span>
-                                    <img 
-                                        id="img01"
-                                    />
+                                <div
+                                    id="modal-img"
+                                    class="modal"
+                                    title="Fermer l'image"
+                                    @click.prevent="closeImg"
+                                >
+                                    <img id="img01"/>
                                 </div>
                                 <!-- post end -->
+
+                                <router-link :to="{ name: 'Post', params: { postId: comment.post_id } }" title="Commenter et aimer le message" class="comment-router-link">
+                                    <div class="post__link">
+                                        <p>
+                                            Commenter / Aimer
+                                        </p>
+                                    </div>
+                                </router-link>
 
                                 <!-- comment -->
                                 <div class="comment">
@@ -150,7 +164,6 @@
                                 </div>
                                 <!-- comment end -->
                             
-                            </router-link>
                         </div>
 
                         <div id="posts-end">
@@ -212,11 +225,9 @@ export default {
 
     created() {
         this.currentUserId = localStorage.getItem("userId");
-        this.currentUserPseudo = localStorage.getItem("pseudo");
         this.currentUserRole = localStorage.getItem("role");
 
         this.userId = this.$route.params.userId;
-        //console.log(this.userId);
 
         this.getAllCommentsOfUser();
         this.getUserInfo();
@@ -231,8 +242,7 @@ export default {
            .then(response => {
                 this.info = response.data.info;
             })
-            .catch(error => console.log(error));
-            
+            .catch(error => console.log(error));    
         },
 
 
@@ -305,7 +315,11 @@ export default {
 
     @include lg {
         border-left: solid 1px $color-secondary; 
-    };     
+    };
+    
+    #profile {
+        color: $color-primary-dark;
+    };
 };
 
 #no-comments {
@@ -317,15 +331,18 @@ export default {
     margin: 0 0 50px 0;
     @include flexbox(column, nowrap, space-around, center);
 
-    .comment-router-link {
-        @include size(100%);
+    .post {
+        padding: 30px 0 30px 0;
+
+        
     };
+
 
     .comment {
         @include position(relative, auto, auto, auto, auto);
         @include size (80%, auto);
         margin: auto;
-        margin-top: 20px;
+        margin-top: 10px;
         padding: 20px 0 0 0;
         border-bottom: none;
         border-top: solid 1px $color-secondary;

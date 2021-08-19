@@ -58,59 +58,70 @@
                     <div id="posts" v-if="posts[0]">
 
                         <div class="post" v-for="post in posts" :key="post.post_id">
-                            <router-link :to="{ name: 'Post', params: { postId: post.post_id } }" title="Voir le message">
-                                <div
-                                    class="delete-post"
-                                    title="Supprimer le message"
-                                    v-if="post.fk_user_id == currentUserId || currentUserRole == 'admin'"
-                                    @click.prevent="deletePost(post)"
-                                >
-                                    <i class="fas fa-times" aria-label="Supprimer le message" role="button"></i>
+                            <div
+                                class="delete-post"
+                                title="Supprimer le message"
+                                v-if="post.fk_user_id == currentUserId || currentUserRole == 'admin'"
+                                @click.prevent="deletePost(post)"
+                            >
+                                <i class="fas fa-times" aria-label="Supprimer le message" role="button"></i>
+                            </div>
+                            <div class="post__title">
+                                <div class="post__title__photo">
+                                    <router-link :to="{ name: 'UserPosts', params: { userId: post.fk_user_id } }" title="Voir le profil de l'utilisateur">
+                                        <img
+                                            :src="post.user_photo"
+                                            alt="Avatar de l'utilisateur"
+                                        />
+                                    </router-link>
                                 </div>
-
-                                <div class="post__title">
-                                    <div class="post__title__photo">
+                                <div class="post__title__txt">
+                                    <div class="post__title__pseudo">
                                         <router-link :to="{ name: 'UserPosts', params: { userId: post.fk_user_id } }" title="Voir le profil de l'utilisateur">
-                                            <img
-                                                :src="post.user_photo"
-                                                alt="Avatar de l'utilisateur"
-                                            />
+                                            <p>{{ post.pseudo }}</p>
                                         </router-link>
                                     </div>
-                                    <div class="post__title__txt">
-                                        <div class="post__title__pseudo">
-                                            <router-link :to="{ name: 'UserPosts', params: { userId: post.fk_user_id } }" title="Voir le profil de l'utilisateur">
-                                                <p>{{ post.pseudo }}</p>
-                                            </router-link>
-                                        </div>
-                                        <div class="post__title__divider">
-                                            <p>-</p>
-                                        </div>
-                                        <div class="post__title__date">
-                                            <p>{{ moment(post.createdAt).fromNow() }}</p>
-                                        </div>
+                                    <div class="post__title__divider">
+                                        <p>-</p>
+                                    </div>
+                                    <div class="post__title__date">
+                                        <p>{{ moment(post.createdAt).fromNow() }}</p>
                                     </div>
                                 </div>
+                            </div>
 
-                                <div class="post__text" v-if="post.post_text">
+                            <div class="post__text" v-if="post.post_text">
+                                <p>
+                                    {{ post.post_text }}
+                                </p>
+                            </div>
+
+                            <div 
+                                class="post__img" 
+                                v-if="post.post_file" 
+                                @click.prevent="enlarge(post)"
+                            >
+                                <img
+                                    :src="post.post_file"
+                                    title = "Agrandir l'image"
+                                />
+                            </div>
+
+                            <!-- popup window enlarge img -->
+                            <div
+                                id="modal-img"
+                                class="modal"
+                                title="Fermer l'image"
+                                @click.prevent="closeImg"
+                            >
+                                <img id="img01"/>
+                            </div>
+
+                            <router-link :to="{ name: 'Post', params: { postId: post.post_id } }" title="Commenter et aimer le message">
+                                <div class="post__link">
                                     <p>
-                                        {{ post.post_text }}
+                                        Commenter / Aimer
                                     </p>
-                                </div>
-
-                                <div class="post__img" v-if="post.post_file" @click.prevent="enlarge(post)">
-                                    <img
-                                        :src="post.post_file"
-                                        title = "Agrandir l'image"
-                                    />
-                                </div>
-
-                                <!-- popup window enlarge img -->
-                                <div id="modal-img" class="modal">
-                                    <span class="close" @click.prevent="closeImg">&times;</span>
-                                    <img 
-                                        id="img01"
-                                    />
                                 </div>
                             </router-link>
 
@@ -174,15 +185,12 @@ export default {
             text: '',
             userId: '',
             newImage: '',
-            errorMessage: null,
-            likes: [],
-            likeCount: ''
+            errorMessage: null
         }
     },
 
     created() {
         this.currentUserId = localStorage.getItem("userId");
-        this.currentUserPseudo = localStorage.getItem("pseudo");
         this.currentUserRole = localStorage.getItem("role");
 
         this.getAllPosts();
@@ -225,7 +233,7 @@ export default {
         handleFileUpload() { // OK
             this.file = this.$refs.file.files[0];
 			this.newImage = URL.createObjectURL(this.file);
-            //console.log(this.file); // ok
+            //console.log(this.file);
         },
 
         checkPost() {
@@ -258,6 +266,7 @@ export default {
             }
     
             window.location.reload();
+
         },
 
         emptyForm() {
@@ -276,7 +285,8 @@ export default {
             .catch(error => console.log(error));
             //console.log();
 
-            window.location.reload();
+            //window.location.reload();
+            this.forceRerender();
         }
     }
 };
@@ -407,7 +417,7 @@ export default {
     @include position(relative, auto, auto, auto, auto);
     @include size (100%, auto);
     border-bottom: solid 1px $color-secondary;
-    padding: 30px 0 30px 0;
+    padding: 30px 0 10px 0;
 
     &__title {
         @include flexbox(row, wrap, flex-start, center);
@@ -457,6 +467,7 @@ export default {
 
     #modal-img { // On id rather than class to override browser default style
         display: none; // hidden by default
+        cursor: pointer;
     };
 
     .modal {
@@ -472,7 +483,7 @@ export default {
             margin: auto;
             @include flexbox(row, nowrap, center, center);
             max-width: 100%;
-            animation: zoom 500ms;    
+            animation: zoom 500ms;
         }
     };
   
@@ -495,56 +506,34 @@ export default {
 
 
 
-    &__buttons {
-        @include flexbox(row, nowrap, space-around, center);
-        margin: auto;
-        max-width: 600px;
+    &__link {
+        @include flexbox(row, nowrap, center, center);
+
+        p {
+            font-size: 1rem;
+            color: $color-secondary-dark;
+            font-weight: 500;
+            padding: 20px 20px 20px 20px;
+            transition: all 200ms ease-in-out;
+
+            &:hover {
+                cursor: pointer;
+                text-decoration: underline;
+                text-decoration-thickness: 1px;
+                text-underline-offset: 4px;
+                color: $color-primary-dark;
+            };
+
+            i {
+                padding: 0 10px 0 0;
+            };
+        }
+
     };
 
 
-    &__btn {
-        @include flexbox(row, nowrap, center, center);
-        padding : 5px 20px 0 20px;
-        color: $color-secondary-dark;
-        transition: all 200ms ease-in-out;
-        
-        &:hover {
-            cursor: pointer;
-        };
-
-        &__icon {
-            margin: 0 10px 0 0;
-            
-            i {
-                border-radius: 50%;
-                padding: 10px;
-            };
-        }; 
-        
-        &--comment {
-            &:hover {
-                color: $color-basic-dark;
-
-                i {
-                    background-color: $color-basic-dark-lighter;
-                };
-            };
-        };
-    
-        &--like {
-            &:hover {
-                color: $color-primary-dark;
-                i {
-                    background-color: $color-primary-light;
-                };
-            };
-        };
-    }; 
-    
-
     .delete-post {
-        @include delete-post-comment;
-        @include position(absolute, 30px, 20px, auto, auto);
+        @include delete-post;
     };
 };
 

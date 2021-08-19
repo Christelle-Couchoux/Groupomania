@@ -133,7 +133,6 @@ export default {
             .then(response => {
                 localStorage.setItem("token", response.data.token);
                 localStorage.setItem("userId", response.data.userId);
-                localStorage.setItem("pseudo", response.data.pseudo);
                 localStorage.setItem("role", response.data.role);
                 router.push('/forums');
                 //console.log(response)

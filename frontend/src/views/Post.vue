@@ -3,7 +3,7 @@
 	<div id="specific-post">
 		<PostsHeader/>
 
-		<main v-if="this.currentUserId">
+		<main v-if="this.currentUserId" :key="postKey">
 
 			<section id="specific-post-content">
                 <h1>Message</h1>
@@ -45,18 +45,22 @@
                             </p>
                         </div>
 
-                        <div class="specific-post__img" v-if="postInfo.post_file" @click="enlarge">
-                            <img
-                                :src="postInfo.post_file"
-                            />
+                        <div
+                            class="specific-post__img"
+                            v-if="postInfo.post_file" 
+                            @click="enlarge"
+                        >
+                            <img :src="postInfo.post_file"/>
                         </div>
 
                         <!-- popup window enlarge img -->
-                        <div id="modal-img" class="modal">
-                            <span class="close" @click="closeImg">&times;</span>
-                            <img
-                                :src="postInfo.post_file"
-                            />
+                        <div
+                            id="modal-img"
+                            class="modal"
+                            title="Fermer l'image"
+                            @click.prevent="closeImg"
+                        >
+                            <img :src="postInfo.post_file"/>
                         </div>
 
                         
@@ -228,12 +232,13 @@ export default {
             comment: '',
             errorMessage: null,
             likes: [],
-            commentsCount: []        }
+            commentsCount: [],
+            postKey: 0        
+        }
     },
 
     created() {
         this.currentUserId = localStorage.getItem("userId");
-        this.currentUserPseudo = localStorage.getItem("pseudo");
         this.currentUserRole = localStorage.getItem("role");
 
         this.postId = this.$route.params.postId;
@@ -247,6 +252,12 @@ export default {
     },
 
     methods: {
+
+        forceRerender() {
+            this.postKey += 1;
+        },
+
+
         // display one post
 
         getOnePost() {
@@ -310,7 +321,6 @@ export default {
             .then(response => console.log(response))
             .catch(error => console.log(error));
             window.location.reload();
-            //console.log(this.currentUserId);
         },
 
         emptyForm() {
@@ -359,13 +369,13 @@ export default {
         like() {
             API.post(`posts/${this.postId}/likes`,
             {
-                userId: this.currentUserId,
+                userId: localStorage.getItem("userId"),
                 postId: this.postId
             })
             .then(response => console.log(response))
             .catch(error => console.log(error));
 
-            window.location.reload();
+            //window.location.reload();
         },
 
 
@@ -489,6 +499,7 @@ export default {
 
     #modal-img { // On id rather than class to override browser default style
         display: none; // hidden by default
+        cursor: pointer;
     };
 
     .modal {
@@ -533,7 +544,7 @@ export default {
 
 
     .delete-specific-post {
-        @include delete-post-comment;
+        @include delete-post;
         @include position(absolute, 30px, 20px, auto, auto);
     };
 
@@ -697,7 +708,7 @@ export default {
 	};
     
     .delete-comment {
-        @include delete-post-comment;
+        @include delete-comment;
     };
 };
 

@@ -18,5 +18,4 @@ router.get('/:userId/comments', auth, userCtrl.getAllCommentsOfUser);
 router.get('/:userId/likes', auth, userCtrl.getAllLikesOfUser);
 
 
-
 module.exports = router;

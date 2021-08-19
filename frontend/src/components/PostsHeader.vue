@@ -11,14 +11,14 @@
 			<ul>
 				<li>
 					<router-link to="/posts" title="Messages">
-						<i class="fas fa-home" aria-label="Retour aux messages" role="img"></i>
+						<i class="fas fa-home" aria-label="Messages" role="img"></i>
 						<span>Messages</span>
 					</router-link>
 				</li>
-				<li>
-					<router-link :to="{ name: 'UserPosts', params: { userId: currentUserId } }" title="Mon profil" id="profile">
+				<li id="profile">
+					<router-link :to="{ name: 'UserPosts', params: { userId: currentUserId } }" title="Mon profil">
 						<i class="fas fa-user" aria-label="Mon profil" role="img"></i>
-						<span>Profil</span>
+						<span>Mon profil</span>
 					</router-link>
 				</li>
 				<li>

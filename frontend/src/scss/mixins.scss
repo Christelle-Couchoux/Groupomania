@@ -492,6 +492,30 @@
 };
 
 
+@mixin delete-post {
+    @include position(absolute, 30px, 0px, auto, auto);
+    color: $color-secondary;
+    font-size: 1.3rem;
+
+    &:hover {
+        cursor: pointer;
+        color: $color-secondary-dark;
+    };
+};
+
+
+@mixin delete-comment {
+    @include position(absolute, 20px, 0px, auto, auto);
+    color: $color-secondary;
+    font-size: 1.3rem;
+
+    &:hover {
+        cursor: pointer;
+        color: $color-secondary-dark;
+    };
+};
+
+
 @mixin form-errors {
     margin: 0 0 30px 0;
         padding: 10px;
