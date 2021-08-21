@@ -1,5 +1,6 @@
 const multer = require('multer');
 
+
 // dictionnary to add file extension
 
 const MIME_TYPES = {
@@ -23,4 +24,4 @@ const storage = multer.diskStorage({
 });
 
 module.exports = multer({storage: storage}).single('image'); 
-// if 'image' here, name input type file must be 'image', and must be formData.append('image', this.file) 
+// if 'image' here, name input type file must be 'image', and must be formData.append('image', this.file)

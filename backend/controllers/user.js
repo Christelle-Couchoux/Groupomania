@@ -5,7 +5,6 @@ const sequelize = db.sequelize;
 
 
 // display all users (GET)
-// OK
 
 exports.getAllUsers = (req, res) => {
     User.findAll({
@@ -24,10 +23,9 @@ exports.getAllUsers = (req, res) => {
 
 
 // modify user profile (PUT)
-// OK
 
 exports.modifyUserProfile = (req, res) => {
-    const userObject = req.file ? 
+    const userObject = req.file ?
     {
         ...req.body.userId,
         bio: req.body.bio,
@@ -45,7 +43,6 @@ exports.modifyUserProfile = (req, res) => {
 
 
 // delete user account (DELETE)
-// OK
 
 exports.deleteUserAccount = (req, res) => {
     User.destroy({ where: { user_id: req.params.userId } })
@@ -60,13 +57,12 @@ exports.deleteUserAccount = (req, res) => {
 
 
 // display info of one user (GET)
-// OK
 
 exports.getUserInfo = (req, res) => {
     sequelize.query('CALL get_user_info(:userId)',
     {
         replacements: { userId: req.params.userId },
-        type: QueryTypes.SELECT 
+        type: QueryTypes.SELECT
     })
     .then(([info, metadata]) => { return res.status(200).json({ info }) })
     .catch((error) => res.status(400).json(error));
@@ -79,13 +75,12 @@ exports.getUserInfo = (req, res) => {
 
 
 // display posts of one user (GET)
-// OK
 
 exports.getAllPostsOfUser = (req, res) => {
-    sequelize.query('CALL get_all_posts_of_user(:userId)', 
+    sequelize.query('CALL get_all_posts_of_user(:userId)',
     {
         replacements: { userId: req.params.userId },
-        type: QueryTypes.SELECT 
+        type: QueryTypes.SELECT
     })
     .then(([posts, metadata]) => {
         return res.status(200).json({ posts })
@@ -100,13 +95,12 @@ exports.getAllPostsOfUser = (req, res) => {
 
 
 // display comments of one user (GET)
-//OK
 
 exports.getAllCommentsOfUser = (req, res) => {
-    sequelize.query('CALL get_all_comments_of_user(:userId)', 
+    sequelize.query('CALL get_all_comments_of_user(:userId)',
     {
         replacements: { userId: req.params.userId },
-        type: QueryTypes.SELECT 
+        type: QueryTypes.SELECT
     })
     .then(([comments, metadata]) => {
         return res.status(200).json({ comments })
@@ -121,13 +115,12 @@ exports.getAllCommentsOfUser = (req, res) => {
 
 
 // display posts liked by one user (GET)
-// OK
 
 exports.getAllLikesOfUser = (req, res) => {
-    sequelize.query('CALL get_all_likes_of_user(:userId)', 
+    sequelize.query('CALL get_all_likes_of_user(:userId)',
     {
         replacements: { userId: req.params.userId },
-        type: QueryTypes.SELECT 
+        type: QueryTypes.SELECT
     })
     .then(([likedPosts, metadata]) => {
         return res.status(200).json({ likedPosts })

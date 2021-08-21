@@ -28,7 +28,7 @@ module.exports = (sequelize, Sequelize) => {
                 fields: ['createdAt']
             },
         ]
-    }); 
+    });
 
     Comment.associate = function (models) {
         Comment.belongsTo(models.Post, { foreignKey: 'fk_post_id', onDelete: 'CASCADE' });
@@ -37,4 +37,3 @@ module.exports = (sequelize, Sequelize) => {
 
     return Comment;
 };
-

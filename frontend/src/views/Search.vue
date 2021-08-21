@@ -1,6 +1,7 @@
 <template>
 
 	<div id="user-search">
+
 		<PostsHeader/>
 
 		<main v-if="this.currentUserId">
@@ -48,23 +49,23 @@
                     <div id="users-end">
                         <p>Fin des utilisateurs.</p>
                     </div>
-
                 </div>
 
                 <!-- if no users -->
                 <div id="no-users" v-else>
-                    <p>
-                        Aucun utilisateur ne correspond à la recherche.
-                    </p>
+                    <p>Aucun utilisateur ne correspond à la recherche.</p>
                 </div>
-
             </section>
+
         </main>
 
         <div class="access-denied" v-else>
-            <p>
-                Vous devez être connecté pour accéder à cette page.
-            </p>
+            <p>Vous devez être connecté pour accéder à cette page.</p>
+            <div class="btn-login">
+				<router-link to="/login" title ="Connexion">
+                    <input type="button" value="Se connecter">
+                </router-link>
+			</div>
         </div>
 
 		<ScrollToTopBtn/>
@@ -74,12 +75,10 @@
 </template>
 
 
-
-
 <script>
 
-import ScrollToTopBtn from "../components/ScrollToTopBtn.vue"
-import PostsHeader from "../components/PostsHeader.vue"
+import ScrollToTopBtn from '../components/ScrollToTopBtn.vue'
+import PostsHeader from '../components/PostsHeader.vue'
 
 import { API } from '@/axios.config.js'
 
@@ -89,8 +88,7 @@ export default {
 
 	components: {
 		ScrollToTopBtn,
-		PostsHeader,
-
+		PostsHeader
 	},
 
     data() {
@@ -102,12 +100,12 @@ export default {
     },
 
     created() {
-        this.currentUserId = localStorage.getItem("userId");
-        this.currentUserRole = localStorage.getItem("role");
+        this.currentUserId = localStorage.getItem('userId');
+        this.currentUserRole = localStorage.getItem('role');
 
-        this.getAllUsers();    
+        this.getAllUsers();
     },
-    
+
     methods: {
         getAllUsers() {
             API.get(`users/`)
@@ -128,7 +126,7 @@ export default {
 </script>
 
 
-<style lang="scss">
+<style lang='scss'>
 
 @import '@/scss/variables.scss';
 @import '@/scss/mixins.scss';
@@ -141,16 +139,12 @@ export default {
 
 #user-search-content {
     @include page;
-    @include size(100%, auto);
-
-    @include lg {
-        @include size(calc(100% - 250px), auto);
-    };
 };
 
+
 #search-box {
-    @include size(100%);
     @include first-under-h1;
+    @include size(100%);
     padding: 5px 0 5px 0;
 };
 
@@ -161,15 +155,15 @@ export default {
     margin: auto;
 
     i {
-        margin: 0 10px 0 10px;
         text-align: center;
+        margin: 0 10px 0 10px;
     };
 
     input {
-        padding: 5px;
-        border: none;
         font-size: map-get($map: $font-size, $key: input);
         font-family: $montserrat;
+        padding: 5px;
+        border: none;
     };
 
     #search {
@@ -179,55 +173,30 @@ export default {
 
 
 #users-list {
-    @include size(100%);
-    border-bottom: none;
-    //margin: 194px 0 50px 0;
-    padding: 5px 0 5px 0;
     @include flexbox(column, nowrap, space-around, center);
-    
+    @include size(100%);
+    padding: 5px 0 5px 0;
+    border-bottom: none;
+
     @include lg {
-        border-left: solid 1px $color-secondary; 
         margin: 0 0 0 0;
-    }
-};
-
-
-#no-users {
-    @include no-results;
-    margin:auto;
-    margin-top: 30px;
+        border-left: solid 1px $color-secondary;
+    };
 };
 
 
 .user {
     @include size (80%, auto);
     margin: auto;
-    border-bottom: solid 1px $color-secondary;
     padding: 20px 0 20px 0;
-    margin: auto;
+    border-bottom: solid 1px $color-secondary;
 
     &__id {
         @include flexbox(row, wrap, flex-start, center);
         margin: 5px 0 5px 0;
 
         &__photo {
-            @include size(50px);
-            border-radius: 50%;
-            margin: 0 15px 0 0;
-            padding: 1px;
-            border: solid 1px $color-basic-dark;
-            transition: all 200ms ease-in-out;
-        
-            &:hover {
-                border: solid 2px $color-primary-dark;
-                padding: 0;
-            };
-        
-            img {
-                @include size(100%);
-                object-fit: cover;
-                border-radius: 50%;
-            };
+            @include user-photo;
         };
 
         &__pseudo {
@@ -237,13 +206,19 @@ export default {
 
     &__bio {
         margin: 10px 0 0 0;
- 
     };
 };
 
 
 #users-end {
     margin: 50px 0 50px 0;
+};
+
+
+#no-users {
+    @include no-results;
+    margin:auto;
+    margin-top: 30px;
 };
 
 </style>

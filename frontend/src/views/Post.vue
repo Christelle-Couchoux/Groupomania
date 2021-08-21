@@ -1,9 +1,10 @@
 <template>
 
 	<div id="specific-post">
+
 		<PostsHeader/>
 
-		<main v-if="this.currentUserId" :key="postKey">
+		<main v-if="this.currentUserId">
 
 			<section id="specific-post-content">
                 <h1>Message</h1>
@@ -22,7 +23,7 @@
                         <div class="specific-post__title">
                             <div class="specific-post__title__photo">
                                 <router-link :to="{ name: 'UserPosts', params: { userId: postInfo.user_id } }" title="Voir le profil de l'utilisateur">
-                                    <img :src="postInfo.user_photo" alt="Avatar de l'utilisateur 2">
+                                    <img :src="postInfo.user_photo" alt="Avatar de l'utilisateur">
                                 </router-link>
                             </div>
 
@@ -35,19 +36,17 @@
 
                         <div class="specific-post__date-time">
                             <div class="specific-post__date">
-                                <p>{{ moment(postInfo.post_createdAt).format('[Le] D MMMM YYYY [à] HH:mm') }}</p>
+                                <p>{{ moment(postInfo.createdAt).format('[Le] D MMMM YYYY [à] HH:mm') }}</p>
                             </div>
                         </div>
 
                         <div class="specific-post__text" v-if="postInfo.post_text">
-                            <p>
-                                {{ postInfo.post_text }}
-                            </p>
+                            <p>{{ postInfo.post_text }}</p>
                         </div>
 
                         <div
                             class="specific-post__img"
-                            v-if="postInfo.post_file" 
+                            v-if="postInfo.post_file"
                             @click="enlarge"
                         >
                             <img :src="postInfo.post_file"/>
@@ -63,10 +62,9 @@
                             <img :src="postInfo.post_file"/>
                         </div>
 
-                        
                         <div class="specific-post__buttons">
                             <div
-                                class="specific-post__btn specific-post__btn--comment" 
+                                class="specific-post__btn specific-post__btn--comment"
                                 title="Voir les commentaires"
                                 v-for="commCount in commentsCount" :key="commCount.post_id"
                                 @click="scrollMeTo('comments-list')"
@@ -80,8 +78,8 @@
                             </div>
 
                             <div
-                                class="specific-post__btn specific-post__btn--like" 
-                                title="Aimer" 
+                                class="specific-post__btn specific-post__btn--like"
+                                title="Aimer"
                                 @click.prevent="like()"
                                 v-for="likeCount in likes" :key="likeCount.post_id"
                             >
@@ -92,9 +90,7 @@
                                     <p>{{ likeCount.post_likes_count }}</p>
                                 </div>
                             </div>
-                            
                         </div> 
-                              
                     </div>
                     <!-- post end -->
 
@@ -108,7 +104,7 @@
                                 v-model="text"
                             ></textarea>
                         </div>
-                        
+
                         <div class="add-comment__btn">
                             <div class="add-comment__btn__btn-send">
                                 <input type="submit" value="Envoyer" @click.prevent="checkComment">
@@ -126,7 +122,6 @@
                     <!-- add comment end -->
 
                     <!-- comments -->
-                    
                     <!-- if comments -->
                     <div id="comments-list" ref="comments-list" v-if="comments[0]">
 
@@ -178,22 +173,22 @@
 
                     <!-- if no comments -->
                     <div id="no-comments"  v-else>
-                        <p>
-                            Ce message n'a pas encore de commentaire.
-                        </p>
+                        <p>Ce message n'a pas encore de commentaire.</p>
                     </div>
 
                    <!-- comments end -->
-
                 </div>
-
             </section>
+
         </main>
 
         <div class="access-denied" v-else>
-            <p>
-                Vous devez être connecté pour accéder à cette page.
-            </p>
+            <p>Vous devez être connecté pour accéder à cette page.</p>
+            <div class="btn-login">
+				<router-link to="/login" title ="Connexion">
+                    <input type="button" value="Se connecter">
+                </router-link>
+			</div>
         </div>
 
 		<ScrollToTopBtn/>
@@ -203,12 +198,10 @@
 </template>
 
 
-
-
 <script>
 
-import ScrollToTopBtn from "../components/ScrollToTopBtn.vue"
-import PostsHeader from "../components/PostsHeader.vue"
+import ScrollToTopBtn from '../components/ScrollToTopBtn.vue'
+import PostsHeader from '../components/PostsHeader.vue'
 import moment from 'moment'
 
 import { API } from '@/axios.config.js'
@@ -217,10 +210,10 @@ import router from '@/router/index.js'
 
 export default {
 	name: 'Post',
-    
+
 	components: {
 		ScrollToTopBtn,
-		PostsHeader,
+		PostsHeader
 	},
 
     data() {
@@ -232,14 +225,13 @@ export default {
             comment: '',
             errorMessage: null,
             likes: [],
-            commentsCount: [],
-            postKey: 0        
+            commentsCount: []     
         }
     },
 
     created() {
-        this.currentUserId = localStorage.getItem("userId");
-        this.currentUserRole = localStorage.getItem("role");
+        this.currentUserId = localStorage.getItem('userId');
+        this.currentUserRole = localStorage.getItem('role');
 
         this.postId = this.$route.params.postId;
 
@@ -252,17 +244,9 @@ export default {
     },
 
     methods: {
-
-        forceRerender() {
-            this.postKey += 1;
-        },
-
-
         // display one post
 
         getOnePost() {
-            
-
             API.get(`posts/${this.postId}`)
            .then(response => {
                 this.post = response.data.post;
@@ -288,6 +272,18 @@ export default {
         },
 
 
+        // delete post
+
+        deletePost() {
+            API.delete(`posts/${this.postId}`)
+            .then(response => {
+                console.log(response);
+                router.replace('/posts'); // replace so can't go back to deleted page
+            })
+            .catch(error => console.log(error));
+        },
+
+
         // scroll to comments list
 
         scrollMeTo(refName) {
@@ -299,33 +295,43 @@ export default {
         // add new comment
 
         checkComment() {
-            if(!this.validComment(this.text)) {
-                this.errorMessage = 'Votre commentaire doit comprendre entre 1 et 255 caractères.';
-            } else { //if no errors
+            if(!this.validComment(this.text)) { // if not validated
+                this.errorMessage = 'Votre commentaire est trop long (255 caractères maximum) ou comprend des caractères non autorisés.';
+            } else { //if ok
                 this.createComment(); // send the form
             }
         },
 
         validComment(text) {
-            const regex = /^[-\w\sÀÁÂÄÅÇÈÉÊËÌÍÎÏÑŒÒÓÔÕÖØÙÚÛÜàáâäåçèéêëìíîïñœòóôõöøùúûü.,!"':;\\?/$ ]{1,255}$/;
+            const regex = /^[-\w\sÀÁÂÄÅÇÈÉÊËÌÍÎÏÑŒÒÓÔÕÖØÙÚÛÜàáâäåçèéêëìíîïñœòóôõöøùúûü.,!"':;\\?/$£€() ]{0,255}$/;
             return regex.test(text);
         },
 
         createComment() {
-            API.post(`posts/${this.postId}/comments`,
-            {
-                userId: this.currentUserId,
-                postId: this.postId,
-                text: this.text
-            })
-            .then(response => console.log(response))
-            .catch(error => console.log(error));
-            window.location.reload();
+            if(this.text != '') { // if comment not empty
+                API.post(`posts/${this.postId}/comments`,
+                {
+                    userId: this.currentUserId,
+                    postId: this.postId,
+                    text: this.text
+                })
+                .then(response => {
+                    console.log(response);
+                    this.text = '';
+                    this.errorMessage = '';
+                    this.getComments();
+                    this.getCommentsCount();
+                    this.scrollMeTo('comments-list');
+                })
+                .catch(error => console.log(error));
+            } else {
+                this.errorMessage = 'Vous ne pouvez pas envoyer un commentaire vide.';
+            }
         },
 
         emptyForm() {
-            this.text = '',
-            this.errorMessage = ''
+            this.text = '';
+            this.errorMessage = '';
         },
 
 
@@ -337,18 +343,6 @@ export default {
                 this.comments = response.data.comments;
             })
             .catch(error => console.log(error));
-        }, 
-
-
-        // delete post
-
-        deletePost() {
-            API.delete(`posts/${this.postId}`)
-            .then(response => console.log(response))
-            .catch(error => console.log(error));
-            //console.log(this.post_id);
-
-            router.replace('/posts'); // replace so doesn't go back to deleted page
         },
 
 
@@ -356,11 +350,12 @@ export default {
 
         deleteComment(comment) {
             API.delete(`comments/${comment.comment_id}`)
-            .then(response => console.log(response))
+            .then(response => {
+                console.log(response);
+                this.getComments();
+                this.getCommentsCount();
+            })
             .catch(error => console.log(error));
-            //console.log();
-
-            window.location.reload();
         },
 
 
@@ -372,10 +367,12 @@ export default {
                 userId: localStorage.getItem("userId"),
                 postId: this.postId
             })
-            .then(response => console.log(response))
-            .catch(error => console.log(error));
-
-            //window.location.reload();
+            .then(response => {
+                console.log(response);
+                this.getLikesCount();
+                this.getIfUserLiked();
+            })
+            .catch(error => console.log(error));    
         },
 
 
@@ -385,7 +382,6 @@ export default {
             API.get(`posts/${this.postId}/likesCount`)
            .then(response => {
                 this.likes = response.data.likes;
-                //console.log(this.likes);
             })
             .catch(error => console.log(error));
         },
@@ -408,10 +404,15 @@ export default {
                     const btn = document.getElementById('heart-btn');
                     btn.classList.remove('far');
                     btn.classList.add('fas');
-
                     const count = document.getElementById('heart-count');
                     count.classList.add('liked');
-                } 
+                } else if(response.data == "false") {
+                    const btn = document.getElementById('heart-btn');
+                    btn.classList.remove('fas');
+                    btn.classList.add('far');
+                    const count = document.getElementById('heart-count');
+                    count.classList.remove('liked');
+                }
             })
             .catch(error => console.log(error));
         }
@@ -421,34 +422,27 @@ export default {
 </script>
 
 
-<style lang="scss">
+<style lang='scss'>
 
 @import '@/scss/variables.scss';
 @import '@/scss/mixins.scss';
 
 
 #specific-post {
-    @include main; 
+    @include main;
 };
 
 
 #specific-post-content {
     @include page;
-    @include size(100%, auto);
-    margin: auto;
-
-    @include lg {
-        @include size(calc(100% - 250px), auto);
-    };
 };
 
 
 #specific-post-details {
     @include first-under-h1;
-    border-bottom: none;
-    @include size(100%);
-    padding: 0 0 50px 0;
     @include flexbox(column, nowrap, space-around, center);
+    @include size(100%);
+    border-bottom: none;
 };
 
 
@@ -487,94 +481,44 @@ export default {
 
     &__img {
         @include post-img;
-        cursor: pointer;
-        transition: 300ms ease-in-out;
-
-        &:hover {
-            opacity: 0.7;
-        };
     };
 
-
-
-    #modal-img { // On id rather than class to override browser default style
-        display: none; // hidden by default
-        cursor: pointer;
-    };
-
-    .modal {
-        @include position(fixed, 0, 0, 0, 0);
-        @include flexbox(row, nowrap, center, center);
-        width: 100%;
-        height: 100%;
-        overflow: auto; // enable scroll if needed
-        background-color: rgba(0, 0, 0 , 0.9);
-        z-index: 100;
-
-        img {
-            margin: auto;
-            @include flexbox(row, nowrap, center, center);
-            max-width: 100%;
-            animation: zoom 500ms;    
-        }
-    };
-  
-    @keyframes zoom {
-        from { transform: scale(0) }
-        to { transform: scale(1) }
-    };
-
-    .close {
-        @include position(absolute, 15px, 35px, auto, auto);
-        color: $color-basic-light;
-        font-size: 40px;
-        transition: 200ms ease-in-out;
-
-        &:hover, &:focus {
-            color: $color-primary-dark;
-            cursor: pointer
-        }
-    };
-
-
+    @include enlarge-img;
 
     &__likes {
-        @include btn-like-count;    
+        @include btn-like-count;
     };
 
-
     .delete-specific-post {
-        @include delete-post;
+        @include delete-post-comment;
         @include position(absolute, 30px, 20px, auto, auto);
     };
 
-
     &__buttons {
         @include flexbox(row, nowrap, space-around, center);
-        margin: auto;
         max-width: 600px;
+        margin: auto;
     };
 
-
     &__btn {
+        color: $color-secondary-dark;
         @include flexbox(row, nowrap, center, center);
         padding : 5px 20px 0 20px;
-        color: $color-secondary-dark;
         transition: all 200ms ease-in-out;
-        
+
         &:hover {
             cursor: pointer;
         };
 
         &__icon {
             margin: 0 10px 0 0;
-            
+
             i {
-                border-radius: 50%;
                 padding: 10px;
+                border-radius: 50%;
             };
-        }; 
-        
+        };
+
         &--comment {
             &:hover {
                 color: $color-basic-dark;
@@ -584,7 +528,7 @@ export default {
                 };
             };
         };
-    
+
         &--like {
             .fas {
                 color: $color-primary-dark;
@@ -596,36 +540,34 @@ export default {
 
             &:hover {
                 color: $color-primary-dark;
+
                 i {
                     background-color: $color-primary-light;
                 };
             };
         };
-
-    }; 
-  
+    };
 };
 
 
 .add-comment {
-    @include size (100%, auto);
     @include flexbox(column, wrap, space-around, center);
+    @include size (100%, auto);
+    margin: 0 0 30px 0;
     padding: 30px 0 30px 0;
     border-bottom: solid 1px $color-secondary;
     border-top: solid 1px $color-secondary;
-    margin: 0 0 30px 0;
 
     &__text {
-        //@include flexbox(column, nowrap, space-around, center);
         @include size(80%, auto);
         margin: auto;
 
         textarea {
+            font-size: map-get($font-size, input);
+            font-family: $montserrat;
             @include size(100%, 150px);
             padding: 10px;
-            border: solid 1px $color-secondary; 
-            font-size: 1rem;
-            font-family: $montserrat;
+            border: solid 1px $color-secondary;
         };
     };
 
@@ -641,7 +583,7 @@ export default {
 
         &__btn-undo {
             @include btn;
-            @include btn-undo-profile;
+            @include btn-undo;
             margin: 30px 10px 0 10px;
         };
     };
@@ -649,18 +591,17 @@ export default {
     .submit-errors {
         @include form-errors;
         margin: 30px 0 10px 0;
+
+        @include sm {
+            max-width: 520px;
+        };
     };
-    
 };
 
-#comments-list {
-    @include size (100%, auto);
-    padding: 0 0 30px 0;
-    @include flexbox(column, nowrap, space-around, center);
 
-    //border-bottom: solid 1px $color-secondary;
-    //border-top: solid 1px $color-secondary;
-    margin: 0 0 30px 0;
+#comments-list {
+    @include flexbox(column, nowrap, space-around, center);
+    @include size (100%, auto);
 };
 
   
@@ -688,14 +629,14 @@ export default {
         };
 
         &__divider {
-            margin: 0 5px 0 0;
             color: $color-secondary-dark;
+            margin: 0 5px 0 0;
         };
 
         &__date {
-            margin: 0 0 0 0;
+            font-size: map-get($font-size, date);
             color: $color-secondary-dark;
-            font-size: 0.9rem;
+            margin: 0 0 0 0;
         };
     };
 
@@ -703,12 +644,9 @@ export default {
         margin: 5px 0 5px 0;
     };
 
-    &__likes {
-        @include btn-like-count;
-	};
-    
     .delete-comment {
-        @include delete-comment;
+        @include delete-post-comment;
+        @include position(absolute, 20px, 0px, auto, auto);
     };
 };
 

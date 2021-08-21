@@ -19,8 +19,8 @@ const app = express();
 
 // to avoid CORS errors
 
-var cors = require('cors')
-app.use(cors()) // Use this after the variable declaration
+var cors = require('cors');
+app.use(cors());
 
 
 // secure cookies
@@ -37,6 +37,7 @@ app.use(cookieSession({
 
 
 // convert request body to js so can be used
+
 app.use(bodyParser.json());
 
 
@@ -58,29 +59,30 @@ db.sequelize.sync();
 
 // Winston error logging
 
-const consoleTransport = new winston.transports.Console()
+const consoleTransport = new winston.transports.Console();
 const myWinstonOptions = {
     transports: [consoleTransport]
-}
-const logger = new winston.createLogger(myWinstonOptions)
+};
+const logger = new winston.createLogger(myWinstonOptions);
 
 function logRequest(req, res, next) {
     logger.info(req.url)
     next()
-}
-app.use(logRequest)
+};
+app.use(logRequest);
 
 function logError(err, req, res, next) {
     logger.error(err)
     next()
-}
-app.use(logError)
+};
+app.use(logError);
 
 
 
 // give access to static directory images
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
+
 
 // define routers
 

@@ -1,6 +1,7 @@
 <template>
 
 	<div id="all-posts">
+
 		<PostsHeader/>
 
 		<main v-if="this.currentUserId">
@@ -9,7 +10,7 @@
                 <h1>Messages</h1>
 
                 <form enctype="multipart/form-data" class="add-post">
-                    <div class="add-post__text" >
+                    <div class="add-post__text">
                         <textarea
                             name="new-post"
                             id="new-post"
@@ -29,7 +30,7 @@
                             <!-- name must be 'image' because multer save .single('image') -->
                             <input
                                 type="file"
-                                name="image" 
+                                name="image"
                                 id="file"
                                 accept="image/png, image/jpeg, image/jpg, image/gif"
                                 ref="file"
@@ -44,14 +45,12 @@
                         <div class="add-post__btn__btn-undo">
                             <input type="submit" value="Annuler" @click.prevent="emptyForm">
                         </div>
-
                     </div>
 
                     <div class="submit-errors" v-if="errorMessage">
                         <p>{{ errorMessage }}</p>
                     </div>
                 </form>
-
 
                 <div id="all-posts-list">
                     <!-- if posts -->
@@ -91,14 +90,12 @@
                             </div>
 
                             <div class="post__text" v-if="post.post_text">
-                                <p>
-                                    {{ post.post_text }}
-                                </p>
+                                <p>{{ post.post_text }}</p>
                             </div>
 
-                            <div 
-                                class="post__img" 
-                                v-if="post.post_file" 
+                            <div
+                                class="post__img"
+                                v-if="post.post_file"
                                 @click.prevent="enlarge(post)"
                             >
                                 <img
@@ -119,9 +116,7 @@
 
                             <router-link :to="{ name: 'Post', params: { postId: post.post_id } }" title="Commenter et aimer le message">
                                 <div class="post__link">
-                                    <p>
-                                        Commenter / Aimer
-                                    </p>
+                                    <p>Commenter - Aimer</p>
                                 </div>
                             </router-link>
 
@@ -135,20 +130,21 @@
 
                     <!-- if no posts -->
                     <div id="no-posts" v-else>
-                        <p>
-                            Il n'y a pas encore de message.
-                        </p>
+                        <p>Il n'y a pas encore de message.</p>
                     </div>
-
                 </div>
             </section>
 
         </main>
 
         <div class="access-denied" v-else>
-            <p>
-                Vous devez être connecté pour accéder à cette page.
-            </p>
+            <p>Vous devez être connecté pour accéder à cette page.</p>
+
+            <div class="btn-login">
+				<router-link to="/login" title ="Connexion">
+                    <input type="button" value="Se connecter">
+                </router-link>
+			</div>
         </div>
 
 		<ScrollToTopBtn/>
@@ -158,12 +154,10 @@
 </template>
 
 
-
-
 <script>
 
-import ScrollToTopBtn from "../components/ScrollToTopBtn.vue"
-import PostsHeader from "../components/PostsHeader.vue"
+import ScrollToTopBtn from '../components/ScrollToTopBtn.vue'
+import PostsHeader from '../components/PostsHeader.vue'
 import moment from 'moment'
 
 import { API } from '@/axios.config.js'
@@ -171,10 +165,10 @@ import { API } from '@/axios.config.js'
 
 export default {
 	name: 'Posts',
-    
+
 	components: {
 		ScrollToTopBtn,
-		PostsHeader,
+		PostsHeader
 	},
 
     data() {
@@ -185,13 +179,13 @@ export default {
             text: '',
             userId: '',
             newImage: '',
-            errorMessage: null
+            errorMessage: null     
         }
     },
 
     created() {
-        this.currentUserId = localStorage.getItem("userId");
-        this.currentUserRole = localStorage.getItem("role");
+        this.currentUserId = localStorage.getItem('userId');
+        this.currentUserRole = localStorage.getItem('role');
 
         this.getAllPosts();
         this.moment();
@@ -200,7 +194,7 @@ export default {
     methods: {
         // display all posts
 
-        getAllPosts() { // OK
+        getAllPosts() {
             API.get(`posts/`)
            .then(response => {
                 this.posts = response.data.posts;
@@ -211,7 +205,7 @@ export default {
         moment() {
             this.moment = moment;
         },
-        
+
 
         // enlarge image in popup
 
@@ -230,50 +224,51 @@ export default {
 
         // add new post
 
-        handleFileUpload() { // OK
+        handleFileUpload() {
             this.file = this.$refs.file.files[0];
 			this.newImage = URL.createObjectURL(this.file);
-            //console.log(this.file);
         },
 
         checkPost() {
-            if(!this.validPost(this.text)) {
-                this.errorMessage = 'Votre message peut comprendre au maximum 255 caractères.';
-            } else { // if no errors
+            if(!this.validPost(this.text)) { // if not validated
+                this.errorMessage = 'Votre message est trop long (255 caractères maximum) ou comprend des caractères non autorisés.';
+            } else { // if ok
                 this.createPost(); // send the form
             }
         },
 
         validPost(text) {
-            const regex = /^[-\w\sÀÁÂÄÅÇÈÉÊËÌÍÎÏÑŒÒÓÔÕÖØÙÚÛÜàáâäåçèéêëìíîïñœòóôõöøùúûü.,!"':;\\?/$ ]{0,255}$/;
+            const regex = /^[-\w\sÀÁÂÄÅÇÈÉÊËÌÍÎÏÑŒÒÓÔÕÖØÙÚÛÜàáâäåçèéêëìíîïñœòóôõöøùúûü.,!"':;\\?/$£€() ]{0,255}$/;
             return regex.test(text);
         },
-        
+
         createPost() {
             const formData = new FormData();
-            formData.append('image', this.file) // must be 'image' because multer save .single('image')
-            formData.append('text', this.text)
+            formData.append('image', this.file); // must be 'image' because multer save .single('image')
+            formData.append('text', this.text);
             formData.append('userId', this.currentUserId);
 
-            //for (var value of formData.values()) { console.log(value); }
-
-            if(this.file != '' || this.text != '') {
+            if(this.file != '' || this.text != '') { // if post not empty
                 API.post(`posts/`, formData)
-                .then(response => console.log(response))
+                .then(response => {
+                    console.log(response);
+                    this.text = '';
+                    this.file = '';
+                    this.newImage = '';
+                    this.errorMessage = '';
+                    this.getAllPosts();
+                })
                 .catch(error => console.log(error));
             } else {
                 this.errorMessage = 'Vous ne pouvez pas envoyer un message vide.';
             }
-    
-            window.location.reload();
-
         },
 
         emptyForm() {
-            this.file = '',
-            this.newImage = '',
-            this.text = '',
-            this.errorMessage = ''
+            this.text = '';
+            this.file = '';
+            this.newImage = '';
+            this.errorMessage = '';
         },
 
 
@@ -281,12 +276,11 @@ export default {
 
         deletePost(post) {
             API.delete(`posts/${post.post_id}`)
-            .then(response => console.log(response))
+            .then(response => {
+                console.log(response);
+                this.getAllPosts();
+            })
             .catch(error => console.log(error));
-            //console.log();
-
-            //window.location.reload();
-            this.forceRerender();
         }
     }
 };
@@ -294,46 +288,40 @@ export default {
 </script>
 
 
-<style lang="scss">
+<style lang='scss'>
 
 @import '@/scss/variables.scss';
 @import '@/scss/mixins.scss';
 
 
 #all-posts {
-    @include main;   
+    @include main;
 };
 
 
 #all-posts-content {
     @include page;
-    @include size(100%, auto);
-    margin: auto;
-
-    @include lg {
-        @include size(calc(100% - 250px), auto);
-    };
 };
 
 
 .add-post {
     @include first-under-h1;
-    @include size(100%);
     @include flexbox(row, wrap, space-around, center);
+    @include size(100%);
     padding: 30px 0 20px 0;
 
     &__text {
         @include flexbox(column, nowrap, space-around, center);
         @include size(80%, auto);
         margin: auto;
-        
+
         textarea {
+            font-size: map-get($font-size, input);
+            font-family: $montserrat;
             @include size(100%, 150px);
             margin: 10px 0 10px 0;
             padding: 10px;
-            border: solid 1px $color-secondary; 
-            font-size: 1rem;
-            font-family: $montserrat;
+            border: solid 1px $color-secondary;
         };
     };
 
@@ -342,13 +330,12 @@ export default {
         @include size(80%, auto);
     };
 
-
     &__btn {
         @include flexbox(row, wrap, space-around, center);
+        @include size(80%, auto);
         margin: auto;
         padding: 0 30px 0 30px;
-        @include size(80%, auto);
-    
+
         &__btn-image {
             @include flexbox(row, nowrap, center, center);
             margin: 10px 10px 10px 10px;
@@ -369,7 +356,7 @@ export default {
 
                 label {
                     cursor: pointer;
-                }
+                };
             };
         };
 
@@ -377,12 +364,11 @@ export default {
             @include btn;
             @include btn-new-post-comm;
             margin: 10px 10px 10px 10px;
-
         };
 
         &__btn-undo {
             @include btn;
-            @include btn-undo-profile;
+            @include btn-undo;
             margin: 10px 10px 10px 10px;
         };
     };
@@ -390,34 +376,30 @@ export default {
     .submit-errors {
         @include form-errors;
         margin: 20px 0 20px 0;
+
+        @include sm {
+            max-width: 480px;
+        };
     };
 };
-
 
 
 #all-posts-list {
-    border-bottom: none;
-    @include size(100%);
     @include flexbox(column, nowrap, space-around, center);
+    @include size(100%);
+    border-bottom: none;
 
     @include lg {
-        border-left: solid 1px $color-secondary; 
+        border-left: solid 1px $color-secondary;
     };
 };
-
-
-#no-posts {
-    @include no-results;
-};
-
-
 
 
 .post {
     @include position(relative, auto, auto, auto, auto);
     @include size (100%, auto);
-    border-bottom: solid 1px $color-secondary;
     padding: 30px 0 10px 0;
+    border-bottom: solid 1px $color-secondary;
 
     &__title {
         @include flexbox(row, wrap, flex-start, center);
@@ -436,110 +418,62 @@ export default {
         };
 
         &__divider {
-            margin: 0 5px 0 0;
             color: $color-secondary-dark;
+            margin: 0 5px 0 0;
         };
 
         &__date {
-            margin: 0 0 0 0;
+            font-size: map-get($font-size, date);
             color: $color-secondary-dark;
-            font-size: 0.9rem;
+            margin: 0 0 0 0;
         };
     };
-
 
     &__text {
         margin: 5px 0 5px 0;
     };
 
-
     &__img {
         @include post-img;
-        cursor: pointer;
-        transition: 300ms ease-in-out;
-
-        &:hover {
-            opacity: 0.7;
-        };
     };
 
-
-
-    #modal-img { // On id rather than class to override browser default style
-        display: none; // hidden by default
-        cursor: pointer;
-    };
-
-    .modal {
-        @include position(fixed, 0, 0, 0, 0);
-        @include flexbox(row, nowrap, center, center);
-        width: 100%;
-        height: 100%;
-        overflow: auto; // enable scroll if needed
-        background-color: rgba(0, 0, 0 , 0.9);
-        z-index: 100;
-
-        img {
-            margin: auto;
-            @include flexbox(row, nowrap, center, center);
-            max-width: 100%;
-            animation: zoom 500ms;
-        }
-    };
-  
-    @keyframes zoom {
-        from { transform: scale(0) }
-        to { transform: scale(1) }
-    };
-
-    .close {
-        @include position(absolute, 15px, 35px, auto, auto);
-        color: $color-basic-light;
-        font-size: 40px;
-        transition: 200ms ease-in-out;
-
-        &:hover, &:focus {
-            color: $color-primary-dark;
-            cursor: pointer
-        }
-    };
-
-
+    @include enlarge-img;
 
     &__link {
         @include flexbox(row, nowrap, center, center);
 
         p {
-            font-size: 1rem;
-            color: $color-secondary-dark;
             font-weight: 500;
+            color: $color-secondary-dark;
             padding: 20px 20px 20px 20px;
             transition: all 200ms ease-in-out;
 
             &:hover {
-                cursor: pointer;
-                text-decoration: underline;
-                text-decoration-thickness: 1px;
-                text-underline-offset: 4px;
+                @include underlined(1px, 4px);
                 color: $color-primary-dark;
             };
 
             i {
                 padding: 0 10px 0 0;
             };
-        }
-
+        };
     };
-
 
     .delete-post {
-        @include delete-post;
+        @include delete-post-comment;
+        @include position(absolute, 30px, 0px, auto, auto);
     };
+};
+
+
+#no-posts {
+    @include no-results;
 };
 
 
 .access-denied {
     @include access-denied;
-}
+    @include access-denied-posts;
+};
 
 </style>

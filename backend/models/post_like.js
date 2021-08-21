@@ -26,7 +26,7 @@ module.exports = (sequelize, Sequelize) => {
             },
         ]
     });
-    
+
     Post_like.associate = function (models) {
         Post_like.belongsTo(models.User, { foreingKey: 'fk_user_id', onDelete: 'CASCADE' });
         Post_like.belongsTo(models.Post, { foreingKey: 'fk_post_id', onDelete: 'CASCADE' });
@@ -34,4 +34,3 @@ module.exports = (sequelize, Sequelize) => {
 
     return Post_like;
 };
-

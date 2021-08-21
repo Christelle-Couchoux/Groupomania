@@ -1,5 +1,7 @@
 <template>
+
 	<div>
+
 		<header id="login-header">
 			<LoginLogoTitle/>
 			<LoginMenu/>
@@ -19,7 +21,7 @@
                     <div class="login-errors" v-if="errorMessage">
                         <p>{{ errorMessage }}</p>
                     </div>
-                        
+
 					<div>
 						<label for="email">Email :</label>
 						<input
@@ -31,7 +33,7 @@
                         >
 					</div>
 					<div>
-						<label for="password">Mot de passe : </label>
+						<label for="password">Mot de passe :</label>
 						<input
                             type="password"
                             name="password"
@@ -62,11 +64,12 @@
 
 </template>
 
+
 <script>
 
-import ScrollToTopBtn from "../components/ScrollToTopBtn.vue"
-import LoginLogoTitle from "../components/LoginLogoTitle.vue"
-import LoginMenu from "../components/LoginMenu.vue"
+import ScrollToTopBtn from '../components/ScrollToTopBtn.vue'
+import LoginLogoTitle from '../components/LoginLogoTitle.vue'
+import LoginMenu from '../components/LoginMenu.vue'
 
 import { API } from '@/axios.config.js'
 import router from '@/router/index.js'
@@ -131,9 +134,9 @@ export default {
                 password: this.password
             })
             .then(response => {
-                localStorage.setItem("token", response.data.token);
-                localStorage.setItem("userId", response.data.userId);
-                localStorage.setItem("role", response.data.role);
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('userId', response.data.userId);
+                localStorage.setItem('role', response.data.role);
                 router.push('/forums');
                 //console.log(response)
             })
@@ -147,7 +150,7 @@ export default {
 </script>
 
 
-<style lang="scss">
+<style lang='scss'>
 
 @import '@/scss/variables.scss';
 @import '@/scss/mixins.scss';
@@ -156,6 +159,7 @@ export default {
 #login-header {
     @include flexbox(column, nowrap, center, center);
 };
+
 
 #login-form {
     @include form;
@@ -170,11 +174,10 @@ export default {
 	};
 };
 
+
 #go-to-signup {
 	@include link-login-signup;
 };
-
-
 
 </style>
 

@@ -9,7 +9,7 @@ module.exports = (req, res, next) => {
         const decodedToken = jwt.verify(token, process.env.RND_TKN);
         const userId = decodedToken.userId;
         if(!userId) {
-            throw 'User ID non valable !';
+            throw 'User id absent, utilisateur non connecté !';
         } else {
             next();
         }

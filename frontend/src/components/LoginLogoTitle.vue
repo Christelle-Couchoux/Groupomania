@@ -1,21 +1,27 @@
 <template>
-    
-    <div id="login-logo-title">
-        
-        <div id="logo">
-            <img src="@/assets/logo/icon-above-font.png" alt="logo de Groupomania">
+
+    <router-link to="/" title ="Déconnexion / Retour à l'accueil" @click="logout">
+        <div id="login-logo-title">
+            <div id="logo">
+                <img src="@/assets/logo/icon-above-font.png" alt="logo de Groupomania">
+            </div>
+            <h1>Réseau social interne</h1>
         </div>
-        
-        <h1>Réseau social interne</h1>    
-    </div>
-    
+    </router-link>
+
 </template>
 
 
 <script>
 
 export default {
-    name: 'LoginLogoTitle'
+    name: 'LoginLogoTitle',
+
+    methods: {
+        logout() {
+            localStorage.clear();
+        }
+    }
 }
 
 </script>
@@ -34,10 +40,11 @@ export default {
 
     h1 {
         font-size: map-get($font-size, h1);
+        font-weight: 400; // override browser bold style
         margin: 0 0 50px 0;
-        font-weight: 400;
     };
 };
+
 
 #logo {
     @include position(relative, auto, auto, auto, auto);

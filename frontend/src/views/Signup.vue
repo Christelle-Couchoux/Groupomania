@@ -1,6 +1,6 @@
 <template>
+
     <div>
-        
         <header id="login-header">
             <LoginLogoTitle/>
             <LoginMenu/>
@@ -30,7 +30,7 @@
                             required
                         >
                         <p>
-                            3-16&nbsp;caractères.
+                            1-16&nbsp;caractères.
                         </p>
                     </div>
                     <div>
@@ -80,11 +80,12 @@
 
 </template>
 
+
 <script>
 
-import ScrollToTopBtn from "../components/ScrollToTopBtn.vue"
-import LoginLogoTitle from "../components/LoginLogoTitle.vue"
-import LoginMenu from "../components/LoginMenu.vue"
+import ScrollToTopBtn from '../components/ScrollToTopBtn.vue'
+import LoginLogoTitle from '../components/LoginLogoTitle.vue'
+import LoginMenu from '../components/LoginMenu.vue'
 
 import { API } from '@/axios.config.js'
 import router from '@/router/index.js'
@@ -101,9 +102,9 @@ export default {
 
     data() {
         return {
-            pseudo: "",
-            email: "",
-            password: "",
+            pseudo: '',
+            email: '',
+            password: '',
             errors: [],
             errorMessage: null,
         }
@@ -136,7 +137,7 @@ export default {
         },
 
         validPseudo(pseudo) {
-            const regex = /^[-\w\sÀÁÂÄÅÇÈÉÊËÌÍÎÏÑŒÒÓÔÕÖØÙÚÛÜàáâäåçèéêëìíîïñœòóôõöøùúûü]{3,16}$/;
+            const regex = /^[-\w\sÀÁÂÄÅÇÈÉÊËÌÍÎÏÑŒÒÓÔÕÖØÙÚÛÜàáâäåçèéêëìíîïñœòóôõöøùúûü]{1,16}$/;
             return regex.test(pseudo);
         },
 
@@ -157,9 +158,9 @@ export default {
                 password: this.password
             })
             .then(response => {
-                localStorage.setItem("token", response.data.token);
-                localStorage.setItem("userId", response.data.userId);
-                localStorage.setItem("role", response.data.role);
+                localStorage.setItem('token', response.data.token);
+                localStorage.setItem('userId', response.data.userId);
+                localStorage.setItem('role', response.data.role);
                 router.push(`/forums`);
                 //console.log(response)
             })
@@ -173,7 +174,7 @@ export default {
 </script>
 
 
-<style lang="scss">
+<style lang='scss'>
 
 @import '@/scss/variables.scss';
 @import '@/scss/mixins.scss';

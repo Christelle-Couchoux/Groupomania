@@ -15,7 +15,7 @@
 						<span>Messages</span>
 					</router-link>
 				</li>
-				<li id="profile">
+				<li>
 					<router-link :to="{ name: 'UserPosts', params: { userId: currentUserId } }" title="Mon profil">
 						<i class="fas fa-user" aria-label="Mon profil" role="img"></i>
 						<span>Mon profil</span>
@@ -52,7 +52,7 @@ export default {
     methods: {
         logout() {
             localStorage.clear();
-        }
+        },
     }
 }
 
@@ -66,17 +66,17 @@ export default {
 
 
 #posts-header {
-    @include size(100%, auto);
-    @include position(fixed, 0, auto, auto, auto);
-    @include flexbox(column, nowrap, center, center);
-    border-bottom: solid 1px $color-secondary;
     background-color: $color-basic-light;
+    @include flexbox(column, nowrap, center, center);
+    @include position(fixed, 0, auto, auto, auto);
     z-index: 10;
+    @include size(100%, auto);
+    border-bottom: solid 1px $color-secondary;
 
     @include lg {
-        border-bottom: none;
-        width: 240px;
         @include position(fixed, auto, auto, auto, 0);
+        width: 240px;
+        border-bottom: none;        
     };
 
     @include xxl {
@@ -104,7 +104,7 @@ export default {
     @include size (100%, auto);
     max-height: 500px;
     margin: 10px 0 15px 0;
-    
+
     ul {
         @include list-style;
         @include flexbox(row, nowrap, space-around, center);
@@ -116,10 +116,9 @@ export default {
     };
 
     li {
-        transition: all 200ms ease-in-out;
-
-        @include size(100%, auto);
         text-align: center;
+        @include size(100%, auto);
+        transition: all 200ms ease-in-out;
 
         @include lg {
             margin: 30px 0 30px ;
@@ -141,9 +140,7 @@ export default {
             };
 
             span {
-                text-decoration: underline;
-                text-underline-offset: 5px;
-                text-decoration-thickness: 2px;
+                @include menu-hover;
             };
         };
 
@@ -154,22 +151,20 @@ export default {
 
         span {
             display: none;
-            
+            transition: all 200ms ease-in-out;
+
             @include xl {
-                font-size: map-get($font-size, posts-text);
+                font-size: map-get($font-size, posts-menu-text);
 				font-weight: 700;
                 display: inline;
-                margin: 0 0 0 10px;               
+                margin: 0 0 0 10px;
             };
         };
 
         .router-link-active {
             color: $color-primary-dark;
         };
-    };    
+    };
 };
 
 </style>
-
-
-

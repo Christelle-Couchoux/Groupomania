@@ -12,7 +12,7 @@
 
                 <div id="user-info">
                     <div id="user-photo">
-                            <img :src="userInfo.user_photo" alt="Avatar de l'utilisateur"/>
+                        <img :src="userInfo.user_photo" alt="Avatar de l'utilisateur"/>
                     </div>
 
                     <p class="pseudo">{{ userInfo.pseudo }}</p>
@@ -49,8 +49,6 @@
                             </li>
                         </ul>
                     </nav>
-                
-                    
 
                     <!-- if posts -->
                     <div id="posts" v-if="posts[0]">
@@ -90,14 +88,12 @@
                                 </div>
 
                                 <div class="post__text" v-if="post.post_text">
-                                    <p>
-                                        {{ post.post_text }}
-                                    </p>
+                                    <p>{{ post.post_text }}</p>
                                 </div>
 
                                 <div
-                                    class="post__img" 
-                                    v-if="post.post_file" 
+                                    class="post__img"
+                                    v-if="post.post_file"
                                     @click.prevent="enlarge(post)"
                                 >
                                     <img
@@ -118,9 +114,7 @@
 
                             <router-link :to="{ name: 'Post', params: { postId: post.post_id } }" title="Commenter et aimer le message">
                                 <div class="post__link">
-                                    <p>
-                                        Commenter / Aimer
-                                    </p>
+                                    <p>Commenter - Aimer</p>
                                 </div>
                             </router-link>
                         </div>
@@ -131,22 +125,22 @@
 
                     </div> 
 
-                    <!-- if no posts yet -->
+                    <!-- if no posts -->
                     <div id="no-posts" v-else>
-                        <p>
-                            {{ userInfo.pseudo }} n'a pas encore posté de message.
-                        </p>
-                    </div>  
+                        <p>{{ userInfo.pseudo }} n'a pas encore posté de message.</p>
+                    </div>
                 </div>
-
             </section>
 
 		</main>
 
         <div class="access-denied" v-else>
-            <p>
-                Vous devez être connecté pour accéder à cette page.
-            </p>
+            <p>Vous devez être connecté pour accéder à cette page.</p>
+            <div class="btn-login">
+				<router-link to="/login" title ="Connexion">
+                    <input type="button" value="Se connecter">
+                </router-link>
+			</div>
         </div>
 
 		<ScrollToTopBtn/>
@@ -155,10 +149,11 @@
 
 </template>
 
+
 <script>
 
-import ScrollToTopBtn from "../components/ScrollToTopBtn.vue"
-import PostsHeader from "../components/PostsHeader.vue"
+import ScrollToTopBtn from '../components/ScrollToTopBtn.vue'
+import PostsHeader from '../components/PostsHeader.vue'
 import moment from 'moment'
 
 import { API } from '@/axios.config.js'
@@ -169,7 +164,7 @@ export default {
 
 	components: {
 		ScrollToTopBtn,
-		PostsHeader,
+		PostsHeader
 	},
 
     data() {
@@ -240,10 +235,11 @@ export default {
 
         deletePost(post) {
             API.delete(`posts/${post.post_id}`)
-            .then(response => console.log(response))
+            .then(response => {
+                console.log(response);
+                this.getAllPostsOfUser();
+            })
             .catch(error => console.log(error));
-
-            window.location.reload();
         }
     }
 };
@@ -251,26 +247,19 @@ export default {
 </script>
 
 
-<style lang="scss">
+<style lang='scss'>
 
 @import '@/scss/variables.scss';
 @import '@/scss/mixins.scss';
 
 
 #user-profile {
-    @include main; 
+    @include main;
 };
 
 
 #user-profile-content {
-    //@include size(100%, auto);
-
     @include page;
-    //margin: auto;
-
-    @include lg {
-        @include size(calc(100% - 250px), auto);
-    };
 };
 
 
@@ -290,18 +279,14 @@ export default {
         @include btn(200px);
         @include btn-edit-profile;
         margin: 10px 10px 10px 10px;
-
-        @include lg {
-            order: 2;
-        };
     };
 };
 
 
 #user-photo {
     @include size(120px);
-    border-radius: 50%;
     margin: 20px 10px 10px 10px;
+    border-radius: 50%;
 
     @include lg {
         order: 1;
@@ -316,16 +301,16 @@ export default {
 
 
 .pseudo {
-    @include size(90%, auto);
     font-size: map-get($font-size, pseudo);
-    color: map-get($color-txt, pseudo);
-    margin: 10px 10px 20px 10px;
     text-align: center;
+    color: map-get($color-txt, pseudo);
+    @include size(90%, auto);
+    margin: 10px 10px 20px 10px;
     transition: all 200ms ease-in-out;
 
     @include lg {
         order: 3;
-    }
+    };
 };
 
 
@@ -336,16 +321,16 @@ export default {
 
     @include lg {
         order: 4;
-    }
+    };
 };
 
 
 #user-posts {
-    @include size(100%);
     @include flexbox(column, nowrap, space-around, center);
+    @include size(100%);
 
     @include lg {
-        border-left: solid 1px $color-secondary; 
+        border-left: solid 1px $color-secondary;
     };
 };
 
@@ -353,54 +338,53 @@ export default {
 .user-nav {
     @include size (100%, auto);
     margin: 0 0 15px 0;
-    
+
     ul {
         @include list-style;
         @include flexbox(row, nowrap, space-around, center);
     };
+
     li {
-        transition: all 200ms ease-in-out;
+        text-align: center;
         @include flexbox(row, nowrap, center, center);
         @include size(100%, auto);
-        text-align: center;
+        transition: all 200ms ease-in-out;
+
 		div {
+            @include flexbox(row, nowrap, center, center);
 			@include size(100%, 50px);
-			@include flexbox(row, nowrap, center, center);
 		};
+
 		a {
 			@include size (100%, auto);
 			border-bottom: solid 1px $color-secondary;
+
 			&:hover {
 				cursor: pointer;
 				font-weight: 700;
+
 				p {
 					color: $color-primary-dark;
 				};
-			};	
-        };     
-    }; 
+			};
+        }; 
+    };
 
-	.router-link-exact-active {
+	.router-link-active {
         border-bottom: solid 1px $color-primary-dark;
-        
+
 		p {
+            font-weight: 700;
 			color: $color-primary-dark;
-			font-weight: 700;
 		};
-    }; 
-};
-
-
-#no-posts {
-    @include no-results;
+    };
 };
 
 
 #posts {
+    @include flexbox(column, nowrap, space-around, center);
     @include size (80%, auto);
     margin: 0 0 50px 0;
-    @include flexbox(column, nowrap, space-around, center);
-
 };
 
 
@@ -408,6 +392,4 @@ export default {
     margin: 50px 0 0 0;
 };
 
-
 </style>
-

@@ -3,7 +3,6 @@ const Comment = db.comment;
 
 
 // delete a comment (DELETE)
-// OK
 
 exports.deleteComment = (req, res) => {
     Comment.destroy({ where: { comment_id: req.params.commentId } })

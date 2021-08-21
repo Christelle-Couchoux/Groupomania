@@ -1,6 +1,6 @@
 <template>
 
-    <button id="scroll-to-top">
+    <button id="scroll-to-top" title="Retour en haut de la page">
         <i class="fas fa-chevron-up" aria-label="Retour en haut de la page" role="img"></i>
     </button>
 
@@ -17,7 +17,7 @@ export default {
         const btnScroll = document.getElementById('scroll-to-top');
         btnScroll.addEventListener('click', this.scrollToTop);
     },
-    
+
     methods: {
         showBtnScroll(){
             const btnScroll = document.getElementById('scroll-to-top');
@@ -34,7 +34,7 @@ export default {
                 behavior: 'smooth'
             });
         }
-    }    
+    }
 };
 
 </script>
@@ -47,18 +47,18 @@ export default {
 
 
 #scroll-to-top {
-    z-index: 99; // above everything
     display: none; // hidden by default
-    font-size: 1.3rem;
+    font-size: map-get($font-size, scroll-to-top);
     @include color-bg-txt(btn-scroll);
     @include position(fixed, auto, 20px, 20px, auto);
+    z-index: 99; // above everything
     @include size(40px);
     border-radius: 50%;
     border: none;
-    cursor: pointer;
     transition: all 200ms ease-in-out;
 
     &:hover{
+        cursor: pointer;
         background-color: $color-primary-dark,
     };
 

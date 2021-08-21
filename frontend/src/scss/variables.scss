@@ -1,90 +1,79 @@
 // color palette
 
 // color variables
-
 $color-basic-light: hsl(120, 100%, 100%);
 $color-basic-dark: hsl(220, 69%, 14%);
 $color-basic-dark-lighter: hsl(220, 69%, 95%);
-
 $color-primary-dark: hsl(357, 53%, 53%);
 $color-primary-light: hsl(357, 53%, 95%);
-
 $color-secondary: hsl(0, 0%, 87%);
 $color-secondary-dark: hsl(0, 0%, 45%);
-
-
 
 
 // color maps
 
 // background
-
 $color-bg: (
     basic: $color-basic-light,
     btn-scroll: $color-basic-dark,
     btn-login-signup: $color-basic-light,
     btn-login-signup-hover: $color-basic-dark,
-    btn-new-post-comm: $color-basic-dark, 
-    btn-new-post-comm-hover: $color-primary-dark, 
+    btn-new-post-comm: $color-basic-dark,
+    btn-new-post-comm-hover: $color-primary-dark,
     btn-edit-profile: $color-basic-light,
     btn-edit-profile-hover: $color-basic-light,
     btn-save-profile: $color-basic-dark,
     btn-save-profile-hover: $color-basic-light,
-    btn-undo-profile: $color-basic-light,
-    btn-undo-profile-hover: $color-basic-dark,
+    btn-undo: $color-basic-light,
+    btn-undo-hover: $color-basic-dark,
     btn-delete-account: $color-primary-dark,
     btn-delete-account-hover: $color-basic-light,
-
-    login-active: $color-basic-light,
 );
 
-
 // text
-
 $color-txt: (
     basic: $color-basic-dark,
     btn-scroll: $color-basic-light,
     btn-login-signup: $color-basic-dark,
     btn-login-signup-hover: $color-basic-light,
-    btn-new-post-comm: $color-basic-light, 
-    btn-new-post-comm-hover: $color-basic-light, 
+    btn-new-post-comm: $color-basic-light,
+    btn-new-post-comm-hover: $color-basic-light,
     btn-edit-profile: $color-basic-dark,
     btn-edit-profile-hover: $color-primary-dark,
     btn-save-profile: $color-basic-light,
     btn-save-profile-hover: $color-basic-dark,
-    btn-undo-profile: $color-basic-dark,
-    btn-undo-profile-hover: $color-basic-light,
+    btn-undo: $color-basic-dark,
+    btn-undo-hover: $color-basic-light,
     btn-delete-account: $color-basic-light,
     btn-delete-account-hover: $color-primary-dark,
     pseudo: $color-primary-dark,
-
-
-    login-active: $color-primary-dark,
 );
 
 
 // fonts
 
 // font family
-
 $montserrat: ('Montserrat', 'arial', 'sans-serif');
 
-
 // font size map
-
 $font-size: (
     basic: 1rem,
+    home: 1.3rem,
     login-menu: 1.1rem,
     input: 1rem,
+    field-constraints: 0.8rem,
     btn: 0.9rem,
-    h1: 1.3rem,
     forums-icon: 4rem,
     articles-text: 1.5rem,
     articles-go-back: 2rem,
+    h1: 1.3rem,
     pseudo: 1.5rem,
-
-
     posts-menu-icon: 1.4rem,
-    posts-menu-text: 1.2rem,
-    field-constraints: 0.8rem,
+    posts-menu-text: 1.15rem,
+    photo-field: 1rem,
+    user-pseudo: 1.2rem,
+    date: 0.9rem,
+    delete-X: 1.3rem,
+    scroll-to-top: 1.3rem,
+    unauthorized: 1.5rem,
 );

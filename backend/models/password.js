@@ -2,6 +2,7 @@
 
 const passwordValidator = require('password-validator');
 
+
 const passwordSchema = new passwordValidator();
 
 passwordSchema

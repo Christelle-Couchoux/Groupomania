@@ -1,13 +1,14 @@
 <template>
 
 	<div id="edit-profile">
+
 		<PostsHeader/>
 
 		<main v-if="this.currentUserId">
 
 			<section id="edit-profile-content" v-for="userInfo in info" :key="userInfo.pseudo">
                 <h1>Modifier le profil</h1>
-                
+
                 <div id="user-info">
                     <div id="user-photo">
                         <img :src="userInfo.user_photo">
@@ -28,7 +29,7 @@
                 </div>
 
                 <div id="user-edit" v-if="currentUserId == userInfo.user_id || currentUserRole == 'admin'">
-                    <div id="photo-form">
+                    <div id="edit-form">
                         <div id="edit-profile-photo" v-if="newPhoto">
                             <img
                                 :src="newPhoto"
@@ -42,7 +43,7 @@
                                 alt="Avatar de l'utilisateur"
                             >
                         </div>
-                        
+
                         <form class="edit-profile-form" enctype="multipart/form-data">
                             <div class="edit-profile-form__field" id="photo-field">
                                 <label for="file">
@@ -58,7 +59,7 @@
                                     accept="image/png, image/jpeg, image/jpg, image/gif"
                                 >
                             </div>
-                            
+
                             <div class="edit-profile-form__field">
                                 <label for="bio">Bio : </label>
                                 <textarea
@@ -71,7 +72,7 @@
 
                             <div class="edit-errors" v-if="errorMessage">
                                 <p>{{ errorMessage }}</p>
-                            </div>   
+                            </div>
                         </form>
                     </div>
 
@@ -103,16 +104,18 @@
                         </router-link>
                     </div>
                 </div>
-                
 
             </section>
 
 		</main>
 
         <div class="access-denied" v-else>
-            <p>
-                Vous devez être connecté pour accéder à cette page.
-            </p>
+            <p>Vous devez être connecté pour accéder à cette page.</p>
+            <div class="btn-login">
+				<router-link to="/login" title ="Connexion">
+                    <input type="button" value="Se connecter">
+                </router-link>
+			</div>
         </div>
 
 		<ScrollToTopBtn/>
@@ -121,10 +124,11 @@
 
 </template>
 
+
 <script>
 
-import ScrollToTopBtn from "../components/ScrollToTopBtn.vue"
-import PostsHeader from "../components/PostsHeader.vue"
+import ScrollToTopBtn from '../components/ScrollToTopBtn.vue'
+import PostsHeader from '../components/PostsHeader.vue'
 
 import { API } from '@/axios.config.js'
 import router from '@/router/index.js'
@@ -151,8 +155,8 @@ export default {
 	},
 
 	created() {
-        this.currentUserId = localStorage.getItem("userId");
-        this.currentUserRole = localStorage.getItem("role");
+        this.currentUserId = localStorage.getItem('userId');
+        this.currentUserRole = localStorage.getItem('role');
 
         this.getUserInfo();
     },
@@ -176,19 +180,19 @@ export default {
 
         handleFileUpload() {
             this.file = this.$refs.file.files[0];
-			this.newPhoto = URL.createObjectURL(this.file)
+			this.newPhoto = URL.createObjectURL(this.file);
         },
 
         checkBio() {
-            if(!this.validBio(this.bio)) {
-                this.errorMessage = 'Votre bio peut comprendre au maximum 255 caractères.';
+            if(this.bio && !this.validBio(this.bio)) {
+                this.errorMessage = 'Votre bio est trop longue (255 caractères maximum) ou comprend des caractères non autorisés.';
             } else { // if no errors
                 this.editProfile(); // send the form
             }
         },
 
         validBio(bio) {
-            const regex = /^[-\w\sÀÁÂÄÅÇÈÉÊËÌÍÎÏÑŒÒÓÔÕÖØÙÚÛÜàáâäåçèéêëìíîïñœòóôõöøùúûü.,!"'\\?/$ ]{0,255}$/;
+            const regex = /^[-\w\sÀÁÂÄÅÇÈÉÊËÌÍÎÏÑŒÒÓÔÕÖØÙÚÛÜàáâäåçèéêëìíîïñœòóôõöøùúûü.,!"'\\?/$£€() ]{1,255}$/;
             return regex.test(bio);
         },
 
@@ -204,13 +208,14 @@ export default {
             if(this.file != '') {
                 formData.append('image', this.file) // must be 'image' because multer save .single('image')
             }
-            formData.append('bio', this.bio)
-            //for (var value of formData.values()) { console.log(value); }
-            API.put(`users/${this.$route.params.userId}`, formData)
-            .then(response => console.log(response))
-            .catch(error => console.log(error));
+            formData.append('bio', this.bio);
 
-            window.location.reload();
+            API.put(`users/${this.$route.params.userId}`, formData)
+            .then(response => {
+                console.log(response);
+                this.getUserInfo();
+            })
+            .catch(error => console.log(error));
         },
 
 
@@ -219,42 +224,35 @@ export default {
 		deleteAccount() {
 			API.delete(`users/${this.$route.params.userId}`)
 			.then(response => {
-				console.log(response)
+				console.log(response);
+                if(this.$route.params.userId == this.currentUserId) {
+                    localStorage.clear();
+                    router.push('/');
+                } else if(this.currentUserRole == 'admin') {
+                    router.push('/posts/');
+                }
 			})
 			.catch(error => console.log(error));
-            
-            if(this.$route.params.userId == this.currentUserId) {
-                localStorage.clear();
-                router.push('/');
-            } else if(this.currentUserRole == 'admin') {
-                router.push('/posts/');
-            }    
-		}    
+		}
     }
 };
 
 </script>
 
 
-<style lang="scss">
+<style lang='scss'>
 
 @import '@/scss/variables.scss';
 @import '@/scss/mixins.scss';
 
 
 #edit-profile {
-    @include main   
+    @include main;
 };
 
 
 #edit-profile-content {
     @include page;
-    @include size(100%, auto);
-    margin: auto;
-
-    @include lg {
-        @include size(calc(100% - 250px), auto);
-    };
 };
 
 
@@ -262,10 +260,6 @@ export default {
 	@include btn(200px);
 	@include btn-edit-profile;
     margin: 20px 10px 10px 10px;
-
-    @include lg {
-        order: 2;
-    }
 };
 
 
@@ -274,14 +268,14 @@ export default {
     padding: 20px 20px 20px 20px;
 
     @include lg {
-        border-left: solid 1px $color-secondary; 
+        border-left: solid 1px $color-secondary;
     };
 };
 
 
-#photo-form {
-    @include size(100%);
+#edit-form {
     @include flexbox(column, nowrap, space-between, center);
+    @include size(100%);
 
     @include xl {
         @include flexbox(row, nowrap, space-around, flex-start);
@@ -292,8 +286,8 @@ export default {
 #edit-profile-photo {
     @include flexbox(row, nowrap, center, center);
     @include size(150px);
-    border-radius: 50%;
     margin: 20px 20px 20px 20px;
+    border-radius: 50%;
 
     @include lg {
         margin: 20px;
@@ -311,30 +305,18 @@ export default {
     @include size(90%);
     max-width: 500px;
 
-    @include lg {
-        @include size(90%);
-    };
-
     &__field {
         margin: 10px;
     };
 
     input {
         @include size(100%, 35px);
-        margin: 3px 0 3px 0;
-        padding: 5px;
-        border: solid 1px $color-secondary;
-        font-size: map-get($map: $font-size, $key: input);
-        font-family: $montserrat;
+        @include form-field;
     };
 
     textarea {
         @include size(100%, 125px);
-        margin: 3px 0 3px 0;
-        padding: 5px;
-        border: solid 1px $color-secondary;
-        font-size: map-get($map: $font-size, $key: input);
-        font-family: $montserrat;
+        @include form-field;
     };
 
     p {
@@ -344,11 +326,7 @@ export default {
         font-size: map-get($font-size, field-constraints);
     };
 
-    #required-fields {
-        margin: 20px auto;
-    };
-
-    #file {
+    #file { // hide default file input
         @include size(0);
         opacity: 0;
     };
@@ -361,23 +339,28 @@ export default {
 
             label {
                 cursor: pointer;
-            }
+            };
         };
 
         p {
+            font-size: map-get($font-size, photo-field);
+            font-style: normal;
+            text-align: center;
             padding: 5px;
             border: solid 1px $color-secondary;
-            text-align: center;
-            font-style: normal;
-            font-size: 1rem;
-        }
+        };
     };
 
 	.edit-errors {
         @include form-errors;
-        margin: 30px 0 10px 0;
-    };
+        margin: auto;
+        margin-top: 30px;
+        margin-bottom: 10px;
 
+        @include sm {
+            max-width: 450px;
+        };
+    };
 };
 
 
@@ -385,11 +368,13 @@ export default {
     @include flexbox(column, nowrap, space-around, center);
 };
 
+
 #modifications {
+    text-align: center;
     @include size(100%, auto);
     margin: 30px 10px 10px 10px;
-    text-align: center;
 };
+
 
 .save-profile-btn {
     @include btn;
@@ -397,24 +382,28 @@ export default {
     margin: 20px 40px 20px 40px;
 };
 
+
 .undo-profile-btn {
     @include btn;
-    @include btn-undo-profile;
+    @include btn-undo;
     margin: 20px 40px 60px 40px;
 };
 
+
 #delete-account {
     @include flexbox(column, nowrap, space-around, center);
-    border-top: solid 1px $color-secondary; 
     @include size(100%, auto);
+    border-top: solid 1px $color-secondary;
 };
 
+
 #delete-account-txt {
-    padding: 60px 10px 20px 10px;
     text-align: center;
     font-weight: 700;
     color: $color-primary-dark;
+    padding: 60px 10px 20px 10px;
 };
+
 
 .delete-account-btn {
     @include btn(300px);
@@ -422,36 +411,28 @@ export default {
     margin: 10px 10px 60px 10px;
 };
 
-
 .unauthorized {
     @include flexbox(column, nowrap, space-around, center);
 
     p {
         color: $color-primary-dark;
-        font-size: 1.5rem;
+        font-size: map-get($font-size, unauthorized);
         margin: 80px 0 0 0;
         padding: 20px;
         border: solid 1px $color-primary-dark;
-
     };
 
     #back-to-profile {
+        @include underlined(1px, 5px);
         text-align: center;
         margin: 80px 0 80px 0;
-        text-decoration: underline;
-        text-decoration-thickness: 1px;
-        text-underline-offset: 5px;
         transition: all 200ms ease-in-out;
 
         a:hover {
             cursor: pointer;
             color: $color-primary-dark;
         };
-    }
+    };
 };
 
-
-
-
 </style>
-

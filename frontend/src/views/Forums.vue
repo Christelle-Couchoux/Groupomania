@@ -1,7 +1,7 @@
 <template>
 
     <div id="forums">
-        
+
         <header id="login-header">
             <LoginLogoTitle/>
         </header>
@@ -32,9 +32,12 @@
         </main>
 
         <div class="access-denied-forums" v-else>
-            <p>
-                Vous devez être connecté pour accéder à cette page.
-            </p>
+            <p>Vous devez être connecté pour accéder à cette page.</p>
+            <div class="btn-login">
+				<router-link to="/login" title ="Connexion">
+                    <input type="button" value="Se connecter">
+                </router-link>
+			</div>
         </div>
 
         <ScrollToTopBtn/>
@@ -46,8 +49,8 @@
 
 <script>
 
-import ScrollToTopBtn from "../components/ScrollToTopBtn.vue"
-import LoginLogoTitle from "../components/LoginLogoTitle.vue"
+import ScrollToTopBtn from '../components/ScrollToTopBtn.vue'
+import LoginLogoTitle from '../components/LoginLogoTitle.vue'
 
 
 export default {
@@ -55,14 +58,14 @@ export default {
 
     components: {
         ScrollToTopBtn,
-		LoginLogoTitle,
+		LoginLogoTitle
     },
 
     created() {
-        this.currentUserId = localStorage.getItem("userId");
-        this.currentUserRole = localStorage.getItem("role");
+        this.currentUserId = localStorage.getItem('userId');
+        this.currentUserRole = localStorage.getItem('role');
     },
-    
+
     methods: {
         logout() {
             localStorage.clear();
@@ -73,7 +76,7 @@ export default {
 </script>
 
 
-<style lang="scss">
+<style lang='scss'>
 
 @import '@/scss/variables.scss';
 @import '@/scss/mixins.scss';
@@ -106,7 +109,7 @@ export default {
         cursor: pointer;
         color: $color-primary-dark;
         border: solid 2px $color-primary-dark;
-    }
+    };
 };
 
 
@@ -115,11 +118,9 @@ export default {
 };
 
 
-#forums {
-    .access-denied-forums {
-        @include access-denied-forums;
-    }
+.access-denied-forums {
+    @include access-denied;
+    @include access-denied-forums;
 };
 
 </style>
-

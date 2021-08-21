@@ -27,7 +27,6 @@ module.exports = (sequelize, Sequelize) => {
 			type: Sequelize.STRING,
 			allowNull: false,
 			defaultValue: 'http://127.0.0.1:3000/images/default-user-icon.jpg'
-			
 		},
 		bio: {
 			type: Sequelize.STRING,
@@ -56,4 +55,3 @@ module.exports = (sequelize, Sequelize) => {
 
 	return User;
 };
-

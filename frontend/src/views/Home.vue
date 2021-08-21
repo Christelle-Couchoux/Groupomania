@@ -1,11 +1,12 @@
 <template>
+
 	<div>
+
 		<header id="login-header">
 			<LoginLogoTitle/>
 		</header>
 
 		<main>
-
 			<section id="home">
                 <p>
                     Bienvenue sur le réseau social de Groupomania&nbsp;!<br><br>
@@ -18,32 +19,30 @@
                     </router-link>
 				</div>
 			</section>
-
 		</main>
 
-
 	</div>
-	
+
 </template>
+
 
 <script>
 
-import LoginLogoTitle from "../components/LoginLogoTitle.vue"
+import LoginLogoTitle from '../components/LoginLogoTitle.vue'
 
 
 export default {
 	name: 'Home',
-	
+
 	components: {
-		LoginLogoTitle,
+		LoginLogoTitle
 	}
-	
 };
 
 </script>
 
 
-<style lang="scss">
+<style lang='scss'>
 
 @import '@/scss/variables.scss';
 @import '@/scss/mixins.scss';
@@ -51,18 +50,17 @@ export default {
 
 #home {
     @include flexbox(column, wrap, center, center);
+	@include size(80%, auto);
     margin: auto;
     margin-top: 50px;
-    @include size(80%, auto);
 
     p {
-        margin: 0 0 50px 0;
         text-align: center;
-        font-size: 1.3rem;
+        font-size: map-get($font-size, home);
         line-height: 1.5rem;
+		margin: 0 0 50px 0;
     };
 };
-
 
 
 .btn-login{
@@ -72,4 +70,3 @@ export default {
 };
 
 </style>
-

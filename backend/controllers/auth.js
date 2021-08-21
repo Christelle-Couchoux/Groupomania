@@ -6,10 +6,9 @@ const User = db.user;
 
 
 // create new user (POST)
-// OK
 
 exports.signup = (req, res) => {
-    // create admin if not exists
+    // create admin if does not exist
     if (User.length === 0) {
         bcrypt.hash(process.env.ADMIN_PASSWORD, 10)
         .then(hash => {
@@ -49,7 +48,7 @@ exports.signup = (req, res) => {
                         .then(user => // return
                             res.status(201).json({
                                 message: 'Utilisateur créé !',
-                                userId: user.user_id, 
+                                userId: user.user_id,
                                 role: user.fk_user_role,
                                 token: jwt.sign(
                                     { userId: user.user_id }, process.env.RND_TKN, { expiresIn: '24h' }
@@ -74,7 +73,6 @@ exports.signup = (req, res) => {
 
 
 // connect existing user (POST)
-// OK
 
 exports.login = (req, res) => {
     User.findOne({
@@ -96,7 +94,7 @@ exports.login = (req, res) => {
             // if they match
             res.status(200).json({ // return
                 message: 'Utilisateur connecté !',
-                userId: user.user_id, 
+                userId: user.user_id,
                 role: user.fk_user_role,
                 token: jwt.sign(
                     { userId: user.user_id }, process.env.RND_TKN, { expiresIn: '24h' }

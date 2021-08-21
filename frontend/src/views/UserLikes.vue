@@ -1,6 +1,7 @@
 <template>
 
 	<div id="user-profile">
+
 		<PostsHeader/>
 
 		<main v-if="currentUserId">
@@ -8,10 +9,10 @@
 			<section id="user-profile-content" v-for="userInfo in info" :key="userInfo.pseudo">
                 <h1 v-if="currentUserId == userInfo.user_id" >Mon profil</h1>
                 <h1 v-else>Profil - {{ userInfo.pseudo }}</h1>
-                
+
                 <div id="user-info">
                     <div id="user-photo">
-                            <img :src="userInfo.user_photo" alt="Avatar de l'utilisateur"/>
+                        <img :src="userInfo.user_photo" alt="Avatar de l'utilisateur"/>
                     </div>
 
                     <p class="pseudo">{{ userInfo.pseudo }}</p>
@@ -49,7 +50,7 @@
                         </ul>
                     </nav>
 
-                    <!-- if posts liked -->
+                    <!-- if liked posts -->
                     <div id="likes" v-if="likedPosts[0]">
                         <div class ="post" v-for="likedPost in likedPosts" :key="likedPost.post_id">
                                 <div
@@ -86,14 +87,12 @@
                                 </div>
 
                                 <div class="post__text" v-if="likedPost.post_text">
-                                    <p>
-                                        {{ likedPost.post_text }}
-                                    </p>
+                                    <p>{{ likedPost.post_text }}</p>
                                 </div>
 
-                                <div 
-                                    class="post__img" 
-                                    v-if="likedPost.post_file" 
+                                <div
+                                    class="post__img"
+                                    v-if="likedPost.post_file"
                                     @click.prevent="enlarge(likedPost)"
                                 >
                                     <img
@@ -114,38 +113,34 @@
 
                             <router-link :to="{ name: 'Post', params: { postId: likedPost.post_id } }" title="Commenter et aimer le message">
                                 <div class="post__link">
-                                    <p>
-                                        Commenter / Aimer
-                                    </p>
+                                    <p>Commenter - Aimer</p>
                                 </div>
                             </router-link>
                         </div>
 
-                        <div id="likes-end">
+                        <div id="posts-end">
                             <p>Fin des messages aimés.</p>
                         </div>
-
                     </div>
 
-                    <!-- if no posts liked yet -->
+                    <!-- if no liked posts -->
                     <div id="no-likes" v-else>
-                        <p>
-                            {{ userInfo.pseudo }} n'a pas encore aimé de message.
-                        </p>
+                        <p>{{ userInfo.pseudo }} n'a pas encore aimé de message.</p>
                     </div>
 
                 </div>
-
             </section>
 
 		</main>
 
         <div class="access-denied" v-else>
-            <p>
-                Vous devez être connecté pour accéder à cette page.
-            </p>
+            <p>Vous devez être connecté pour accéder à cette page.</p>
+            <div class="btn-login">
+				<router-link to="/login" title ="Connexion">
+                    <input type="button" value="Se connecter">
+                </router-link>
+			</div>
         </div>
-
 
 		<ScrollToTopBtn/>
 
@@ -153,10 +148,11 @@
 
 </template>
 
+
 <script>
 
-import ScrollToTopBtn from "../components/ScrollToTopBtn.vue"
-import PostsHeader from "../components/PostsHeader.vue"
+import ScrollToTopBtn from '../components/ScrollToTopBtn.vue'
+import PostsHeader from '../components/PostsHeader.vue'
 import moment from 'moment'
 
 import { API } from '@/axios.config.js'
@@ -167,7 +163,7 @@ export default {
 
 	components: {
 		ScrollToTopBtn,
-		PostsHeader,
+		PostsHeader
 	},
 
     data() {
@@ -181,8 +177,8 @@ export default {
     },
 
     created() {
-        this.currentUserId = localStorage.getItem("userId");
-        this.currentUserRole = localStorage.getItem("role");
+        this.currentUserId = localStorage.getItem('userId');
+        this.currentUserRole = localStorage.getItem('role');
 
         this.userId = this.$route.params.userId;
 
@@ -238,10 +234,11 @@ export default {
 
         deletePost(likedPost) {
             API.delete(`posts/${likedPost.post_id}`)
-            .then(response => console.log(response))
+            .then(response => {
+                console.log(response);
+                this.getAllLikesOfUser();
+            })
             .catch(error => console.log(error));
-
-            window.location.reload();
         }
     }
 };
@@ -249,31 +246,26 @@ export default {
 </script>
 
 
-<style scoped lang="scss">
+<style lang='scss'>
 
 @import '@/scss/variables.scss';
 @import '@/scss/mixins.scss';
 
 
 #user-likes {
-    @include size(100%);
     @include flexbox(column, nowrap, space-around, center);
+    @include size(100%);
 
     @include lg {
-        border-left: solid 1px $color-secondary; 
-    };     
-};
-
-
-#no-likes {
-    @include no-results;
+        border-left: solid 1px $color-secondary;
+    };
 };
 
 
 #likes {
+    @include flexbox(column, nowrap, space-around, center);
     @include size (80%, auto);
     margin: 0 0 50px 0;
-    @include flexbox(column, nowrap, space-around, center);
 
     .post_liked {
         @include position(relative, auto, auto, auto, auto);
@@ -284,12 +276,11 @@ export default {
         border-bottom: none;
         border-top: solid 1px $color-secondary;
     };
+};
 
-    #likes-end {
-        margin: 50px 0 0 0;
-    };
 
+#no-likes {
+    @include no-results;
 };
 
 </style>
-
