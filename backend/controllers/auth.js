@@ -51,7 +51,9 @@ exports.signup = (req, res) => {
                                 userId: user.user_id,
                                 role: user.fk_user_role,
                                 token: jwt.sign(
-                                    { userId: user.user_id }, process.env.RND_TKN, { expiresIn: '24h' }
+                                    { userId: user.user_id },
+                                    process.env.RND_TKN,
+                                    { expiresIn: '24h' }
                                 )
                             })
                         )
@@ -97,7 +99,9 @@ exports.login = (req, res) => {
                 userId: user.user_id,
                 role: user.fk_user_role,
                 token: jwt.sign(
-                    { userId: user.user_id }, process.env.RND_TKN, { expiresIn: '24h' }
+                    { userId: user.user_id },
+                    process.env.RND_TKN,
+                    { expiresIn: '24h' }
                 )
             });
         })

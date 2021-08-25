@@ -129,7 +129,8 @@
 @mixin form-errors {
     @include flexbox(column, nowrap, space-around, center);
     max-width: 80%;
-    margin: 0 0 30px 0;
+    margin: auto;
+    margin-bottom: 30px;
     padding: 10px;
     border: solid 1px $color-primary-dark;
 

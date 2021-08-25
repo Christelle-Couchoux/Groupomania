@@ -213,6 +213,7 @@ export default {
             API.put(`users/${this.$route.params.userId}`, formData)
             .then(response => {
                 console.log(response);
+                
                 this.getUserInfo();
             })
             .catch(error => console.log(error));

@@ -317,8 +317,7 @@ export default {
                 })
                 .then(response => {
                     console.log(response);
-                    this.text = '';
-                    this.errorMessage = '';
+                    this.emptyForm();
                     this.getComments();
                     this.getCommentsCount();
                     this.scrollMeTo('comments-list');

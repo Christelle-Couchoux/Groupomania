@@ -252,10 +252,7 @@ export default {
                 API.post(`posts/`, formData)
                 .then(response => {
                     console.log(response);
-                    this.text = '';
-                    this.file = '';
-                    this.newImage = '';
-                    this.errorMessage = '';
+                    this.emptyForm();
                     this.getAllPosts();
                 })
                 .catch(error => console.log(error));
