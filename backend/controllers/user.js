@@ -29,7 +29,7 @@ exports.modifyUserProfile = (req, res) => {
     User.findOne({ where: { user_id: req.params.userId } })
     .then(user => {
         const filename = user.user_photo.split('/images/')[1];
-        if(filename !== 'default-user-icon.jpg') { // delete file if not default avatar
+        if(filename !== 'default-user-icon.jpg') { // delete file unless default avatar
             fs.unlink(`images/${ filename }`, () => {
                 console.log('Fichier image supprimé.')
             });
@@ -60,7 +60,7 @@ exports.deleteUserAccount = (req, res) => {
     User.findOne({ where: { user_id: req.params.userId }})
     .then(user => {
         const filename = user.user_photo.split('/images/')[1];
-        if(filename !== 'default-user-icon.jpg') { // delete file if not default avatar
+        if(filename !== 'default-user-icon.jpg') { // delete file unless default avatar
             fs.unlink(`images/${ filename }`, () => {
                 console.log('Fichier image supprimé.')
             });

@@ -177,7 +177,6 @@ export default {
             post: '',
             file: '',
             text: '',
-            userId: '',
             newImage: '',
             errorMessage: null     
         }
@@ -226,6 +225,7 @@ export default {
 
         handleFileUpload() {
             this.file = this.$refs.file.files[0];
+            console.log(this.file);
 			this.newImage = URL.createObjectURL(this.file);
         },
 
@@ -263,9 +263,11 @@ export default {
 
         emptyForm() {
             this.text = '';
-            this.file = '';
             this.newImage = '';
+            this.file = '';
             this.errorMessage = '';
+            const input = document.getElementById('file');
+            input.value = ''; // reset value so same image can appear in preview after post cancelled
         },
 
 

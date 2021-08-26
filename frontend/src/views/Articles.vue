@@ -51,8 +51,7 @@ export default {
 
     created() {
         this.currentUserId = localStorage.getItem('userId');
-        this.currentUserRole = localStorage.getItem('role');
-    },
+    }
 }
 
 </script>

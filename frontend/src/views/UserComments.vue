@@ -17,9 +17,9 @@
 
                     <p class="pseudo">{{ userInfo.pseudo }}</p>
 
-                    <div class="edit-profile-btn" v-if="currentUserId == userId || currentUserRole == 'admin'">
-                        <router-link :to="{ name: 'EditProfile', params: { userId: userInfo.user_id } }" title="Éditer le profil">
-                            <input type="button" value="Éditer le profil"/>
+                    <div class="edit-profile-btn" v-if="currentUserId == userInfo.user_id || currentUserRole == 'admin'">
+                        <router-link :to="{ name: 'EditProfile', params: { userId: userInfo.user_id } }" title="Modifier le profil">
+                            <input type="button" value="Modifier le profil"/>
                         </router-link>
                     </div>
 
@@ -33,17 +33,17 @@
                     <nav class="user-nav">
                         <ul>
                             <li>
-                                <router-link :to="{ name: 'UserPosts', params: { userId: userId } }" title="Messages">
+                                <router-link :to="{ name: 'UserPosts', params: { userId: userInfo.user_id } }" title="Messages">
                                     <div><p>Messages</p></div>
                                 </router-link>
                             </li>
                             <li>
-                                <router-link :to="{ name: 'UserComments', params: { userId: userId } }" title="Commentaires">
+                                <router-link :to="{ name: 'UserComments', params: { userId: userInfo.user_id } }" title="Commentaires">
                                     <div><p>Commentaires</p></div>
                                 </router-link>
                             </li>
                             <li>
-                                <router-link :to="{ name: 'UserLikes', params: { userId: userId } }" title="J'aime">
+                                <router-link :to="{ name: 'UserLikes', params: { userId: userInfo.user_id } }" title="J'aime">
                                     <div><p>J'aime</p></div>
                                 </router-link>
                             </li>

@@ -145,6 +145,7 @@ export default {
 			newPhoto: '',
             info: [],
             userInfo:'',
+            userId: '',
             errorMessage: null
         }
     },
@@ -158,6 +159,8 @@ export default {
         this.currentUserId = localStorage.getItem('userId');
         this.currentUserRole = localStorage.getItem('role');
 
+        this.userId = this.$route.params.userId;
+
         this.getUserInfo();
     },
 
@@ -165,10 +168,7 @@ export default {
         // display user info
 
         getUserInfo() {
-            const userId = this.$route.params.userId;
-            //console.log(userId);
-
-            API.get(`users/${userId}/info`)
+            API.get(`users/${this.userId}/info`)
            .then(response => {
                 this.info = response.data.info;
             })
@@ -197,10 +197,12 @@ export default {
         },
 
         emptyForm() {
-            this.file = '',
-            this.newPhoto = '',
-            this.bio = '',
-            this.errorMessage = null
+            this.file = '';
+            this.newPhoto = '';
+            this.bio = '';
+            this.errorMessage = null;
+            const input = document.getElementById('file');
+            input.value = ''; // reset value so same image can appear in preview after changes cancelled
         },
 
         editProfile() {
@@ -210,7 +212,7 @@ export default {
             }
             formData.append('bio', this.bio);
 
-            API.put(`users/${this.$route.params.userId}`, formData)
+            API.put(`users/${this.userId}`, formData)
             .then(response => {
                 console.log(response);
                 
@@ -223,10 +225,10 @@ export default {
         // delete account
 
 		deleteAccount() {
-			API.delete(`users/${this.$route.params.userId}`)
+			API.delete(`users/${this.userId}`)
 			.then(response => {
 				console.log(response);
-                if(this.$route.params.userId == this.currentUserId) {
+                if(this.userId == this.currentUserId) {
                     localStorage.clear();
                     router.push('/');
                 } else if(this.currentUserRole == 'admin') {

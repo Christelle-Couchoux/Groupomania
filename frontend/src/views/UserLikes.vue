@@ -18,8 +18,8 @@
                     <p class="pseudo">{{ userInfo.pseudo }}</p>
 
                     <div class="edit-profile-btn" v-if="currentUserId == userInfo.user_id || currentUserRole == 'admin'">
-                        <router-link :to="{ name: 'EditProfile', params: { userId: userInfo.user_id } }" title="Éditer le profil">
-                            <input type="button" value="Éditer le profil"/>
+                        <router-link :to="{ name: 'EditProfile', params: { userId: userInfo.user_id } }" title="Modifier le profil">
+                            <input type="button" value="Modifier le profil"/>
                         </router-link>
                     </div>
 
@@ -53,63 +53,63 @@
                     <!-- if liked posts -->
                     <div id="likes" v-if="likedPosts[0]">
                         <div class ="post" v-for="likedPost in likedPosts" :key="likedPost.post_id">
-                                <div
-                                    class="delete-post"
-                                    title="Supprimer le message"
-                                    v-if="likedPost.post_user_id == currentUserId || currentUserRole == 'admin'"
-                                    @click.prevent="deletePost(likedPost)"
-                                >
-                                    <i class="fas fa-times" aria-label="Supprimer le message" role="button" @click="deletePost"></i>
-                                </div>
+                            <div
+                                class="delete-post"
+                                title="Supprimer le message"
+                                v-if="likedPost.post_user_id == currentUserId || currentUserRole == 'admin'"
+                                @click.prevent="deletePost(likedPost)"
+                            >
+                                <i class="fas fa-times" aria-label="Supprimer le message" role="button" @click="deletePost"></i>
+                            </div>
 
-                                <div class="post__title">
-                                    <div class="post__title__photo">
+                            <div class="post__title">
+                                <div class="post__title__photo">
+                                    <router-link :to="{ name: 'UserPosts', params: { userId: likedPost.post_user_id } }" title="Voir le profil de l'utilisateur">
+                                        <img
+                                            :src="likedPost.post_user_photo"
+                                            alt="Avatar de l'utilisateur"
+                                        />
+                                    </router-link>
+                                </div>
+                                <div class="post__title__txt">
+                                    <div class="post__title__pseudo">
                                         <router-link :to="{ name: 'UserPosts', params: { userId: likedPost.post_user_id } }" title="Voir le profil de l'utilisateur">
-                                            <img
-                                                :src="likedPost.post_user_photo"
-                                                alt="Avatar de l'utilisateur"
-                                            />
+                                            <p>{{ likedPost.post_user_pseudo }}</p>
                                         </router-link>
                                     </div>
-                                    <div class="post__title__txt">
-                                        <div class="post__title__pseudo">
-                                            <router-link :to="{ name: 'UserPosts', params: { userId: likedPost.post_user_id } }" title="Voir le profil de l'utilisateur">
-                                                <p>{{ likedPost.post_user_pseudo }}</p>
-                                            </router-link>
-                                        </div>
-                                        <div class="post__title__divider">
-                                            <p>-</p>
-                                        </div>
-                                        <div class="post__title__date">
-                                            <p>{{ moment(likedPost.post_createdAt).fromNow() }}</p>
-                                        </div>
+                                    <div class="post__title__divider">
+                                        <p>-</p>
+                                    </div>
+                                    <div class="post__title__date">
+                                        <p>{{ moment(likedPost.post_createdAt).fromNow() }}</p>
                                     </div>
                                 </div>
+                            </div>
 
-                                <div class="post__text" v-if="likedPost.post_text">
-                                    <p>{{ likedPost.post_text }}</p>
-                                </div>
+                            <div class="post__text" v-if="likedPost.post_text">
+                                <p>{{ likedPost.post_text }}</p>
+                            </div>
 
-                                <div
-                                    class="post__img"
-                                    v-if="likedPost.post_file"
-                                    @click.prevent="enlarge(likedPost)"
-                                >
-                                    <img
-                                        :src="likedPost.post_file"
-                                        title = "Agrandir l'image"
-                                    />
-                                </div>
+                            <div
+                                class="post__img"
+                                v-if="likedPost.post_file"
+                                @click.prevent="enlarge(likedPost)"
+                            >
+                                <img
+                                    :src="likedPost.post_file"
+                                    title = "Agrandir l'image"
+                                />
+                            </div>
 
-                                <!-- popup window enlarge img -->
-                                <div
-                                    id="modal-img"
-                                    class="modal"
-                                    title="Fermer l'image"
-                                    @click.prevent="closeImg"
-                                >
-                                    <img id="img01"/>
-                                </div>
+                            <!-- popup window enlarge img -->
+                            <div
+                                id="modal-img"
+                                class="modal"
+                                title="Fermer l'image"
+                                @click.prevent="closeImg"
+                            >
+                                <img id="img01"/>
+                            </div>
 
                             <router-link :to="{ name: 'Post', params: { postId: likedPost.post_id } }" title="Commenter et aimer le message">
                                 <div class="post__link">

@@ -20,7 +20,7 @@ For more details, see the functional specification file.
 #### Database
 - Connect to a MySQL client.
 - Run `CREATE DATABASE groupomania;`.
-- Import the file groupomania.sql.
+- Import database/groupomania.sql.
 - To connect to the database, change the values of USER, PASSWORD and PORT in config/db.config.js so they match your MySQL configuration.
 
 #### Back-end
@@ -49,7 +49,7 @@ See the API guidelines file.
 ### How to use the app
 
 #### Create an account
-You need to provide a pseudo, an email address and a password. You can then also add a photo and a bio to your profile. You can delete your profile whenever you want.
+You need to provide a pseudo, an email address and a password. You can then also add a photo and a bio to your profile. You can delete your account whenever you want.
 
 #### Login
 You need to provide your email address and password.
@@ -59,4 +59,3 @@ You can view users' posts, comments, and likes.
 You can add a post, comment on a post, and like a post.
 You can delete your own post, comment or like.
 The administrator can delete your comment, post or account if you do not respect the rules of the forum.
-

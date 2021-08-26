@@ -26,7 +26,7 @@
 	font-size: map-get($map: $font-size, $key: basic);
 	@include links-style(map-get($color-txt, basic));
 	@include color-bg-txt(basic);
-	min-width: 375px;
+	min-width: 320px;
 	max-width: 1440px;
 	margin: auto;
 		
