@@ -1,6 +1,6 @@
 # Groupomania
 
-## OpenClassrooms - Web Developper path - Project 7
+## OpenClassrooms - Web Developer path - Project 7
 
 
 ### Aim
@@ -24,6 +24,7 @@ For more details, see the functional specification file.
 - To connect to the database, change the values of USER, PASSWORD and PORT in config/db.config.js so they match your MySQL configuration.
 
 #### Back-end
+- Fill in the variables in the .env file.
 - Install nodemon.
 - Run `npm install`.
 - Run `npm start`. The server should run on localhost:3000.
