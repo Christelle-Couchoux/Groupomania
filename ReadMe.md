@@ -4,8 +4,8 @@
 
 
 ### Aim
-- Build the MVP for an internal social network for the employees of the company Groupomania. The social network should include two forums; one where employees can share multimdedia content and one where they can share articles.
-- Only one of these two functionnalities will be developped.
+- Build the MVP for an internal social network for the employees of the company Groupomania. The social network should include two forums; one where employees can share multimedia content and one where they can share articles.
+- Only one of these two functionalities will be developped.
 - The project should be written in JavaScript and work with an SQL database.
 - The API should be secured.
 - WCAG standards should be respected.
